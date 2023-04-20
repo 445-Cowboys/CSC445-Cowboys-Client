@@ -1,0 +1,8 @@
+#border-box {
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+}
