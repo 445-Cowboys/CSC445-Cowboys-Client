@@ -17,6 +17,14 @@ public class HelloApplication extends Application {
         stage.show();
 
         HelloController controller = fxmlLoader.getController();
+        controller.setPlayer1Fields();
+        controller.setPlayer2Fields();
+        controller.setPlayer3Fields();
+        controller.setBossFields();
+        controller.setBossImage("file:src/main/resources/com/csc445cowboys/guiwip/img/boss_angel.jpeg");
+        controller.setPlayer1Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_grit.jpeg");
+        controller.setPlayer2Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_jango.jpeg");
+        controller.setPlayer3Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_no_name.jpeg");
 
     }
 

@@ -1,9 +1,11 @@
 package com.csc445cowboys.guiwip;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
@@ -14,7 +16,6 @@ public class HelloController {
     public Button action_user_reload_button;
     public Label boss_weapon_type_label;
     public Label boss_curr_health_label;
-    public Label boss_health_label;
     public Label boss_max_health_label;
     public Label boss_curr_ammo_label;
     public Label boss_max_ammo_label;
@@ -25,7 +26,6 @@ public class HelloController {
     public Label player1_name_label;
     public ImageView player1_picture;
     public Label player1_weapon_type_label;
-    public Label player1_health_label;
     public Label player1_curr_health_label;
     public Label player1_max_health_label;
     public Label player1_curr_ammo_label;
@@ -36,7 +36,6 @@ public class HelloController {
     public Label player2_name_label;
     public ImageView player2_picture;
     public Label player2_weapon_type_label;
-    public Label player2_health_label;
     public Label player2_curr_health_label;
     public Label player2_max_health_label;
     public Label player2_curr_ammo_label;
@@ -47,22 +46,93 @@ public class HelloController {
     public Label player3_name_label;
     public ImageView player3_picture;
     public Label player3_weapon_type_label;
-    public Label player3_health_label;
     public Label player3_curr_health_label;
     public Label player3_max_health_label;
     public Label player3_curr_ammo_label;
     public Label player3_max_ammo_label;
     public Label player3_ability_label;
     public Label player3_ability_status1;
-    @FXML
-    private Label welcomeText;
+    public VBox boss_frame;
+    public Label boss_name_label;
+    public ImageView boss_picture;
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    public void onUseAbilityClick(ActionEvent actionEvent) {
     }
 
+    public void onLeaveGameClick(ActionEvent actionEvent) {
+    }
 
-    
+    public void onFireClick(ActionEvent actionEvent) {
+    }
 
+    public void onReloadClick(ActionEvent actionEvent) {
+    }
+
+    public void setBossFields(){
+        boss_name_label.setText("Boss");
+        boss_weapon_type_label.setText("Weapon Type");
+        boss_curr_health_label.setText("Current Health");
+        boss_max_health_label.setText("Max Health");
+        boss_curr_ammo_label.setText("Current Ammo");
+        boss_max_ammo_label.setText("Max Ammo");
+        boss_ability_label.setText("Ability");
+        boss_ability_status.setText("Ability Status");
+        boss_picture.setImage(null);
+    }
+
+    public void setPlayer1Fields(){
+        player1_name_label.setText("Player 1");
+        player1_weapon_type_label.setText("Weapon Type");
+        player1_curr_health_label.setText("Current Health");
+        player1_max_health_label.setText("Max Health");
+        player1_curr_ammo_label.setText("Current Ammo");
+        player1_max_ammo_label.setText("Max Ammo");
+        player1_ability_label.setText("Ability");
+        player1_ability_status1.setText("Ability Status");
+        player1_picture.setImage(null);
+    }
+
+    public void setPlayer2Fields(){
+        player2_name_label.setText("Player 2");
+        player2_weapon_type_label.setText("Weapon Type");
+        player2_curr_health_label.setText("Current Health");
+        player2_max_health_label.setText("Max Health");
+        player2_curr_ammo_label.setText("Current Ammo");
+        player2_max_ammo_label.setText("Max Ammo");
+        player2_ability_label.setText("Ability");
+        player2_ability_status1.setText("Ability Status");
+        player2_picture.setImage(null);
+    }
+
+    public void setPlayer3Fields(){
+        player3_name_label.setText("Player 3");
+        player3_weapon_type_label.setText("Weapon Type");
+        player3_curr_health_label.setText("Current Health");
+        player3_max_health_label.setText("Max Health");
+        player3_curr_ammo_label.setText("Current Ammo");
+        player3_max_ammo_label.setText("Max Ammo");
+        player3_ability_label.setText("Ability");
+        player3_ability_status1.setText("Ability Status");
+        player3_picture.setImage(null);
+    }
+
+    public void setBossImage(String path){
+        Image image = new Image(path);
+        boss_picture.setImage(image);
+    }
+
+    public void setPlayer1Image(String path){
+        Image image = new Image(path);
+        player1_picture.setImage(image);
+    }
+
+    public void setPlayer2Image(String path){
+        Image image = new Image(path);
+        player2_picture.setImage(image);
+    }
+
+    public void setPlayer3Image(String path){
+        Image image = new Image(path);
+        player3_picture.setImage(image);
+    }
 }
