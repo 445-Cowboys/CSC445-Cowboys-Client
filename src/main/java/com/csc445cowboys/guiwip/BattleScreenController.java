@@ -57,7 +57,6 @@ public class BattleScreenController {
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
         System.out.println("Use Ability Clicked");
-//        actionEvent.notifyAll();
     }
 
     public void onLeaveGameClick(ActionEvent actionEvent) {
