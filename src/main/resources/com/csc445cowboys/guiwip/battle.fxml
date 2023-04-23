@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" stylesheets="@cowboys.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.csc445cowboys.guiwip.HelloController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" stylesheets="@cowboys.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.csc445cowboys.guiwip.BattleScreenController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -24,12 +24,14 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <AnchorPane prefHeight="200.0" prefWidth="200.0">
-      <VBox id="border-box" prefHeight="360.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <Pane prefHeight="368.0" prefWidth="356.0">
+      <VBox id="border-box" layoutY="248.0" prefHeight="360.0" prefWidth="360.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <Pane prefHeight="158.0" prefWidth="356.0">
             <Button id="button" fx:id="action_user_ability_button" layoutX="14.0" layoutY="297.0" mnemonicParsing="false" onAction="#onUseAbilityClick" prefHeight="47.0" prefWidth="163.0" text="Use Ability" />
             <Button id="button" fx:id="action_user_leave_button" layoutX="182.0" layoutY="297.0" mnemonicParsing="false" onAction="#onLeaveGameClick" prefHeight="47.0" prefWidth="163.0" text="Leave Game" />
             <Button id="button" fx:id="action_user_fire_button" layoutX="14.0" layoutY="236.0" mnemonicParsing="false" onAction="#onFireClick" prefHeight="47.0" prefWidth="163.0" text="Fire" />
             <Button id="button" fx:id="action_user_reload_button" layoutX="182.0" layoutY="236.0" mnemonicParsing="false" onAction="#onReloadClick" prefHeight="47.0" prefWidth="163.0" text="Reload" />
+            <Label id="char-label" fx:id="round_indicator" alignment="CENTER" layoutX="-3.0" layoutY="-3.0" prefHeight="31.0" prefWidth="360.0" stylesheets="@cowboys.css" text="Turn Indicator: 1" textAlignment="CENTER" />
+            <Separator id="horz-line" layoutX="-1.0" layoutY="26.0" prefHeight="5.0" prefWidth="356.0" style="-fx-background-color: #000000;" />
          </Pane>
       </VBox>
    </AnchorPane>

@@ -60,7 +60,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.csc445cowboys.guiwip/com.csc445cowboys.guiwip.HelloApplication</mainClass>
+                            <mainClass>com.csc445cowboys.guiwip/com.csc445cowboys.guiwip.Main</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

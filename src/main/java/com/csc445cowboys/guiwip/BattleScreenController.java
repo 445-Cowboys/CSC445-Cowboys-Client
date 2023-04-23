@@ -1,7 +1,6 @@
 package com.csc445cowboys.guiwip;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -9,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-public class HelloController {
+public class BattleScreenController {
     public Button action_user_ability_button;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
@@ -57,15 +56,20 @@ public class HelloController {
     public ImageView boss_picture;
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
+        System.out.println("Use Ability Clicked");
+//        actionEvent.notifyAll();
     }
 
     public void onLeaveGameClick(ActionEvent actionEvent) {
+        System.out.println("Leave Game Clicked");
     }
 
     public void onFireClick(ActionEvent actionEvent) {
+        System.out.println("Fire Clicked");
     }
 
     public void onReloadClick(ActionEvent actionEvent) {
+        System.out.println("Reload Clicked");
     }
 
     public void setBossFields(){
@@ -134,5 +138,9 @@ public class HelloController {
     public void setPlayer3Image(String path){
         Image image = new Image(path);
         player3_picture.setImage(image);
+    }
+
+    public void appendTextToWriter(String text){
+        activity_writer.appendText(text);
     }
 }
