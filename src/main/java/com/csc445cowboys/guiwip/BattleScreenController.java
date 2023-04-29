@@ -171,6 +171,7 @@ public class BattleScreenController {
     }
 
 
+    // TODO Listener will be called when a GameStatePacket is received
     public void updateFromGameStatePacket(GameState gs){
 
         // Boss Stats
@@ -190,6 +191,10 @@ public class BattleScreenController {
 
         playerTurn = gs.getCurrentPlayer();
 
+    }
 
+    public void initializeGameScreen(){
+        setAllFields();
+        activity_writer.setText("");
     }
 }

@@ -27,22 +27,36 @@ public class MainLobbyController {
 
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException {
-        System.out.println("Lobby 1 Enter Game");
+        System.out.println("Attempting to Enter Lobby 3...");
         if (checkFull(lobby1_curr_players)) {
             System.out.println("Lobby 1 is full");
 
         } else {
             System.out.println("Lobby 1 is not full");
-            JoinGame(actionEvent);
+            JoinGame(actionEvent,1);
         }
     }
 
-    public void onLobby2EnterGame(ActionEvent actionEvent) {
-        System.out.println("Lobby 2 Enter Game");
+    public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException {
+        System.out.println("Attempting to Enter Lobby 2...");
+        if (checkFull(lobby1_curr_players)) {
+            System.out.println("Lobby 2 is full");
+
+        } else {
+            System.out.println("Lobby 2 is not full");
+            JoinGame(actionEvent,2);
+        }
     }
 
-    public void onLobby3EnterGame(ActionEvent actionEvent) {
-        System.out.println("Lobby 3 Enter Game");
+    public void onLobby3EnterGame(ActionEvent actionEvent) throws IOException {
+        System.out.println("Attempting to Enter Lobby 3...");
+        if (checkFull(lobby1_curr_players)) {
+            System.out.println("Lobby 3 is full");
+
+        } else {
+            System.out.println("Lobby 3 is not full");
+            JoinGame(actionEvent,3);
+        }
     }
 
     public void setLobby1(int curr_players, String game_status) {
@@ -60,8 +74,14 @@ public class MainLobbyController {
         lobby3_game_status_label.setText(game_status);
     }
 
-    public void JoinGame(ActionEvent actionEvent) throws IOException {
-        OpenBattleScreen(actionEvent);
+    public void JoinGame(ActionEvent actionEvent,int n) throws IOException {
+        // We need to initialize the game, and then open the battle screen, we attempt to get or wait for a initial
+        // game state packet.
+        // TODO : Implement initial game state packet
+
+
+
+        OpenBattleScreen(actionEvent,n);
     }
 
     public boolean checkFull(int curr_players)  {
@@ -72,8 +92,10 @@ public class MainLobbyController {
         this.scene = battle;
     }
 
-    public void OpenBattleScreen(ActionEvent actionEvent) throws IOException {
+    public void OpenBattleScreen(ActionEvent actionEvent, int  l) throws IOException {
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setTitle("Battling: Game Room " + l);
         stage.setScene(scene);
     }
+
 }
