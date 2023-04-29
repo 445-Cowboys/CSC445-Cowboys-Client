@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip;
 
+import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -201,5 +202,8 @@ public class BattleScreenController {
 
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
         this.mainLobbyController = mainLobbyController;
+    }
+
+    public void setGameRooms(GameRooms gameRooms) {
     }
 }

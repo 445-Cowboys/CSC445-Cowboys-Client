@@ -2,6 +2,7 @@ package com.csc445cowboys.guiwip;
 
 import com.csc445cowboys.guiwip.charTemplates.AckPacket;
 import com.csc445cowboys.guiwip.charTemplates.PacketFactory;
+import com.csc445cowboys.guiwip.packets.GameRooms;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -48,14 +49,17 @@ public class Main extends Application {
         AckPacket ackPacket = new AckPacket(serverAddr.getAddress(), 7806, AckPacket.TYPE, 0);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         buffer.put(ackPacket.getDatagramPacket().getData());
-        buffer.flip();
-        buffer.clear();
-        boolean gs = false;
-        // TODO parse game lobby packet
-        do {
+        // Loop Continuously
+        for(;;){
             client.receive(buffer);
-            // TODO check to see if game lobby packet
-        } while (!gs);
+            buffer.flip();
+            // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
+            if(buffer.get(1) == 1){
+                GameRooms gameRooms = new GameRooms(buffer);
+                battleScreenController.setGameRooms(gameRooms);
+                break;
+            }
+        }
 
 
         // INITIAL REQUEST TO SERVER FOR LOBBY INFO
