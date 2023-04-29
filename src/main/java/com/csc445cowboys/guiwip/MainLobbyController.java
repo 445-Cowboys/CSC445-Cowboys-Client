@@ -13,6 +13,9 @@ import java.util.Objects;
 
 public class MainLobbyController {
 
+
+        private Scene scene;
+
     public Label lobby1_curr_players_label;
     private int lobby1_curr_players;
     public Label lobby1_game_status_label;
@@ -56,14 +59,18 @@ public class MainLobbyController {
     }
 
     public void JoinGame(ActionEvent actionEvent) throws IOException {
-        Stage stage = new Stage();
-    BattleScreenController battleScreenController = new BattleScreenController(stage);
 
-        FXMLLoader root = new FXMLLoader(getClass().getResource("battle.fxml"));
-        stage.setScene(new Scene(root.load()));
     }
 
     public boolean checkFull(int curr_players)  {
         return curr_players == 3;
+    }
+
+    public initBs(Scene scene){
+        this.scene = scene;
+    }
+
+    public void setBattleScreen(Scene battle) {
+        this.scene = battle;
     }
 }

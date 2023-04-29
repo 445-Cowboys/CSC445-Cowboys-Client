@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip;
 
 import javafx.event.ActionEvent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -58,12 +59,7 @@ public class BattleScreenController {
     public Label boss_name_label;
     public ImageView boss_picture;
 
-    private Stage stage;
-
-
-    public BattleScreenController(Stage stage){
-        this.stage = stage;
-    }
+    private Scene scene;
 
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
@@ -73,8 +69,6 @@ public class BattleScreenController {
     public void onLeaveGameClick(ActionEvent actionEvent) {
         System.out.println("Leave Game Clicked");
 
-        stage.close();
-        // Exit the window
     }
 
     public void onFireClick(ActionEvent actionEvent) {
@@ -161,5 +155,9 @@ public class BattleScreenController {
     }
     public void appendTextToWriter(String text){
         activity_writer.appendText(text);
+    }
+
+    public void setMainScreen(Scene mainMenuScene) {
+        scene = mainMenuScene;
     }
 }
