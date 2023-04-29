@@ -1,11 +1,11 @@
 package com.csc445cowboys.guiwip;
 
-import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -15,7 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.security.PublicKey;
 
 public class BattleScreenController {
     public Button action_user_ability_button;
@@ -71,7 +70,11 @@ public class BattleScreenController {
 
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
-        System.out.println("Use Ability Clicked");
+        if (clientPlayer == playerTurn) {
+            System.out.println("Use Ability Clicked");
+        } else {
+            notTurn();
+        }
     }
 
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
@@ -80,11 +83,19 @@ public class BattleScreenController {
     }
 
     public void onFireClick(ActionEvent actionEvent) {
-        System.out.println("Fire Clicked");
+        if (clientPlayer == playerTurn) {
+            System.out.println("Fire Clicked");
+        } else {
+            notTurn();
+        }
     }
 
     public void onReloadClick(ActionEvent actionEvent) {
-        System.out.println("Reload Clicked");
+        if (clientPlayer == playerTurn) {
+            System.out.println("Reload Clicked");
+        } else {
+            notTurn();
+        }
     }
 
     public void setBossFields(){
@@ -175,13 +186,10 @@ public class BattleScreenController {
     }
 
 
-    // TODO Listener will be called when a GameStatePacket is received
     public void updateFromGameStatePacket(GameState gs){
-
         // Boss Stats
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
         boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
-
         // Player Stats
         // Player 1
         player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
@@ -198,7 +206,6 @@ public class BattleScreenController {
     }
 
     public void initializeGameScreen(GameStart gstart){
-
         setPlayer1Fields();
         setPlayer2Fields();
         setPlayer3Fields();
@@ -209,6 +216,11 @@ public class BattleScreenController {
 
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
         this.mainLobbyController = mainLobbyController;
+    }
+
+    private void notTurn(){
+        // Disable all buttons
+        Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
     }
 
 }
