@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip;
 
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -63,6 +64,7 @@ public class BattleScreenController {
     public Label boss_name_label;
     public ImageView boss_picture;
     private int playerTurn;
+    private int clientPlayer;
 
     private Scene scene;
     public MainLobbyController mainLobbyController;
@@ -195,15 +197,18 @@ public class BattleScreenController {
 
     }
 
-    public void initializeGameScreen(){
-        setAllFields();
-        activity_writer.setText("");
+    public void initializeGameScreen(GameStart gstart){
+
+        setPlayer1Fields();
+        setPlayer2Fields();
+        setPlayer3Fields();
+        setBossFields();
+        clientPlayer = gstart.getClientPlayer();
+
     }
 
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
         this.mainLobbyController = mainLobbyController;
     }
 
-    public void setGameRooms(GameRooms gameRooms) {
-    }
 }

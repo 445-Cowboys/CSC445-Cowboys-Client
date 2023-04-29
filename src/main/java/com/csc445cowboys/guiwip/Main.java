@@ -15,8 +15,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
-import static sun.security.util.Debug.args;
-
 //7806
 public class Main extends Application {
     @Override
@@ -56,15 +54,23 @@ public class Main extends Application {
             // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
             if(buffer.get(1) == 1){
                 GameRooms gameRooms = new GameRooms(buffer);
-                battleScreenController.setGameRooms(gameRooms);
+                mainLobbyController.setGameRooms(gameRooms);
                 break;
             }
         }
-
-
-        // INITIAL REQUEST TO SERVER FOR LOBBY INFO
-
+        // Since game-rooms are set we can now show the stage
         stage.show();
+
+        for(;;){
+            client.receive(buffer);
+            buffer.flip();
+            // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
+            if(buffer.get(1) == 1){
+                GameRooms gameRooms = new GameRooms(buffer);
+                mainLobbyController.setGameRooms(gameRooms);
+
+            }
+        }
 
     }
 
