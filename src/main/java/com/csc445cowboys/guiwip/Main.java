@@ -1,5 +1,7 @@
 package com.csc445cowboys.guiwip;
 
+import com.csc445cowboys.guiwip.charTemplates.AckPacket;
+import com.csc445cowboys.guiwip.charTemplates.PacketFactory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +9,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+
+import static sun.security.util.Debug.args;
+
 //7806
 public class Main extends Application {
     @Override
@@ -33,6 +42,24 @@ public class Main extends Application {
 
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
+        // TODO SPIN UP THEAD TO LISTEN FOR CHANGES FOR LOBBY THREADS
+        DatagramChannel client = DatagramChannel.open().bind(null);
+        InetSocketAddress serverAddr = new InetSocketAddress("localhost", 7806);
+        AckPacket ackPacket = new AckPacket(serverAddr.getAddress(), 7806, AckPacket.TYPE, 0);
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        buffer.put(ackPacket.getDatagramPacket().getData());
+        buffer.flip();
+        buffer.clear();
+        boolean gs = false;
+        // TODO parse game lobby packet
+        do {
+            client.receive(buffer);
+            // TODO check to see if game lobby packet
+        } while (!gs);
+
+
+        // INITIAL REQUEST TO SERVER FOR LOBBY INFO
+
         stage.show();
 
     }

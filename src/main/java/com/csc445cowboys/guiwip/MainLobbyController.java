@@ -90,6 +90,8 @@ public class MainLobbyController {
 
 
         battleScreenController.setAllFields();
+
+        // TODO Spin up datagram thread to listen for packets battle screen
         OpenBattleScreen(actionEvent,n);
     }
 
