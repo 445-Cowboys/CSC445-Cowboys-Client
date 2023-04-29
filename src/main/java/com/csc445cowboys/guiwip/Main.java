@@ -68,7 +68,6 @@ public class Main extends Application {
             if(buffer.get(1) == 1){
                 GameRooms gameRooms = new GameRooms(buffer);
                 mainLobbyController.setGameRooms(gameRooms);
-
             }
         }
 

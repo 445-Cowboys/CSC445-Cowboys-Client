@@ -139,9 +139,6 @@ public class MainLobbyController {
 
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
     public void setGameRooms(GameRooms gameRooms){
-//        setLobby1(gameRooms.getLobby1().getCurr_players(),gameRooms.getLobby1().getGame_status());
-//        setLobby2(gameRooms.getLobby2().getCurr_players(),gameRooms.getLobby2().getGame_status());
-//        setLobby3(gameRooms.getLobby3().getCurr_players(),gameRooms.getLobby3().getGame_status());
     }
 
 }
