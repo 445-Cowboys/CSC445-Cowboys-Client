@@ -31,7 +31,6 @@ public class GameSession {
 
     public void requestJoin() throws IOException, GeneralSecurityException {
         // TODO : Implement ENTER ROOM REQUEST
-        // TODO : PARSE CRYPTO KEY FROM ENTER ROOM RESPONSE
         client.connect(serverAddress);
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         buffer.put("ENTER ROOM REQUEST".getBytes());
@@ -44,7 +43,7 @@ public class GameSession {
         buffer.flip();
         GameStart gameStart = new GameStart(buffer);
         aead.parseKey(gameStart.cryptoKey);
-        battleScreenController.updateGameStartPacket(gameStart);
+        battleScreenController.initializeGameScreen(gameStart);
 
     }
 

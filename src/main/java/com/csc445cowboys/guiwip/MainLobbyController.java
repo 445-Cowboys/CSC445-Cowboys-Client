@@ -93,8 +93,7 @@ public class MainLobbyController {
     }
 
     public void JoinGame(ActionEvent actionEvent,int n) throws IOException, GeneralSecurityException {
-        GameSession gameSession = new GameSession(battleScreenController,);
-        battleScreenController.setAllFields();
+        GameSession gameSession = new GameSession(battleScreenController,n);
         OpenBattleScreen(actionEvent,n);
     }
 
