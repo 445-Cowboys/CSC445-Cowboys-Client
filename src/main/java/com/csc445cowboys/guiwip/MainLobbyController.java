@@ -2,6 +2,7 @@ package com.csc445cowboys.guiwip;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -59,18 +60,19 @@ public class MainLobbyController {
     }
 
     public void JoinGame(ActionEvent actionEvent) throws IOException {
-
+        OpenBattleScreen(actionEvent);
     }
 
     public boolean checkFull(int curr_players)  {
         return curr_players == 3;
     }
 
-    public initBs(Scene scene){
-        this.scene = scene;
-    }
-
     public void setBattleScreen(Scene battle) {
         this.scene = battle;
+    }
+
+    public void OpenBattleScreen(ActionEvent actionEvent) throws IOException {
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 }

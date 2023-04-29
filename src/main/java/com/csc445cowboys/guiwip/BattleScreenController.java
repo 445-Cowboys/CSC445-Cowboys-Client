@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip;
 
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.security.PublicKey;
 
 public class BattleScreenController {
@@ -66,8 +68,9 @@ public class BattleScreenController {
         System.out.println("Use Ability Clicked");
     }
 
-    public void onLeaveGameClick(ActionEvent actionEvent) {
+    public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
+        OpenMainMenuScreen(actionEvent);
 
     }
 
@@ -159,5 +162,10 @@ public class BattleScreenController {
 
     public void setMainScreen(Scene mainMenuScene) {
         scene = mainMenuScene;
+    }
+
+    public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
+        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
     }
 }
