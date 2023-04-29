@@ -64,6 +64,7 @@ public class BattleScreenController {
     private int playerTurn;
 
     private Scene scene;
+    public MainLobbyController mainLobbyController;
 
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
@@ -196,5 +197,9 @@ public class BattleScreenController {
     public void initializeGameScreen(){
         setAllFields();
         activity_writer.setText("");
+    }
+
+    public void setMainLobbyController(MainLobbyController mainLobbyController) {
+        this.mainLobbyController = mainLobbyController;
     }
 }

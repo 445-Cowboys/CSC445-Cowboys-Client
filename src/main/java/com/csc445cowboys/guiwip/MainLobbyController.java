@@ -16,9 +16,12 @@ public class MainLobbyController {
 
 
         private Scene scene;
+        public BattleScreenController battleScreenController;
 
     public Label lobby1_curr_players_label;
     private int lobby1_curr_players;
+        private int lobby2_curr_players;
+            private int lobby3_curr_players;
     public Label lobby1_game_status_label;
     public Label lobby2_curr_players_label1;
     public Label lobby2_game_status_label;
@@ -27,9 +30,11 @@ public class MainLobbyController {
 
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException {
+
         System.out.println("Attempting to Enter Lobby 3...");
         if (checkFull(lobby1_curr_players)) {
             System.out.println("Lobby 1 is full");
+            gameFullAlert();
 
         } else {
             System.out.println("Lobby 1 is not full");
@@ -39,8 +44,9 @@ public class MainLobbyController {
 
     public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException {
         System.out.println("Attempting to Enter Lobby 2...");
-        if (checkFull(lobby1_curr_players)) {
+        if (checkFull(lobby2_curr_players)) {
             System.out.println("Lobby 2 is full");
+            gameFullAlert();
 
         } else {
             System.out.println("Lobby 2 is not full");
@@ -50,7 +56,8 @@ public class MainLobbyController {
 
     public void onLobby3EnterGame(ActionEvent actionEvent) throws IOException {
         System.out.println("Attempting to Enter Lobby 3...");
-        if (checkFull(lobby1_curr_players)) {
+        if (checkFull(lobby3_curr_players)) {
+            gameFullAlert();
             System.out.println("Lobby 3 is full");
 
         } else {
@@ -62,6 +69,7 @@ public class MainLobbyController {
     public void setLobby1(int curr_players, String game_status) {
         lobby1_curr_players_label.setText(String.valueOf(curr_players));
         lobby1_game_status_label.setText(game_status);
+        lobby1_curr_players = curr_players;
     }
 
     public void setLobby2(int curr_players, String game_status) {
@@ -81,6 +89,7 @@ public class MainLobbyController {
 
 
 
+        battleScreenController.setAllFields();
         OpenBattleScreen(actionEvent,n);
     }
 
@@ -98,4 +107,12 @@ public class MainLobbyController {
         stage.setScene(scene);
     }
 
+    public void setBattleScreenController(BattleScreenController battleScreenController) {
+        this.battleScreenController = battleScreenController;
+
+    }
+
+    public void gameFullAlert(){
+        Alerts.displayAlert("Game is full","The game you are trying to join is full. Please try again later.");
+    }
 }

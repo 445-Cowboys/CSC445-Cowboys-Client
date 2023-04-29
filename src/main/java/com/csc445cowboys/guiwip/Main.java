@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+//7806
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -20,11 +20,16 @@ public class Main extends Application {
         Parent battlePane = battle.load();
         Scene battleScene = new Scene(battlePane);
 
+
+
         MainLobbyController mainLobbyController = mainLdr.getController();
         mainLobbyController.setBattleScreen(battleScene);
 
         BattleScreenController battleScreenController = battle.getController();
         battleScreenController.setMainScreen(mainMenuScene);
+
+        battleScreenController.setMainLobbyController(mainLobbyController);
+       mainLobbyController.setBattleScreenController(battleScreenController);
 
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
