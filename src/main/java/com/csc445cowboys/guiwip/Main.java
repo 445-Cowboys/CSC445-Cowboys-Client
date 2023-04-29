@@ -11,9 +11,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         GuiTester guiTester = new GuiTester(stage);
-        guiTester.setAllFields();
-        guiTester.setAllFields();
-        guiTester.writerAppend();
+//        guiTester.setAllFields();
+//        guiTester.setAllFields();
+//        guiTester.writerAppend();
     }
 
     public static void main(String[] args) {

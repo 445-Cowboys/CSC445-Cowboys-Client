@@ -7,6 +7,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.security.PublicKey;
 
 public class BattleScreenController {
     public Button action_user_ability_button;
@@ -55,12 +58,23 @@ public class BattleScreenController {
     public Label boss_name_label;
     public ImageView boss_picture;
 
+    private Stage stage;
+
+
+    public BattleScreenController(Stage stage){
+        this.stage = stage;
+    }
+
+
     public void onUseAbilityClick(ActionEvent actionEvent) {
         System.out.println("Use Ability Clicked");
     }
 
     public void onLeaveGameClick(ActionEvent actionEvent) {
         System.out.println("Leave Game Clicked");
+
+        stage.close();
+        // Exit the window
     }
 
     public void onFireClick(ActionEvent actionEvent) {
@@ -139,6 +153,12 @@ public class BattleScreenController {
         player3_picture.setImage(image);
     }
 
+    public void setAllFields(){
+        setBossFields();
+        setPlayer1Fields();
+        setPlayer2Fields();
+        setPlayer3Fields();
+    }
     public void appendTextToWriter(String text){
         activity_writer.appendText(text);
     }
