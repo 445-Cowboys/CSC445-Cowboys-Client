@@ -1,11 +1,13 @@
 package com.csc445cowboys.guiwip;
 
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.google.crypto.tink.Aead;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -16,6 +18,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -36,7 +39,7 @@ public class MainLobbyController {
     public Label lobby3_curr_players_label;
 
 
-    public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException {
+    public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
 
         System.out.println("Attempting to Enter Lobby 3...");
         if (checkFull(lobby1_curr_players)) {
@@ -49,7 +52,7 @@ public class MainLobbyController {
         }
     }
 
-    public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException {
+    public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
         System.out.println("Attempting to Enter Lobby 2...");
         if (checkFull(lobby2_curr_players)) {
             System.out.println("Lobby 2 is full");
@@ -61,7 +64,7 @@ public class MainLobbyController {
         }
     }
 
-    public void onLobby3EnterGame(ActionEvent actionEvent) throws IOException {
+    public void onLobby3EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
         System.out.println("Attempting to Enter Lobby 3...");
         if (checkFull(lobby3_curr_players)) {
             gameFullAlert();
@@ -89,26 +92,9 @@ public class MainLobbyController {
         lobby3_game_status_label.setText(game_status);
     }
 
-    public void JoinGame(ActionEvent actionEvent,int n) throws IOException {
-        // We need to initialize the game, and then open the battle screen, we attempt to get or wait for a initial
-        // game state packet.
-        // TODO : Implement initial game state packet
-
+    public void JoinGame(ActionEvent actionEvent,int n) throws IOException, GeneralSecurityException {
+        GameSession gameSession = new GameSession(battleScreenController,);
         battleScreenController.setAllFields();
-        // TODO Spin up datagram thread to listen for packets battle screen
-        // Dedicated Datagram thread for Battle Screen
-        DatagramChannel client = DatagramChannel.open().bind(null);
-        InetSocketAddress serverAddress = new InetSocketAddress(InetAddress.getLocalHost(), 4444);
-         //our task we will time
-        Callable<Void> Callable = () -> {
-            ByteBuffer receivedData = ByteBuffer.allocate(1024);
-            try {
-                new Thread(new BatNet(battleScreenController,receivedData, serverAddress)).start();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return null;
-        };
         OpenBattleScreen(actionEvent,n);
     }
 
@@ -132,7 +118,7 @@ public class MainLobbyController {
     }
 
     public void gameFullAlert(){
-        Alerts.displayAlert("Game is full","The game you are trying to join is full. Please try again later.");
+        Alerts.displayAlert("Game is full","The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION);
     }
 
 

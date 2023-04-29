@@ -223,4 +223,6 @@ public class BattleScreenController {
         Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
     }
 
+    public void updateGameStartPacket(GameStart gameStart) {
+    }
 }
