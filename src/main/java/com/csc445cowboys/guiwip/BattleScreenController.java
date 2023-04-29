@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip;
 
+import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -60,6 +61,7 @@ public class BattleScreenController {
     public VBox boss_frame;
     public Label boss_name_label;
     public ImageView boss_picture;
+    private int playerTurn;
 
     private Scene scene;
 
@@ -71,7 +73,6 @@ public class BattleScreenController {
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
         OpenMainMenuScreen(actionEvent);
-
     }
 
     public void onFireClick(ActionEvent actionEvent) {
@@ -167,5 +168,28 @@ public class BattleScreenController {
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
         Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
+    }
+
+
+    public void updateFromGameStatePacket(GameState gs){
+
+        // Boss Stats
+        boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
+        boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
+
+        // Player Stats
+        // Player 1
+        player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
+        player1_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(1)));
+        // Player 2
+        player2_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
+        player2_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
+        // Player 3
+        player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(3)));
+        player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(3)));
+
+        playerTurn = gs.getCurrentPlayer();
+
+
     }
 }

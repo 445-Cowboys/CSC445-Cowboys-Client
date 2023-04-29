@@ -30,6 +30,7 @@ public class MainLobbyController {
         System.out.println("Lobby 1 Enter Game");
         if (checkFull(lobby1_curr_players)) {
             System.out.println("Lobby 1 is full");
+
         } else {
             System.out.println("Lobby 1 is not full");
             JoinGame(actionEvent);
