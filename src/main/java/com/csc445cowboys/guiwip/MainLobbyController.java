@@ -25,6 +25,12 @@ import java.util.concurrent.Callable;
 public class MainLobbyController {
 
 
+    static public GameSession gameSession;
+
+    public GameSession getGameSession() {
+        return gameSession;
+    }
+
         private Scene scene;
         public BattleScreenController battleScreenController;
 
@@ -93,7 +99,7 @@ public class MainLobbyController {
     }
 
     public void JoinGame(ActionEvent actionEvent,int n) throws IOException, GeneralSecurityException {
-        GameSession gameSession = new GameSession(battleScreenController,n);
+        gameSession = new GameSession(battleScreenController,n);
         OpenBattleScreen(actionEvent,n);
     }
 

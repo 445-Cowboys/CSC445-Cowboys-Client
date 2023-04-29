@@ -59,4 +59,9 @@ public class GameSession {
             return null;
         };
     }
+
+    public void leaveGame() throws IOException {
+        // TODO : Implement LEAVE ROOM COURTESY ACK
+        client.close();
+    }
 }
