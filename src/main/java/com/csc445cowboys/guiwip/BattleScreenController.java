@@ -80,6 +80,7 @@ public class BattleScreenController {
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
         mainLobbyController.getGameSession().leaveGame();
+        MainLobbyController.gameSession = null;
         OpenMainMenuScreen(actionEvent);
     }
 
