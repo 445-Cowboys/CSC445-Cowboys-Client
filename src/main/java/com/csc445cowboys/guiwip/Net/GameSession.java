@@ -34,11 +34,13 @@ public class GameSession implements Runnable {
 
 
 // Send a request to join a game and wait for a response from the server
-public void requestJoin(int n) {
+public void requestJoin(int n) throws IOException {
+        // Get host name
     try {
         // Create a buffer to hold the packet
         buf = ByteBuffer.allocate(1024);
-        EnterRoom enterRoom = new EnterRoom(n);
+        EnterRoom enterRoom = new EnterRoom(n,client.getLocalAddress().toString());
+        client.send(buf, serverAddress);
         // Create a FutureTask object
         FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
             @Override

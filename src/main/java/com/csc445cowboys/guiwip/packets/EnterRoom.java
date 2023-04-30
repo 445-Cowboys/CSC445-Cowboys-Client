@@ -33,6 +33,7 @@ public class EnterRoom extends Packet {
     public EnterRoom(int roomNum, String userName) {
         this.roomNum = roomNum;
         this.userName = userName;
+        data = toBytes();
     }
 
     @Override
@@ -49,19 +50,7 @@ public class EnterRoom extends Packet {
     }
 
     public byte[] toBytes() {
-        byte[] data = new byte[this.data.length];
-        ByteBuffer buffer = ByteBuffer.wrap(data);
-
-        // Write the opcode
-        buffer.put((byte) this.getOpcode());
-
-        // Write the room number
-        buffer.putInt(this.roomNum);
-
-        // Write the username
-        buffer.put(this.userName.getBytes());
-
-        return data;
+        return this.data;
     }
 
 
