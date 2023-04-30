@@ -175,6 +175,10 @@ public class BattleScreenController {
     }
 
     public void appendTextToWriter(String text) {
+        // If Last not \n
+        if (!text.endsWith("\n")) {
+            text = text.concat("\n");
+        }
         activity_writer.appendText(text);
     }
 
@@ -204,7 +208,8 @@ public class BattleScreenController {
         player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(3)));
 
         playerTurn = gs.getCurrentPlayer();
-
+        String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
+        appendTextToWriter(s);
     }
 
     public void initializeGameScreen(GameStart gstart) {
