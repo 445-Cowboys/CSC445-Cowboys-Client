@@ -21,7 +21,6 @@ public class MainNet implements Runnable {
         this.mainLobbyController = mainLobbyController;
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);
-//        channel.configureBlocking(true);
         sa = new InetSocketAddress("localhost", 7806);
     }
 

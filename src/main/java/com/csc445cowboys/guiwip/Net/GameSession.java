@@ -1,8 +1,11 @@
 package com.csc445cowboys.guiwip.Net;
 
+import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
+import com.csc445cowboys.guiwip.packets.EnterRoom;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -10,7 +13,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
-import java.util.concurrent.Callable;
+import java.util.concurrent.*;
 
 public class GameSession implements Runnable {
     ByteBuffer buf;
@@ -30,32 +33,45 @@ public class GameSession implements Runnable {
     }
 
 
-    public void requestJoin() throws IOException, GeneralSecurityException {
-        // TODO : Implement ENTER ROOM REQUEST
-        client.connect(serverAddress);
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        buffer.put("ENTER ROOM REQUEST".getBytes());
-        buffer.flip();
-        // TODO: ACTUALLY ENCRYPT THIS
-        client.write(buffer);
-        // TODO : Implement ENTER ROOM RESPONSE (initial game state)
-        buffer.clear();
-        client.read(buffer);
-        buffer.flip();
-        GameStart gameStart = new GameStart(buffer);
+// Send a request to join a game and wait for a response from the server
+public void requestJoin(int n) {
+    try {
+        // Create a FutureTask object
+        FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
+            @Override
+            public GameStart call() throws Exception {
+                // Receive Game Start Packet
+                client.receive(buf);
+                return new GameStart(buf);
+            }
+        });
+
+        // Start the long-running operation
+        new Thread(futureTask).start();
+
+        // Get the result of the long-running operation
+        GameStart gameStart = futureTask.get(5, TimeUnit.SECONDS);
+
+        // Check for timeout
+        if (gameStart == null) {
+            throw new TimeoutException("No Response from Server after Join Request");
+        }
+
+        // Get Updated Crypto Key
         aead.parseKey(gameStart.cryptoKey);
-        battleScreenController.initializeGameScreen(gameStart);
-
+    } catch (IOException e) {
+        // Handle the error
+        Alerts.displayAlert(IOException.class.getName(), e.getMessage(), Alert.AlertType.ERROR);
+    } catch (GeneralSecurityException e) {
+        // Handle the error
+        Alerts.displayAlert(GeneralSecurityException.class.getName(), e.getMessage(), Alert.AlertType.ERROR);
+    } catch (TimeoutException e) {
+        // Handle the timeout
+        Alerts.displayAlert("Request timed out", "The server did not respond within 5 seconds", Alert.AlertType.ERROR);
+    } catch (ExecutionException | InterruptedException e) {
+        throw new RuntimeException(e);
     }
-
-    public void startGame() {
-        //our task we will time
-        Callable<Void> Callable = () -> {
-            ByteBuffer receivedData = ByteBuffer.allocate(1024);
-            //                new Thread(new BatNet(battleScreenController,receivedData, serverAddress)).start();
-            return null;
-        };
-    }
+}
 
     public void leaveGame() throws IOException {
         // TODO : Implement LEAVE ROOM COURTESY ACK
