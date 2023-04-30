@@ -40,34 +40,9 @@ public class Main extends Application {
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
         stage.show();
-        // TODO SPIN UP THEAD TO LISTEN FOR CHANGES FOR LOBBY THREADS
-//        DatagramChannel client = DatagramChannel.open().bind(null);
-//        InetSocketAddress serverAddr = new InetSocketAddress("localhost", 7806);
-//        AckPacket ackPacket = new AckPacket(serverAddr.getAddress(), 7806, AckPacket.TYPE, 0);
-//        ByteBuffer buffer = ByteBuffer.allocate(1024);
-//        buffer.put(ackPacket.getDatagramPacket().getData());
-//        // Loop Continuously
-//        for(;;){
-//            client.receive(buffer);
-//            buffer.flip();
-//            // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
-//            if(buffer.get(1) == 1){
-//                GameRooms gameRooms = new GameRooms(buffer);
-//                mainLobbyController.setGameRooms(gameRooms);
-//                break;
-//            }
-//        }
-//        // Since game-rooms are set we can now show the stage
-//        stage.show();
-//
-//        for(;;){
-//            client.receive(buffer);
-//            buffer.flip();
-//            // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
-//            if(buffer.get(1) == GameRooms.TYPE){
-//                GameRooms gameRooms = new GameRooms(buffer);
-//                mainLobbyController.setGameRooms(gameRooms);
-//            }
+        MainNet mainNet = new MainNet(mainLobbyController);
+        Thread mainNetThread = new Thread(mainNet);
+        mainNetThread.start();
 
 
     }
