@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Net.GameSession;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
@@ -64,6 +65,8 @@ public class BattleScreenController {
     public ImageView boss_picture;
     public Label round_indicator;
     public MainLobbyController mainLobbyController;
+    public Label curr_server_name_label;
+    public Label curr_player_label;
     private int playerTurn;
     private int clientPlayer;
     private Scene scene;
@@ -71,6 +74,7 @@ public class BattleScreenController {
     public void onUseAbilityClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Use Ability Clicked");
+            mainLobbyController.getGameSession().useAbility();
         } else {
             notTurn();
         }
@@ -79,13 +83,13 @@ public class BattleScreenController {
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
         mainLobbyController.getGameSession().leaveGame();
-        MainLobbyController.gameSession = null;
         OpenMainMenuScreen(actionEvent);
     }
 
     public void onFireClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Fire Clicked");
+            mainLobbyController.getGameSession().fire();
         } else {
             notTurn();
         }
@@ -94,6 +98,7 @@ public class BattleScreenController {
     public void onReloadClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Reload Clicked");
+            mainLobbyController.getGameSession().reload();
         } else {
             notTurn();
         }
@@ -209,6 +214,11 @@ public class BattleScreenController {
 
         playerTurn = gs.getCurrentPlayer();
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
+        round_indicator.setText(gs.getBlockNum());
+        // TODO - Implement current player label
+        curr_player_label.setText("NOT IMPLEMENTED");
+        // TODO - Implement server name label
+        curr_server_name_label.setText("NOT IMPLEMENTED");
         appendTextToWriter(s);
     }
 
@@ -224,5 +234,9 @@ public class BattleScreenController {
     // TODO - Implement game start packet update
     public void updateFromGameStartPacket(GameStart gameStart) {
 
+    }
+
+    public void setGameSession(GameSession gameSession) {
+        this.gameSession = gameSession;
     }
 }

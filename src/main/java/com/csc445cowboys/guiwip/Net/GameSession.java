@@ -81,16 +81,33 @@ public class GameSession implements Runnable {
 
     @Override
     public void run() {
-
         // If game State packet
-        if (buf.get(1) == 2) {
+        if (buf.getInt(0) == 9) {
+            try {
+            client.receive(buf);
+            buf = ByteBuffer.wrap(aead.decrypt(buf.array()));
             GameState gameState = new GameState(buf);
             battleScreenController.updateFromGameStatePacket(gameState);
+            } catch (GeneralSecurityException | IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 
     // Get Game Start
     public GameStart getGameStart() {
         return gameStart;
+    }
+
+    public void fire() {
+        buf = new Factory().makePlayerActionPacket(lobby, 1,0);
+    }
+
+    public void reload() {
+        buf = new Factory().makePlayerActionPacket(lobby, 2,0);
+    }
+
+    public void useAbility() {
     }
 }
