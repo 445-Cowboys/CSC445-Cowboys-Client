@@ -13,6 +13,7 @@ public class GameStart extends Packet {
     private final byte[] data;
     private final int character;
     private final SecretKey symmetricKey;
+    public byte[] cryptoKey;
 
     public GameStart(ByteBuffer buffer){
 
@@ -41,5 +42,9 @@ public class GameStart extends Packet {
 
     public SecretKey getSymmetricKey(){
         return symmetricKey;
+    }
+
+    public int getClientPlayer() {
+        return 1;
     }
 }

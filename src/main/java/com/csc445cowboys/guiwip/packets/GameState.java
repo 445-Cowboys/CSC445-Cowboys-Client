@@ -2,8 +2,6 @@ package com.csc445cowboys.guiwip.packets;
 
 import java.nio.ByteBuffer;
 
-import java.nio.ByteBuffer;
-
 public class GameState extends Packet {
 
     /*
@@ -75,9 +73,9 @@ public class GameState extends Packet {
         return playerHealth[player];
     }
 
-    public int[] getPlayerAmmo(int player) {
+    public int getPlayerAmmo(int player) {
         player--;
-        return playerAmmo;
+        return playerAmmo[player];
     }
 
     public int[] getPlayerAbilityCD(int player) {

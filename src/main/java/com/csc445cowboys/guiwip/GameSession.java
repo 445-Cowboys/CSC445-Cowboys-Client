@@ -52,11 +52,7 @@ ByteBuffer buf;
          //our task we will time
         Callable<Void> Callable = () -> {
             ByteBuffer receivedData = ByteBuffer.allocate(1024);
-            try {
-                new Thread(new BatNet(battleScreenController,receivedData, serverAddress)).start();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            //                new Thread(new BatNet(battleScreenController,receivedData, serverAddress)).start();
             return null;
         };
     }
