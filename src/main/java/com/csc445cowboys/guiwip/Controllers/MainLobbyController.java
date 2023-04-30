@@ -104,8 +104,12 @@ public class MainLobbyController {
 
     gameSession = new GameSession(battleScreenController, n);
     if(gameSession.requestJoin(n)){
+        battleScreenController.updateFromGameStartPacket(gameSession.getGameStart());
         OpenBattleScreen(actionEvent, n);
+    }   else{
+        appendToWriter("Failed to join game.");
     }
+
     };
 
 
