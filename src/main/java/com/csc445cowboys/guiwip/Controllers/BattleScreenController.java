@@ -62,6 +62,7 @@ public class BattleScreenController {
     public VBox boss_frame;
     public Label boss_name_label;
     public ImageView boss_picture;
+    public Label round_indicator;
     private int playerTurn;
     private int clientPlayer;
 

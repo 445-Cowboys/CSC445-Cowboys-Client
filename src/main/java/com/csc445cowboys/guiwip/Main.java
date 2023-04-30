@@ -13,6 +13,16 @@ import java.io.IOException;
 
 //7806
 public class Main extends Application {
+
+    static String SERVER1_NAME;
+    static String SERVER1_IP;
+    static int SERVER1_PORT;
+    static String SERVER2_NAME;
+    static String SERVER2_IP;
+    static int SERVER2_PORT;
+    static String SERVER3_NAME;
+    static String SERVER3_IP;
+    static int SERVER3_PORT;
     @Override
     public void start(Stage stage) throws IOException {
 
@@ -82,5 +92,15 @@ public class Main extends Application {
             7806,
             7806
         };
+
+        SERVER1_NAME = serverNames[0];
+        SERVER1_IP = serverIPs[0];
+        SERVER1_PORT = serverPorts[0];
+        SERVER2_NAME = serverNames[1];
+        SERVER2_IP = serverIPs[1];
+        SERVER2_PORT = serverPorts[1];
+        SERVER3_NAME = serverNames[2];
+        SERVER3_IP = serverIPs[2];
+        SERVER3_PORT = serverPorts[2];
     }
 }

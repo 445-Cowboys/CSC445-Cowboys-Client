@@ -16,6 +16,8 @@ public class MainLobbyController {
 
 
     static public GameSession gameSession;
+    public Label lobby2_label;
+    public Label lobby_label3;
 
     public GameSession getGameSession() {
         return gameSession;
