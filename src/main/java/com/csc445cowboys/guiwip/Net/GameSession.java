@@ -36,6 +36,9 @@ public class GameSession implements Runnable {
 // Send a request to join a game and wait for a response from the server
 public void requestJoin(int n) {
     try {
+        // Create a buffer to hold the packet
+        buf = ByteBuffer.allocate(1024);
+        EnterRoom enterRoom = new EnterRoom(n);
         // Create a FutureTask object
         FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
             @Override
@@ -58,7 +61,7 @@ public void requestJoin(int n) {
         }
 
         // Get Updated Crypto Key
-        aead.parseKey(gameStart.cryptoKey);
+        aead.parseKey(gameStart.getSymmetricKey().getEncoded());
     } catch (IOException e) {
         // Handle the error
         Alerts.displayAlert(IOException.class.getName(), e.getMessage(), Alert.AlertType.ERROR);
