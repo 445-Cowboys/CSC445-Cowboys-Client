@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.Net.MainNet;
+import com.csc445cowboys.guiwip.Net.ServerConfig;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -25,7 +26,7 @@ public class Main extends Application {
     static int SERVER3_PORT;
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
-
+        ServerConfig serverConfig = new ServerConfig();
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent mainMenuPane  = mainLdr.load();
         Scene mainMenuScene = new Scene(mainMenuPane);
@@ -47,6 +48,8 @@ public class Main extends Application {
 
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
+        // Set target server names
+        mainLobbyController.SetServerNames(serverConfig);
         stage.show();
         MainNet mainNet = new MainNet(mainLobbyController);
         Thread mainNetThread = new Thread(mainNet);
@@ -57,51 +60,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        LoadConfig(args);
         launch();
     }
 
-    public static void LoadConfig(String[] args){
-      //
-
-        // get env vars
-        // SERVER1_NAME="Moxie"
-        // SERVER1_IP="https://moxie.cs.oswego.edu"
-        // SERVER1_PORT=7806
-        //
-        // SERVER2_NAME="Pi"
-        // SERVER2_IP="https://pi.cs.oswego.edu"
-        // SERVER2_PORT=7806
-
-        // SERVER3_NAME="Rho"
-        // SERVER3_IP="https://rho.cs.oswego.edu"
-        // SERVER3_PORT=7806
-
-        // Array
-        String[] serverNames = {
-            "Moxie",
-            "Pi",
-            "Rho"
-        };
-        String[] serverIPs = {
-            "https://moxie.cs.oswego.edu",
-            "https://pi.cs.oswego.edu",
-            "https://rho.cs.oswego.edu"
-        };
-        int[] serverPorts = {
-            7806,
-            7806,
-            7806
-        };
-
-        SERVER1_NAME = serverNames[0];
-        SERVER1_IP = serverIPs[0];
-        SERVER1_PORT = serverPorts[0];
-        SERVER2_NAME = serverNames[1];
-        SERVER2_IP = serverIPs[1];
-        SERVER2_PORT = serverPorts[1];
-        SERVER3_NAME = serverNames[2];
-        SERVER3_IP = serverIPs[2];
-        SERVER3_PORT = serverPorts[2];
-    }
 }

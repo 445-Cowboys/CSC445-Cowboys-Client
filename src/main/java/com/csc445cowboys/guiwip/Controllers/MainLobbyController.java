@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.Controllers;
 
 import com.csc445cowboys.guiwip.Net.GameSession;
+import com.csc445cowboys.guiwip.Net.ServerConfig;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -144,8 +145,6 @@ public class MainLobbyController {
         };
     }
 
-
-
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
     public void setGameRooms(GameRooms gameRooms){
 
@@ -163,5 +162,11 @@ public class MainLobbyController {
     public void exitGameButton(ActionEvent actionEvent) {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
         System.exit(0);
+    }
+
+    public void SetServerNames(ServerConfig sc) {
+        server1_name_label.setText(sc.SERVER1_NAME);
+        server2_name_label.setText(sc.SERVER2_NAME);
+        server3_name_label.setText(sc.SERVER3_NAME);
     }
 }
