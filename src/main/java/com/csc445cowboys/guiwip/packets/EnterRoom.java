@@ -15,7 +15,7 @@ public class EnterRoom extends Packet {
 
     public EnterRoom(ByteBuffer buffer) {
 
-    int totalLength = buffer.limit();
+        int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
@@ -31,15 +31,15 @@ public class EnterRoom extends Packet {
 
 
     @Override
-    public int getOpcode(){
+    public int getOpcode() {
         return 9;
     }
 
-    public int getRoomNum(){
+    public int getRoomNum() {
         return roomNum;
     }
 
-    public String getuserName(){
+    public String getuserName() {
         return userName;
     }
 

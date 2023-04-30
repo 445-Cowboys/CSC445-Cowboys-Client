@@ -10,12 +10,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 // import server status enum
 
-public class MainNet implements  Runnable{
+public class MainNet implements Runnable {
 
     MainLobbyController mainLobbyController;
     ByteBuffer receivedData;
     DatagramChannel channel;
     SocketAddress sa;
+
     public MainNet(MainLobbyController mainLobbyController) throws IOException {
         this.mainLobbyController = mainLobbyController;
         receivedData = ByteBuffer.allocate(1024);
@@ -36,23 +37,23 @@ public class MainNet implements  Runnable{
     @Override
     public void run() {
         // for
-       try {
-           for (;;){
-               channel.receive(receivedData);
-               receivedData.flip();
-               int opcode = receivedData.getInt();
-               // Opcode 6 is for game rooms
-               if (opcode == 6) {
-                   GameRooms gameRooms = new GameRooms(receivedData);
-                   mainLobbyController.setGameRooms(gameRooms);
-               }
+        try {
+            for (; ; ) {
+                channel.receive(receivedData);
+                receivedData.flip();
+                int opcode = receivedData.getInt();
+                // Opcode 6 is for game rooms
+                if (opcode == 6) {
+                    GameRooms gameRooms = new GameRooms(receivedData);
+                    mainLobbyController.setGameRooms(gameRooms);
+                }
 
 
-               Thread.sleep(1000);
-           }
+                Thread.sleep(1000);
+            }
 
-       }catch (RuntimeException | InterruptedException | IOException e){
-           e.printStackTrace();
-       }
+        } catch (RuntimeException | InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

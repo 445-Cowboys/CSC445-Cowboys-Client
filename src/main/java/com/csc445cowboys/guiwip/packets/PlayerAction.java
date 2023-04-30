@@ -1,7 +1,8 @@
 package com.csc445cowboys.guiwip.packets;
+
 import java.nio.ByteBuffer;
 
-public class PlayerAction extends Packet{
+public class PlayerAction extends Packet {
 
     /*
 
@@ -18,31 +19,31 @@ public class PlayerAction extends Packet{
 
     public PlayerAction(ByteBuffer buffer) {
         int totalLength = buffer.limit();
-            this.data = new byte[totalLength];
-            buffer.get(data, 0, data.length);
-            buffer.rewind();
-            this.gameRoom = buffer.getInt(1);
-            this.action = buffer.getInt(6);
+        this.data = new byte[totalLength];
+        buffer.get(data, 0, data.length);
+        buffer.rewind();
+        this.gameRoom = buffer.getInt(1);
+        this.action = buffer.getInt(6);
 
-            //If not a healer this should always be 0,
-            //if using healer ability the player number will be listed.
-            this.heal = buffer.getInt(11);
+        //If not a healer this should always be 0,
+        //if using healer ability the player number will be listed.
+        this.heal = buffer.getInt(11);
     }
 
     @Override
-    public int getOpcode(){
+    public int getOpcode() {
         return 8;
     }
 
-    public int getGameRoom(){
+    public int getGameRoom() {
         return gameRoom;
     }
 
-    public int getAction(){
+    public int getAction() {
         return action;
     }
 
-    public int getHeal(){
+    public int getHeal() {
         return heal;
     }
 

@@ -63,12 +63,10 @@ public class BattleScreenController {
     public Label boss_name_label;
     public ImageView boss_picture;
     public Label round_indicator;
+    public MainLobbyController mainLobbyController;
     private int playerTurn;
     private int clientPlayer;
-
     private Scene scene;
-    public MainLobbyController mainLobbyController;
-
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
@@ -101,7 +99,7 @@ public class BattleScreenController {
         }
     }
 
-    public void setBossFields(){
+    public void setBossFields() {
         boss_name_label.setText("Boss");
         boss_weapon_type_label.setText("Weapon Type");
         boss_curr_health_label.setText("Current Health");
@@ -113,7 +111,7 @@ public class BattleScreenController {
         boss_picture.setImage(null);
     }
 
-    public void setPlayer1Fields(){
+    public void setPlayer1Fields() {
         player1_name_label.setText("Player 1");
         player1_weapon_type_label.setText("Weapon Type");
         player1_curr_health_label.setText("Current Health");
@@ -125,7 +123,7 @@ public class BattleScreenController {
         player1_picture.setImage(null);
     }
 
-    public void setPlayer2Fields(){
+    public void setPlayer2Fields() {
         player2_name_label.setText("Player 2");
         player2_weapon_type_label.setText("Weapon Type");
         player2_curr_health_label.setText("Current Health");
@@ -137,7 +135,7 @@ public class BattleScreenController {
         player2_picture.setImage(null);
     }
 
-    public void setPlayer3Fields(){
+    public void setPlayer3Fields() {
         player3_name_label.setText("Player 3");
         player3_weapon_type_label.setText("Weapon Type");
         player3_curr_health_label.setText("Current Health");
@@ -149,33 +147,34 @@ public class BattleScreenController {
         player3_picture.setImage(null);
     }
 
-    public void setBossImage(String path){
+    public void setBossImage(String path) {
         Image image = new Image(path);
         boss_picture.setImage(image);
     }
 
-    public void setPlayer1Image(String path){
+    public void setPlayer1Image(String path) {
         Image image = new Image(path);
         player1_picture.setImage(image);
     }
 
-    public void setPlayer2Image(String path){
+    public void setPlayer2Image(String path) {
         Image image = new Image(path);
         player2_picture.setImage(image);
     }
 
-    public void setPlayer3Image(String path){
+    public void setPlayer3Image(String path) {
         Image image = new Image(path);
         player3_picture.setImage(image);
     }
 
-    public void setAllFields(){
+    public void setAllFields() {
         setBossFields();
         setPlayer1Fields();
         setPlayer2Fields();
         setPlayer3Fields();
     }
-    public void appendTextToWriter(String text){
+
+    public void appendTextToWriter(String text) {
         activity_writer.appendText(text);
     }
 
@@ -184,12 +183,12 @@ public class BattleScreenController {
     }
 
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
-        Stage stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
     }
 
 
-    public void updateFromGameStatePacket(GameState gs){
+    public void updateFromGameStatePacket(GameState gs) {
         // Boss Stats
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
         boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
@@ -208,7 +207,7 @@ public class BattleScreenController {
 
     }
 
-    public void initializeGameScreen(GameStart gstart){
+    public void initializeGameScreen(GameStart gstart) {
         setPlayer1Fields();
         setPlayer2Fields();
         setPlayer3Fields();
@@ -221,7 +220,7 @@ public class BattleScreenController {
         this.mainLobbyController = mainLobbyController;
     }
 
-    private void notTurn(){
+    private void notTurn() {
         // Disable all buttons
         Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
     }

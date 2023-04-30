@@ -24,17 +24,21 @@ public class Main extends Application {
     static String SERVER3_NAME;
     static String SERVER3_IP;
     static int SERVER3_PORT;
+
+    public static void main(String[] args) {
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
         ServerConfig serverConfig = new ServerConfig();
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
-        Parent mainMenuPane  = mainLdr.load();
+        Parent mainMenuPane = mainLdr.load();
         Scene mainMenuScene = new Scene(mainMenuPane);
 
         FXMLLoader battle = new FXMLLoader(getClass().getResource("battle.fxml"));
         Parent battlePane = battle.load();
         Scene battleScene = new Scene(battlePane);
-
 
 
         MainLobbyController mainLobbyController = mainLdr.getController();
@@ -44,23 +48,17 @@ public class Main extends Application {
         battleScreenController.setMainScreen(mainMenuScene);
 
         battleScreenController.setMainLobbyController(mainLobbyController);
-       mainLobbyController.setBattleScreenController(battleScreenController);
+        mainLobbyController.setBattleScreenController(battleScreenController);
 
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
-        // Set target server names
         mainLobbyController.SetServerNames(serverConfig);
         stage.show();
         MainNet mainNet = new MainNet(mainLobbyController);
         Thread mainNetThread = new Thread(mainNet);
         mainNetThread.start();
-//        mainNetThread.join();
 
 
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 
 }

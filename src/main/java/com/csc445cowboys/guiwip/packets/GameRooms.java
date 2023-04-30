@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.packets;
 
 import java.nio.ByteBuffer;
+
 public class GameRooms extends Packet {
 
     /*
@@ -17,9 +18,9 @@ public class GameRooms extends Packet {
     private final int[] serverStatus;
 
 
-    public GameRooms(ByteBuffer buffer){
+    public GameRooms(ByteBuffer buffer) {
 
-    int totalLength = buffer.limit();
+        int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
@@ -40,12 +41,12 @@ public class GameRooms extends Packet {
         }
         for (int i = 0; i < 3; i++) {
             this.serverStatus[i] = buffer.getInt(offset);
-            if ( i < 2 ) offset += 4;
+            if (i < 2) offset += 4;
         }
     }
 
     @Override
-    public int getOpcode(){
+    public int getOpcode() {
         return 5;
     }
 

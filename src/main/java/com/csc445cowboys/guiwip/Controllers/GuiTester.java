@@ -1,7 +1,5 @@
 package com.csc445cowboys.guiwip.Controllers;
 
-import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
-import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,9 +14,10 @@ public class GuiTester {
     FXMLLoader fxmlLoader;
     Scene scene;
 
-    public GuiTester(){}
+    public GuiTester() {
+    }
 
-    public GuiTester(Stage stage){
+    public GuiTester(Stage stage) {
         try {
             GuiMainScreenTester(stage);
         } catch (IOException e) {
@@ -44,7 +43,7 @@ public class GuiTester {
         stage.show();
     }
 
-    public void setAllFields(){
+    public void setAllFields() {
         this.battleScreenController.setPlayer1Fields();
         this.battleScreenController.setPlayer2Fields();
         this.battleScreenController.setPlayer3Fields();
@@ -55,9 +54,9 @@ public class GuiTester {
         this.battleScreenController.setPlayer3Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_no_name.jpeg");
     }
 
-    public void writerAppend(){
+    public void writerAppend() {
         // iterate 50 times with random actions
-        for(int i = 0; i < 50; i++){
+        for (int i = 0; i < 50; i++) {
             // Get random bytes
             this.battleScreenController.appendTextToWriter("Player 1 attacks Boss for 10 damage!\n");
         }

@@ -24,7 +24,7 @@ public class GameState extends Packet {
 
     public GameState(ByteBuffer buffer) {
 
-    int totalLength = buffer.limit();
+        int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
@@ -53,10 +53,10 @@ public class GameState extends Packet {
         buffer.position(offset);
         buffer.get(actionMessageBytes, 0, actionMessageBytes.length);
         this.actionMessage = new String(actionMessageBytes);
-}
+    }
 
     @Override
-    public int getOpcode(){
+    public int getOpcode() {
         return 9;
     }
 
@@ -87,14 +87,13 @@ public class GameState extends Packet {
         return currentPlayer;
     }
 
-    public int getBlockNum(){
+    public int getBlockNum() {
         return blockNum;
     }
 
     public String getActionMessage() {
         return actionMessage;
     }
-
 
 
 }

@@ -15,7 +15,7 @@ public class GameStart extends Packet {
     private final SecretKey symmetricKey;
     public byte[] cryptoKey;
 
-    public GameStart(ByteBuffer buffer){
+    public GameStart(ByteBuffer buffer) {
 
         int totalLength = buffer.limit();
         this.data = new byte[totalLength];
@@ -31,16 +31,17 @@ public class GameStart extends Packet {
         // Convert the symmetric key bytes back into a SecretKey object
         symmetricKey = new SecretKeySpec(symmetricKeyBytes, "AES");
     }
+
     @Override
-    public int getOpcode(){
+    public int getOpcode() {
         return 4;
     }
 
-    public int getCharacter(){
+    public int getCharacter() {
         return character;
     }
 
-    public SecretKey getSymmetricKey(){
+    public SecretKey getSymmetricKey() {
         return symmetricKey;
     }
 

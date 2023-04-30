@@ -12,8 +12,8 @@ import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.Callable;
 
-public class GameSession implements Runnable{
-ByteBuffer buf;
+public class GameSession implements Runnable {
+    ByteBuffer buf;
     DatagramChannel client;
     InetSocketAddress serverAddress;
     AEAD aead;
@@ -49,7 +49,7 @@ ByteBuffer buf;
     }
 
     public void startGame() {
-         //our task we will time
+        //our task we will time
         Callable<Void> Callable = () -> {
             ByteBuffer receivedData = ByteBuffer.allocate(1024);
             //                new Thread(new BatNet(battleScreenController,receivedData, serverAddress)).start();
@@ -62,11 +62,11 @@ ByteBuffer buf;
         client.close();
     }
 
-        @Override
-         public void run() {
+    @Override
+    public void run() {
 
         // If game State packet
-        if(buf.get(1) == 2){
+        if (buf.get(1) == 2) {
             GameState gameState = new GameState(buf);
             battleScreenController.updateFromGameStatePacket(gameState);
         }

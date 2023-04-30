@@ -10,13 +10,13 @@ import java.security.GeneralSecurityException;
 
 public final class AEAD {
 
-  private Aead aead;
-  private KeysetHandle keysetHandle;
-  final static String keyType = "AES128_GCM";
+    final static String keyType = "AES128_GCM";
+    private Aead aead;
+    private KeysetHandle keysetHandle;
 
-  public AEAD() throws GeneralSecurityException {
-    AeadConfig.register();
-  }
+    public AEAD() throws GeneralSecurityException {
+        AeadConfig.register();
+    }
 
     public void genKeySet() throws GeneralSecurityException, IOException {
         keysetHandle = KeysetHandle.generateNew(KeyTemplates.get(keyType));
@@ -45,17 +45,17 @@ public final class AEAD {
     }
 
     public void TestAEAD() throws GeneralSecurityException, IOException {
-      AEAD client = new AEAD();
-      AEAD server = new AEAD();
-      server.genKeySet();
-      byte[] keyData = server.getKeySetAsJSON();
-    client.parseKey(keyData);
+        AEAD client = new AEAD();
+        AEAD server = new AEAD();
+        server.genKeySet();
+        byte[] keyData = server.getKeySetAsJSON();
+        client.parseKey(keyData);
 
 
-    // assert
-    String plaintext = "Hello World!";
-    byte[] ciphertext = client.encrypt(plaintext.getBytes());
-    byte[] decrypted = server.decrypt(ciphertext);
-    assert plaintext.equals(new String(decrypted)) : "Assertion Failed" ;
+        // assert
+        String plaintext = "Hello World!";
+        byte[] ciphertext = client.encrypt(plaintext.getBytes());
+        byte[] decrypted = server.decrypt(ciphertext);
+        assert plaintext.equals(new String(decrypted)) : "Assertion Failed";
     }
 }
