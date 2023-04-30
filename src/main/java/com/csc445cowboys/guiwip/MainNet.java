@@ -1,5 +1,7 @@
 package com.csc445cowboys.guiwip;
 
+import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.Packet;
 import javafx.scene.chart.PieChart;
 
 import java.io.IOException;
@@ -24,21 +26,31 @@ public class MainNet implements  Runnable{
     }
 
 
+    // Listens for updates on game rooms
     @Override
     public void run() {
-        System.out.println("Running");
         // for
        try {
            for (;;){
-               System.out.println("Waiting for packet, Timeout: " + channel.socket().getSoTimeout());
-
-
+               channel.receive(receivedData);
+               receivedData.flip();
+               int opcode = receivedData.getInt();
+               if (opcode == 1) {
+                   GameRooms gameRooms = new GameRooms(receivedData);
+                   mainLobbyController.setGameRooms(gameRooms);
+               }
            }
 
        }catch (RuntimeException e){
            e.printStackTrace();
-       } catch (SocketException e) {
+       } catch (IOException e) {
            throw new RuntimeException(e);
+       } finally {
+              try {
+                channel.close();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
        }
     }
 }
