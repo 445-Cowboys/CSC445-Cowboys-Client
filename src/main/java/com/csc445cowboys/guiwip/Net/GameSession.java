@@ -2,7 +2,7 @@ package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
-import com.csc445cowboys.guiwip.packets.EnterRoom;
+import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.scene.control.Alert;
@@ -24,7 +24,7 @@ public class GameSession implements Runnable {
     int lobby;
 
 
-    public GameSession(BattleScreenController bsc, int lobby) throws IOException, GeneralSecurityException {
+    public GameSession(BattleScreenController bsc, int lobby) throws IOException, GeneralSecurityException, TimeoutException {
         battleScreenController = bsc;
         client = DatagramChannel.open().bind(null);
         serverAddress = new InetSocketAddress(InetAddress.getLocalHost(), 7086);
@@ -33,50 +33,44 @@ public class GameSession implements Runnable {
     }
 
 
-// Send a request to join a game and wait for a response from the server
-public void requestJoin(int n) throws IOException {
-        // Get host name
-    try {
-        // Create a buffer to hold the packet
-        buf = ByteBuffer.allocate(1024);
-        EnterRoom enterRoom = new EnterRoom(n,client.getLocalAddress().toString());
-        client.send(buf, serverAddress);
-        // Create a FutureTask object
-        FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
-            @Override
-            public GameStart call() throws Exception {
-                // Receive Game Start Packet
-                client.receive(buf);
-                return new GameStart(buf);
+    // Send a request to join a game and wait for a response from the server
+    public Boolean requestJoin(int n) {
+        try {
+            Factory factory = new Factory();
+            buf = factory.makeEnterRoomPacket(n, client.getLocalAddress().toString());
+            client.send(buf, serverAddress);
+            // Create a FutureTask object
+            FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
+                @Override
+                public GameStart call() throws Exception {
+                    // Receive Game Start Packet
+                    client.receive(buf);
+                    return new GameStart(buf);
+                }
+            });
+
+            // Start the long-running operation
+            new Thread(futureTask).start();
+
+            // Get the result of the long-running operation
+            GameStart gameStart = futureTask.get(1, TimeUnit.SECONDS);
+
+            // Check for timeout
+            if (gameStart == null) {
+                throw new TimeoutException("No Response from Server after Join Request");
             }
-        });
 
-        // Start the long-running operation
-        new Thread(futureTask).start();
-
-        // Get the result of the long-running operation
-        GameStart gameStart = futureTask.get(5, TimeUnit.SECONDS);
-
-        // Check for timeout
-        if (gameStart == null) {
-            throw new TimeoutException("No Response from Server after Join Request");
+            // Get Updated Crypt     Key
+            aead.parseKey(gameStart.getSymmetricKey().getEncoded());
+        } catch (IOException | GeneralSecurityException | TimeoutException | InterruptedException |
+                 ExecutionException e) {
+            // Handle the error
+            e.printStackTrace();
+            Alerts.displayAlert("Unable to enter room", "Error during request creation stage", Alert.AlertType.ERROR);
+            return false;
         }
-
-        // Get Updated Crypto Key
-        aead.parseKey(gameStart.getSymmetricKey().getEncoded());
-    } catch (IOException e) {
-        // Handle the error
-        Alerts.displayAlert(IOException.class.getName(), e.getMessage(), Alert.AlertType.ERROR);
-    } catch (GeneralSecurityException e) {
-        // Handle the error
-        Alerts.displayAlert(GeneralSecurityException.class.getName(), e.getMessage(), Alert.AlertType.ERROR);
-    } catch (TimeoutException e) {
-        // Handle the timeout
-        Alerts.displayAlert("Request timed out", "The server did not respond within 5 seconds", Alert.AlertType.ERROR);
-    } catch (ExecutionException | InterruptedException e) {
-        throw new RuntimeException(e);
+        return true;
     }
-}
 
     public void leaveGame() throws IOException {
         // TODO : Implement LEAVE ROOM COURTESY ACK

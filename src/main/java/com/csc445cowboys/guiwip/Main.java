@@ -43,6 +43,8 @@ public class Main extends Application {
 
         MainLobbyController mainLobbyController = mainLdr.getController();
         mainLobbyController.setBattleScreen(battleScene);
+        mainLobbyController.appendToWriter("Starting 445 Cowboys Client...");
+        mainLobbyController.appendToWriter("Yeehaw! Giddyup Cowboys!");
 
         BattleScreenController battleScreenController = battle.getController();
         battleScreenController.setMainScreen(mainMenuScene);
