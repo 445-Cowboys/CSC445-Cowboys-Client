@@ -14,7 +14,6 @@ import java.security.GeneralSecurityException;
 
 public class MainLobbyController {
 
-
     static public GameSession gameSession;
     public Label lobby2_label;
     public Label lobby_label3;
@@ -46,7 +45,6 @@ public class MainLobbyController {
 
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
-
         System.out.println("Attempting to Enter Lobby 3...");
         if (checkFull(lobby1_curr_players)) {
             System.out.println("Lobby 1 is full");
@@ -100,10 +98,6 @@ public class MainLobbyController {
         lobby3_curr_players = curr_players;
     }
 
-    public void setServerStatuses(String[] serverStatus) {
-        System.out.println("Server Status: " + serverStatus);
-    }
-
     public void JoinGame(ActionEvent actionEvent,int n) throws IOException, GeneralSecurityException {
         gameSession = new GameSession(battleScreenController,n);
         OpenBattleScreen(actionEvent,n);
@@ -132,11 +126,12 @@ public class MainLobbyController {
         Alerts.displayAlert("Game is full","The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION);
     }
 
-    public String gameStatusFromN(int n){
+    public String serverStatusFromN(int n){
         return switch (n) {
-            case 0 -> "Server Offline";
-            case 1 -> "Server Online";
-            default -> "Unknown";
+            case 0 -> "Offline";  // Server is reporting server as offline
+            case 1 -> "Main";  // Server is elected leader in zookeeper
+            case 2 -> "Backup"; // Server is not elected leader in zookeeper
+            default -> "Unknown"; // Server is reporting unknown status
         };
     }
 
@@ -154,17 +149,13 @@ public class MainLobbyController {
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
     public void setGameRooms(GameRooms gameRooms){
 
-        int room1Status = gameRooms.getRoomStatus(1);
-        int room2Status = gameRooms.getRoomStatus(2);
-        int room3Status = gameRooms.getRoomStatus(3);
-        int room1Players = gameRooms.getNumPlayers(1);
-        int room2Players = gameRooms.getNumPlayers(2);
-        int room3Players = gameRooms.getNumPlayers(3);
-
-        int server1Status = gameRooms.getServerStatus(1);
-        int server2Status = gameRooms.getServerStatus(2);
-        int server3Status = gameRooms.getServerStatus(3);
-
+        // Update Server Status Labels
+        server1_status_label.setText(serverStatusFromN(gameRooms.getRoomStatus(1)));
+        server2_status_label.setText(serverStatusFromN(gameRooms.getRoomStatus(2)));
+        serve3_status_label.setText(serverStatusFromN(gameRooms.getRoomStatus(2)));
+        setLobby1(gameRooms.getNumPlayers(1),roomStatusFromN(gameRooms.getRoomStatus(1)));
+        setLobby2(gameRooms.getNumPlayers(2),roomStatusFromN(gameRooms.getRoomStatus(2)));
+        setLobby3(gameRooms.getNumPlayers(3),roomStatusFromN(gameRooms.getRoomStatus(3)));
     }
 
     // exitGameButton is called when the user clicks the exit button
