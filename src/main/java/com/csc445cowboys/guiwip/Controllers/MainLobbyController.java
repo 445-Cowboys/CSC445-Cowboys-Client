@@ -18,6 +18,15 @@ public class MainLobbyController {
     static public GameSession gameSession;
     public Label lobby2_label;
     public Label lobby_label3;
+    public Label server1_name_label;
+    public Label main_server_status_label;
+    public Label server2_name_label;
+    public Label server3_name_label;
+    public Label serve3_status_label;
+    public Label server2_status_label;
+    public Label server1_status_label;
+    public Label players_in_game_label;
+    public Label player_in_main_lobby_label;
 
     public GameSession getGameSession() {
         return gameSession;

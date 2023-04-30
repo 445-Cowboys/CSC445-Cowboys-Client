@@ -103,73 +103,81 @@
       </Pane>
    </AnchorPane>
    <Pane prefHeight="360.0" prefWidth="360.0" styleClass="border-box" stylesheets="@cowboys.css">
-      <children>
-         <Label fx:id="main_server_status_label" alignment="CENTER" layoutX="12.0" layoutY="14.0" prefHeight="64.0" prefWidth="336.0" text="Waiting for Hosts" textAlignment="CENTER">
-            <font>
-               <Font size="24.0" />
-            </font>
-         </Label>
-         <Label fx:id="server1_name_label" alignment="CENTER" layoutX="29.0" layoutY="78.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Separator layoutX="2.0" layoutY="257.0" prefHeight="1.0" prefWidth="360.0" />
-         <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label fx:id="server2_name_label" alignment="CENTER" layoutX="29.0" layoutY="119.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Separator layoutX="2.0" layoutY="157.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label fx:id="server3_name_label" alignment="CENTER" layoutX="28.0" layoutY="154.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Separator layoutY="191.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label alignment="CENTER" layoutX="6.0" layoutY="194.0" prefHeight="64.0" prefWidth="336.0" text="Current Players" textAlignment="CENTER">
-            <font>
-               <Font size="28.0" />
-            </font>
-         </Label>
-         <Separator layoutX="12.0" layoutY="87.0" prefHeight="1.0" prefWidth="360.0" />
-         <Label alignment="CENTER" layoutX="29.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="In-Game">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Label alignment="CENTER" layoutX="12.0" layoutY="307.0" prefHeight="39.0" prefWidth="146.0" text="In Main Lobby">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Separator layoutX="-5.0" layoutY="305.0" prefHeight="1.0" prefWidth="360.0" />
-         <Label fx:id="server1_status_label" alignment="CENTER" layoutX="192.0" layoutY="78.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Label fx:id="server2_status_label" alignment="CENTER" layoutX="192.0" layoutY="119.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Label fx:id="serve3_status_label" alignment="CENTER" layoutX="192.0" layoutY="154.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Label fx:id="players_in_game_label" alignment="CENTER" layoutX="185.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-         <Label fx:id="player_in_main_lobby_label" alignment="CENTER" layoutX="185.0" layoutY="307.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-            <font>
-               <Font size="16.0" />
-            </font>
-         </Label>
-      </children>
+      <Label fx:id="main_server_status_label" alignment="CENTER" layoutX="12.0" layoutY="14.0" prefHeight="64.0"
+             prefWidth="336.0" text="Waiting for Hosts" textAlignment="CENTER">
+         <font>
+            <Font size="24.0"/>
+         </font>
+      </Label>
+      <Label fx:id="server1_name_label" alignment="CENTER" layoutX="29.0" layoutY="78.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Separator layoutX="2.0" layoutY="257.0" prefHeight="1.0" prefWidth="360.0"/>
+      <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0"/>
+      <Label fx:id="server2_name_label" alignment="CENTER" layoutX="29.0" layoutY="119.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Separator layoutX="2.0" layoutY="157.0" prefHeight="3.0" prefWidth="360.0"/>
+      <Label fx:id="server3_name_label" alignment="CENTER" layoutX="28.0" layoutY="154.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Separator layoutY="191.0" prefHeight="3.0" prefWidth="360.0"/>
+      <Label alignment="CENTER" layoutX="6.0" layoutY="194.0" prefHeight="64.0" prefWidth="336.0" text="Current Players"
+             textAlignment="CENTER">
+         <font>
+            <Font size="28.0"/>
+         </font>
+      </Label>
+      <Separator layoutX="12.0" layoutY="87.0" prefHeight="1.0" prefWidth="360.0"/>
+      <Label alignment="CENTER" layoutX="29.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="In-Game">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="12.0" layoutY="307.0" prefHeight="39.0" prefWidth="146.0" text="In Main Lobby">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Separator layoutX="-5.0" layoutY="305.0" prefHeight="1.0" prefWidth="360.0"/>
+      <Label fx:id="server1_status_label" alignment="CENTER" layoutX="192.0" layoutY="78.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Label fx:id="server2_status_label" alignment="CENTER" layoutX="192.0" layoutY="119.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Label fx:id="serve3_status_label" alignment="CENTER" layoutX="192.0" layoutY="154.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Label fx:id="players_in_game_label" alignment="CENTER" layoutX="185.0" layoutY="260.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
+      <Label fx:id="player_in_main_lobby_label" alignment="CENTER" layoutX="185.0" layoutY="307.0" prefHeight="39.0"
+             prefWidth="146.0" text="Waiting...">
+         <font>
+            <Font size="16.0"/>
+         </font>
+      </Label>
    </Pane>
 </GridPane>
