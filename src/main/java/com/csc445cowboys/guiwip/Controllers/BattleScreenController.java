@@ -212,15 +212,6 @@ public class BattleScreenController {
         appendTextToWriter(s);
     }
 
-    public void initializeGameScreen(GameStart gstart) {
-        setPlayer1Fields();
-        setPlayer2Fields();
-        setPlayer3Fields();
-        setBossFields();
-        clientPlayer = gstart.getClientPlayer();
-
-    }
-
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
         this.mainLobbyController = mainLobbyController;
     }
