@@ -65,7 +65,7 @@ public class Main extends Application {
             client.receive(buffer);
             buffer.flip();
             // TODO CHECK TO SEE IF GAME ROOM PACKET IS RECEIVED
-            if(buffer.get(1) == 1){
+            if(buffer.get(1) == GameRooms.TYPE){
                 GameRooms gameRooms = new GameRooms(buffer);
                 mainLobbyController.setGameRooms(gameRooms);
             }

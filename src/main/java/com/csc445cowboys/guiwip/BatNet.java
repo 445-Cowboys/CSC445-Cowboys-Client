@@ -25,13 +25,5 @@ public class BatNet implements Runnable {
 
     }
 
-    @Override
-    public void run() {
 
-        // If game State packet
-        if(buf.get(1) == 2){
-            GameState gameState = new GameState(buf);
-            battleScreenController.updateFromGameStatePacket(gameState);
-        }
-    }
 }

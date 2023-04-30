@@ -2,6 +2,7 @@ package com.csc445cowboys.guiwip;
 
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameStart;
+import com.csc445cowboys.guiwip.packets.GameState;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -11,8 +12,8 @@ import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.Callable;
 
-public class GameSession {
-
+public class GameSession implements Runnable{
+ByteBuffer buf;
     DatagramChannel client;
     InetSocketAddress serverAddress;
     AEAD aead;
@@ -63,5 +64,15 @@ public class GameSession {
     public void leaveGame() throws IOException {
         // TODO : Implement LEAVE ROOM COURTESY ACK
         client.close();
+    }
+
+        @Override
+         public void run() {
+
+        // If game State packet
+        if(buf.get(1) == 2){
+            GameState gameState = new GameState(buf);
+            battleScreenController.updateFromGameStatePacket(gameState);
+        }
     }
 }
