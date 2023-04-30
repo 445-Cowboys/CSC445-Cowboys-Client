@@ -167,4 +167,9 @@ public class MainLobbyController {
 
     }
 
+    // exitGameButton is called when the user clicks the exit button
+    // it completely exits the game
+    public void exitGameButton(ActionEvent actionEvent) {
+        System.exit(0);
+    }
 }

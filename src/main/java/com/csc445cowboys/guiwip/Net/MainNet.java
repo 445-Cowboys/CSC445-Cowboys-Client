@@ -45,18 +45,13 @@ public class MainNet implements  Runnable{
                    GameRooms gameRooms = new GameRooms(receivedData);
                    mainLobbyController.setGameRooms(gameRooms);
                }
+
+
+               Thread.sleep(1000);
            }
 
-       }catch (RuntimeException e){
+       }catch (RuntimeException | InterruptedException | IOException e){
            e.printStackTrace();
-       } catch (IOException e) {
-           throw new RuntimeException(e);
-       } finally {
-              try {
-                channel.close();
-              } catch (IOException e) {
-                e.printStackTrace();
-              }
        }
     }
 }
