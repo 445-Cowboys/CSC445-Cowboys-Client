@@ -2,7 +2,7 @@ package com.csc445cowboys.guiwip.packets;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.ByteBuffer;yeah well you
+import java.nio.ByteBuffer;
 
 public class GameStart extends Packet {
 

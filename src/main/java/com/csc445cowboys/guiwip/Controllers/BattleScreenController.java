@@ -225,6 +225,7 @@ public class BattleScreenController {
         Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
     }
 
+    // TODO - Implement game start packet update
     public void updateFromGameStartPacket(GameStart gameStart) {
 
     }
