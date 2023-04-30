@@ -138,6 +138,9 @@ public class MainLobbyController {
         int room1Status = gameRooms.getRoomStatus(1);
         int room2Status = gameRooms.getRoomStatus(2);
         int room3Status = gameRooms.getRoomStatus(3);
+        int room1Players = gameRooms.getNumPlayers(1);
+        int room2Players = gameRooms.getNumPlayers(2);
+        int room3Players = gameRooms.getNumPlayers(3);
 
         int server1Status = gameRooms.getServerStatus(1);
         int server2Status = gameRooms.getServerStatus(2);

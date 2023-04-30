@@ -35,7 +35,8 @@ public class MainNet implements  Runnable{
                channel.receive(receivedData);
                receivedData.flip();
                int opcode = receivedData.getInt();
-               if (opcode == 1) {
+               // Opcode 6 is for game rooms
+               if (opcode == 6) {
                    GameRooms gameRooms = new GameRooms(receivedData);
                    mainLobbyController.setGameRooms(gameRooms);
                }
