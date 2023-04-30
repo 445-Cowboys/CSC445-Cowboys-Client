@@ -98,6 +98,10 @@ public class MainLobbyController {
         lobby3_game_status_label.setText(game_status);
     }
 
+    public void setServerStatuses(String[] serverStatus) {
+        System.out.println("Server Status: " + serverStatus);
+    }
+
     public void JoinGame(ActionEvent actionEvent,int n) throws IOException, GeneralSecurityException {
         gameSession = new GameSession(battleScreenController,n);
         OpenBattleScreen(actionEvent,n);
@@ -130,6 +134,15 @@ public class MainLobbyController {
 
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
     public void setGameRooms(GameRooms gameRooms){
+
+        int room1Status = gameRooms.getRoomStatus(1);
+        int room2Status = gameRooms.getRoomStatus(2);
+        int room3Status = gameRooms.getRoomStatus(3);
+
+        int server1Status = gameRooms.getServerStatus(1);
+        int server2Status = gameRooms.getServerStatus(2);
+        int server3Status = gameRooms.getServerStatus(3);
+
     }
 
 }
