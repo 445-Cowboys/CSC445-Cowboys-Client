@@ -1,4 +1,4 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Controllers;
 
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;

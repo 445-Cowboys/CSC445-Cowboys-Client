@@ -1,4 +1,4 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Net;
 
 import com.google.crypto.tink.*;
 import com.google.crypto.tink.aead.AeadConfig;

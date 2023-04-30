@@ -1,4 +1,4 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Controllers;
 
 import javafx.scene.control.Alert;
 

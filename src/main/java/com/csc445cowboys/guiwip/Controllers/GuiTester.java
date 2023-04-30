@@ -1,5 +1,8 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
+import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
+import com.csc445cowboys.guiwip.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

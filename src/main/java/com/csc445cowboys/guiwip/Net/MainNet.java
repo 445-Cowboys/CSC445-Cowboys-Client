@@ -1,13 +1,11 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Net;
 
+import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
-import com.csc445cowboys.guiwip.packets.Packet;
-import javafx.scene.chart.PieChart;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
@@ -21,8 +19,15 @@ public class MainNet implements  Runnable{
         this.mainLobbyController = mainLobbyController;
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);
-        channel.configureBlocking(true);
+//        channel.configureBlocking(true);
+        sa = new InetSocketAddress("localhost", 7806);
+    }
 
+    public void sendAwake() throws IOException {
+        ByteBuffer sendData = ByteBuffer.allocate(4);
+        sendData.putInt(20);
+        sendData.flip();
+        channel.send(sendData, sa);
     }
 
 

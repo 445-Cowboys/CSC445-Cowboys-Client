@@ -64,6 +64,4 @@ public class GameRooms extends Packet {
     public int getServerStatus(int server) {
         return serverStatus[server];
     }
-
-
 }

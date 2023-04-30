@@ -1,6 +1,6 @@
-package com.csc445cowboys.guiwip;
+package com.csc445cowboys.guiwip.Net;
 
-import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 
