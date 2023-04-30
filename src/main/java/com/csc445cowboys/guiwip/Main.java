@@ -24,7 +24,7 @@ public class Main extends Application {
     static String SERVER3_IP;
     static int SERVER3_PORT;
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, InterruptedException {
 
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent mainMenuPane  = mainLdr.load();
@@ -51,6 +51,7 @@ public class Main extends Application {
         MainNet mainNet = new MainNet(mainLobbyController);
         Thread mainNetThread = new Thread(mainNet);
         mainNetThread.start();
+//        mainNetThread.join();
 
 
     }
