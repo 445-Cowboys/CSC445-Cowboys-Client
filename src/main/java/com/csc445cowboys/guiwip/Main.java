@@ -47,6 +47,7 @@ public class Main extends Application {
         stage.show();
         // Start Round Robin for
         MainNet mainNet = new MainNet(mainLobbyController);
+//        mainNet.sendAwakeLoop();
         Thread mainNetThread = new Thread(mainNet);
         mainNetThread.start();
     }

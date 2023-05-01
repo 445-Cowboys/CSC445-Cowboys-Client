@@ -37,41 +37,41 @@ public class GameSession implements Runnable {
 
     // Send a request to join a game and wait for a response from the server
     public Boolean requestJoin(int n) {
-            try {
-                System.out.println("Sending Join Request ");
-                Factory factory = new Factory();
-                buf = factory.makeEnterRoomPacket(n, client.getLocalAddress().toString());
-                client.send(buf, serverAddress);
-                // Create a FutureTask object
-                FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
-                    @Override
-                    public GameStart call() throws Exception {
-                        // Receive Game Start Packet
-                        client.receive(buf);
-                        return new GameStart(buf);
-                    }
-                });
-
-                // Start the long-running operation
-                new Thread(futureTask).start();
-
-                // Get the result of the long-running operation
-                this.gameStart = futureTask.get(5, TimeUnit.SECONDS);
-
-                // Check for timeout
-                if (gameStart == null) {
-                    throw new TimeoutException("No Response from Server after Join Request");
+        try {
+            System.out.println("Sending Join Request ");
+            Factory factory = new Factory();
+            buf = factory.makeEnterRoomPacket(n, client.getLocalAddress().toString());
+            client.send(buf, serverAddress);
+            // Create a FutureTask object
+            FutureTask<GameStart> futureTask = new FutureTask<>(new Callable<GameStart>() {
+                @Override
+                public GameStart call() throws Exception {
+                    // Receive Game Start Packet
+                    client.receive(buf);
+                    return new GameStart(buf);
                 }
+            });
 
-                // Get Updated Crypt     Key
-                aead.parseKey(gameStart.getSymmetricKey().getEncoded());
-            } catch (IOException | GeneralSecurityException | TimeoutException | InterruptedException |
-                     ExecutionException e) {
-                // Handle the error
-                e.printStackTrace();
-                Alerts.displayAlert("Unable to enter room", "Error during request creation stage", Alert.AlertType.ERROR);
-                return false;
+            // Start the long-running operation
+            new Thread(futureTask).start();
+
+            // Get the result of the long-running operation
+            this.gameStart = futureTask.get(5, TimeUnit.SECONDS);
+
+            // Check for timeout
+            if (gameStart == null) {
+                throw new TimeoutException("No Response from Server after Join Request");
             }
+
+            // Get Updated Crypt     Key
+            aead.parseKey(gameStart.getSymmetricKey().getEncoded());
+        } catch (IOException | GeneralSecurityException | TimeoutException | InterruptedException |
+                 ExecutionException e) {
+            // Handle the error
+            e.printStackTrace();
+            Alerts.displayAlert("Unable to enter room", "Error during request creation stage", Alert.AlertType.ERROR);
+            return false;
+        }
         return true;
     }
 
@@ -102,11 +102,11 @@ public class GameSession implements Runnable {
     }
 
     public void fire() {
-        buf = new Factory().makePlayerActionPacket(lobby, 1,0);
+        buf = new Factory().makePlayerActionPacket(lobby, 1, 0);
     }
 
     public void reload() {
-        buf = new Factory().makePlayerActionPacket(lobby, 2,0);
+        buf = new Factory().makePlayerActionPacket(lobby, 2, 0);
     }
 
     public void useAbility() {
