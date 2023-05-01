@@ -16,6 +16,7 @@ import java.security.GeneralSecurityException;
 import java.util.concurrent.*;
 
 public class GameSession implements Runnable {
+    ServerConfig serverConfig = new ServerConfig();
     ByteBuffer buf;
     DatagramChannel client;
     InetSocketAddress serverAddress;
@@ -84,14 +85,14 @@ public class GameSession implements Runnable {
         // If game State packet
         if (buf.getInt(0) == 9) {
             try {
-            client.receive(buf);
-            buf = ByteBuffer.wrap(aead.decrypt(buf.array()));
-            GameState gameState = new GameState(buf);
-            battleScreenController.updateFromGameStatePacket(gameState);
+                client.receive(buf);
+                buf = ByteBuffer.wrap(aead.decrypt(buf.array()));
+                GameState gameState = new GameState(buf);
+                // Put in a lock here for safety
+                battleScreenController.updateFromGameStatePacket(gameState);
             } catch (GeneralSecurityException | IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
 

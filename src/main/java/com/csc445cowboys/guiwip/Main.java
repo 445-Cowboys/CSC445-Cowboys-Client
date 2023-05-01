@@ -15,22 +15,12 @@ import java.io.IOException;
 //7806
 public class Main extends Application {
 
-    static String SERVER1_NAME;
-    static String SERVER1_IP;
-    static int SERVER1_PORT;
-    static String SERVER2_NAME;
-    static String SERVER2_IP;
-    static int SERVER2_PORT;
-    static String SERVER3_NAME;
-    static String SERVER3_IP;
-    static int SERVER3_PORT;
-
     public static void main(String[] args) {
         launch();
     }
 
     @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
+    public void start(Stage stage) throws IOException {
         ServerConfig serverConfig = new ServerConfig();
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent mainMenuPane = mainLdr.load();
@@ -54,13 +44,11 @@ public class Main extends Application {
 
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
-        mainLobbyController.SetServerNames(serverConfig);
         stage.show();
+        // Start Round Robin for
         MainNet mainNet = new MainNet(mainLobbyController);
         Thread mainNetThread = new Thread(mainNet);
         mainNetThread.start();
-
-
     }
 
 }

@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MainLobbyController {
 
@@ -43,6 +45,8 @@ public class MainLobbyController {
     private Scene scene;
     private final int[] server_status_int = new int[3];
     private final int[] lobby_status = new int[3];
+    Lock lock = new ReentrantLock();
+
 
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
@@ -101,16 +105,14 @@ public class MainLobbyController {
 
 
     public void JoinGame2(ActionEvent actionEvent, int n) throws IOException, GeneralSecurityException, TimeoutException {
-
-    gameSession = new GameSession(battleScreenController, n);
-    if(gameSession.requestJoin(n)){
-        battleScreenController.updateFromGameStartPacket(gameSession.getGameStart());
-        battleScreenController.setGameSession(gameSession);
-        OpenBattleScreen(actionEvent, n);
-    }   else{
-        appendToWriter("Failed to join game.");
-    }
-
+        gameSession = new GameSession(battleScreenController, n);
+        if(gameSession.requestJoin(n)){
+            battleScreenController.updateFromGameStartPacket(gameSession.getGameStart());
+            battleScreenController.setGameSession(gameSession);
+            OpenBattleScreen(actionEvent, n);
+        }   else{
+            appendToWriter("Failed to join game.");
+        }
     };
 
 
@@ -157,14 +159,15 @@ public class MainLobbyController {
 
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
     public void setGameRooms(GameRooms gameRooms) {
-
         // Update Server Status Labels
+        lock.lock();
         server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
         server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
         serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(3)));
         setLobby1(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
         setLobby2(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
         setLobby3(gameRooms.getNumPlayers(3), roomStatusFromN(gameRooms.getRoomStatus(3)));
+        lock.unlock();
     }
 
     // exitGameButton is called when the user clicks the exit button
@@ -175,9 +178,9 @@ public class MainLobbyController {
     }
 
     public void SetServerNames(ServerConfig sc) {
-        server1_name_label.setText(sc.SERVER1_NAME);
-        server2_name_label.setText(sc.SERVER2_NAME);
-        server3_name_label.setText(sc.SERVER3_NAME);
+        server1_name_label.setText(ServerConfig.SERVER_NAMES[0]);
+        server2_name_label.setText(ServerConfig.SERVER_NAMES[1]);
+        server3_name_label.setText(ServerConfig.SERVER_NAMES[2]);
     }
 
     public int getServer_status_val(int i, int s) {
@@ -203,6 +206,4 @@ public class MainLobbyController {
     public void appendToWriter(String s) {
         main_menu_act_writer.appendText(s+"\n");
     }
-
-
 }

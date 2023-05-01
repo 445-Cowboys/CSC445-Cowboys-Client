@@ -16,6 +16,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class BattleScreenController {
     public Button action_user_ability_button;
@@ -70,6 +72,7 @@ public class BattleScreenController {
     private int playerTurn;
     private int clientPlayer;
     private Scene scene;
+    Lock lock = new ReentrantLock();
 
     public void onUseAbilityClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
@@ -199,6 +202,7 @@ public class BattleScreenController {
 
     public void updateFromGameStatePacket(GameState gs) {
         // Boss Stats
+        lock.lock();
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
         boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
         // Player Stats
@@ -214,12 +218,13 @@ public class BattleScreenController {
 
         playerTurn = gs.getCurrentPlayer();
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
-        round_indicator.setText(gs.getBlockNum());
+        round_indicator.setText(String.valueOf(gs.getBlockNum()));
         // TODO - Implement current player label
         curr_player_label.setText("NOT IMPLEMENTED");
         // TODO - Implement server name label
         curr_server_name_label.setText("NOT IMPLEMENTED");
         appendTextToWriter(s);
+        lock.unlock();
     }
 
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
@@ -237,6 +242,6 @@ public class BattleScreenController {
     }
 
     public void setGameSession(GameSession gameSession) {
-        this.gameSession = gameSession;
     }
+
 }

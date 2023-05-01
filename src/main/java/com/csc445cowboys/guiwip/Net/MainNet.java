@@ -12,6 +12,7 @@ import java.nio.channels.DatagramChannel;
 
 public class MainNet implements Runnable {
 
+    ServerConfig serverConfig = new ServerConfig();
     MainLobbyController mainLobbyController;
     ByteBuffer receivedData;
     DatagramChannel channel;
@@ -24,13 +25,14 @@ public class MainNet implements Runnable {
         sa = new InetSocketAddress("localhost", 7806);
     }
 
-    public void sendAwake() throws IOException {
-        ByteBuffer sendData = ByteBuffer.allocate(4);
-        sendData.putInt(20);
-        sendData.flip();
-        channel.send(sendData, sa);
+    public void sendAwakeLoop() throws IOException {
+       for(int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
+          ByteBuffer buf = ByteBuffer.allocate(1024);
+          buf.putInt(20);  // 20 is arbitrary for
+          buf.flip();
+          channel.send(buf, new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]));
+       }
     }
-
 
     // Listens for updates on game rooms
     @Override
@@ -46,8 +48,6 @@ public class MainNet implements Runnable {
                     GameRooms gameRooms = new GameRooms(receivedData);
                     mainLobbyController.setGameRooms(gameRooms);
                 }
-
-
                 Thread.sleep(1000);
             }
 
