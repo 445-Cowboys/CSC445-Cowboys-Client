@@ -20,7 +20,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, InterruptedException {
         ServerConfig serverConfig = new ServerConfig();
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent mainMenuPane = mainLdr.load();
@@ -45,9 +45,9 @@ public class Main extends Application {
         stage.setScene(mainMenuScene);
         stage.setTitle("Main Menu");
         stage.show();
-        // Start Round Robin for
         MainNet mainNet = new MainNet(mainLobbyController);
-//        mainNet.sendAwakeLoop();
+        mainNet.sendAwake();
+        mainNet.initServResp();
         Thread mainNetThread = new Thread(mainNet);
         mainNetThread.start();
     }
