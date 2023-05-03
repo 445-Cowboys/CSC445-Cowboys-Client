@@ -66,9 +66,9 @@ public class MainNet implements Runnable {
     }
 
     public void initServResp() {
+        GameRooms gameRooms = null;
         try {
             ByteBuffer buf = ByteBuffer.allocate(1024);
-            GameRooms gameRooms;
             FutureTask<GameRooms> futureTask = new FutureTask<>(() -> {
                 // Receive Game Start Packet
                 channel.receive(buf);
@@ -78,13 +78,10 @@ public class MainNet implements Runnable {
                 }
                 return new GameRooms(buf);
             });
-
             // Start the long-running operation
             new Thread(futureTask).start();
-
             // Get the result of the long-running operation
             gameRooms = futureTask.get(5, TimeUnit.SECONDS);
-
             if (gameRooms == null) {
                 throw new TimeoutException();
             }
@@ -93,7 +90,11 @@ public class MainNet implements Runnable {
         }catch (RuntimeException | InterruptedException | ExecutionException e){
             System.out.println("Server is not awake: Runtime Exception");
         }
-        mainLobbyController.appendToWriter("Server is awake");
+        if (gameRooms != null) {
+            System.out.println("Server is awake");
+            mainLobbyController.appendToWriter("Server is awake");
+            mainLobbyController.setGameRooms(gameRooms);
+        }
     }
 
     // Listens for updates on game rooms
