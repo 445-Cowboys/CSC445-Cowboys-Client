@@ -21,7 +21,7 @@ public class MainNet implements Runnable {
     DatagramChannel channel;
     SocketAddress sa;
     AtomicInteger timeout = new AtomicInteger(1000);
-    AtomicInteger retries = new AtomicInteger(0);
+    AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean inGame = new AtomicBoolean(false);
     AtomicBoolean connected = new AtomicBoolean(false);
 
@@ -67,8 +67,8 @@ public class MainNet implements Runnable {
         // Start the long-running operation
         new Thread(futureTask).start();
 
-        // Get the result of the long-running operation
-        this.receivedData = futureTask.get((long) this.timeout.get() *this.timeout.get(), TimeUnit.MILLISECONDS);
+        // Exp backoff
+        this.receivedData = futureTask.get((long) timeout.get() * retries.get(), TimeUnit.MILLISECONDS);
 
         // Check for timeout
         if (this.receivedData == null) {
@@ -121,6 +121,7 @@ public class MainNet implements Runnable {
                 mainLobbyController.appendToWriter("No servers available. Exiting...");
                 System.exit(0);
             }
+            retries.set(1);
         }
     }
 }
