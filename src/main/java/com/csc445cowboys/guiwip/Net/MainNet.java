@@ -130,20 +130,27 @@ public class MainNet implements Runnable {
     @Override
     public void run() {
         // Ctr a d lol
-        while(!connected.get()) {
-            for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
+        for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
+            while ((retries.get() < MAX_RETRIES.get()) | !this.connected.get()) {
                 try {
                     // Send awake packet to server
                     sendAwake();
                     // Attempt to receive a packet from the server
                     packetReceive();
                     // Break out of loop if server is awake
-                    break;
+                    if (receivedData.get(0) == 5) {
+                        mainLobbyController.appendToWriter("Server is awake");
+                        this.connected.set(true);
+                        break;
+                    }
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
-                    System.out.println("Server is not awake" + e.getMessage());
+                    mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                     retries.getAndIncrement();
                     continue;
                 }
+            }
+            if (this.connected.get()) {
+                break;
             }
         }
     }

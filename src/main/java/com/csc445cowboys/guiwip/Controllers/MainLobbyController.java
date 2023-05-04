@@ -204,6 +204,7 @@ public class MainLobbyController {
     }
 
     public void appendToWriter(String s) {
+        System.out.println(s);
         main_menu_act_writer.appendText(s+"\n");
     }
 }
