@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainNet implements Runnable {
     // Atomics
-    final static AtomicInteger MAX_RETRIES = new AtomicInteger(3);
+    final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
     MainLobbyController mainLobbyController;  // Reference to Main Menu Controller
     ByteBuffer receivedData;
     DatagramChannel channel;
@@ -79,8 +79,30 @@ public class MainNet implements Runnable {
 
     @Override
     public void run() {
-        if (!roundRobinServerFind()) System.exit(-5); // If no server is found, exit the program fast
+        for(;;){
+            // Will always fail on first attempt and attempt to round robin find a server
+            while (this.connected.get()){
+                // Set Heartbeack to 60 seconds
+                this.timeout.set(1000 * 60);
+                try {
+                    Thread heartbeat = new Thread(new Heartbeat(sa));
+                    heartbeat.start();
+                    packetReceive();  // Attempt to receive a packet from the server, will timeout after 60 seconds
+                    if (receivedData.get(0) == 5) {  // If a packet is received, check if it is a @GameRooms packet
+                        mainLobbyController.setGameRooms(new GameRooms(receivedData));  // Update the game rooms frame
+                        System.out.println("Game Rooms Updated");
+                    }
+                }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
+                    // will fall to round robin search to try to connect to a server
+                    this.connected.set(false);
 
+                } catch (ExecutionException | InterruptedException | IOException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+            // Attempt to connect to a server if connection is lost
+            if(!roundRobinServerFind()) System.exit(-5);
+        }
     }
 
     /*
