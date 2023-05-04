@@ -89,6 +89,8 @@ public class MainNet implements Runnable {
     * --> If retries > MAX_RETRIES, attempt to connect to next server
     * --> If no servers are available, exit the program
     * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
+    *
+    * --> Then Enter Main Run State
      */
     @Override
     public void run() {
@@ -122,6 +124,24 @@ public class MainNet implements Runnable {
                 System.exit(0);
             }
             retries.set(1);
+        }
+    }
+
+    public void mainMenuRun(){
+        while (this.connected.get(){
+            try {
+                packetReceive();
+                if (receivedData.get(0) == 6) {
+                    mainLobbyController.appendToWriter("Game Start Packet Received");
+                    mainLobbyController.setGameStart(new GameStart(receivedData));
+                    this.inGame.set(true);
+                    break;
+                }
+            } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
+                System.out.println("Error: " + e.getMessage());
+                mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                retries.getAndIncrement();
+            }
         }
     }
 }
