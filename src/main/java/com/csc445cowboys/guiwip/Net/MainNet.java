@@ -3,7 +3,6 @@ package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameStart;
-import jdk.internal.access.JavaIOFileDescriptorAccess;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -140,17 +139,19 @@ public class MainNet implements Runnable {
                     // Break out of loop if server is awake
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToWriter("Server is awake");
+                        mainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         break;
                     }
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
                     mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                     retries.getAndIncrement();
-                    continue;
                 }
             }
-            if (this.connected.get()) {
-                break;
+            if (this.connected.get()) break;
+            if (i == ServerConfig.SERVER_NAMES.length - 1) {
+                mainLobbyController.appendToWriter("No servers available. Exiting...");
+                System.exit(0);
             }
         }
     }
