@@ -88,6 +88,7 @@ public class MainNet implements Runnable {
     * --> Increment backoff time
     * --> If retries > MAX_RETRIES, attempt to connect to next server
     * --> If no servers are available, exit the program
+    * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
      */
     @Override
     public void run() {
@@ -111,7 +112,10 @@ public class MainNet implements Runnable {
                     retries.getAndIncrement();
                 }
             }
-            if (this.connected.get()) break;  // Break out of loop if server is awake
+            if (this.connected.get()) {
+                this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);\
+                break;
+            }
             if (i == ServerConfig.SERVER_NAMES.length - 1) {  // If no servers are available, exit the program
                 mainLobbyController.appendToWriter("No servers available. Exiting...");
                 System.exit(0);
