@@ -161,12 +161,12 @@ public class MainLobbyController {
     public void setGameRooms(GameRooms gameRooms) {
         // Update Server Status Labels
         lock.lock();
-        server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
-        server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
-        serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(3)));
-        setLobby1(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
-        setLobby2(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
-        setLobby3(gameRooms.getNumPlayers(3), roomStatusFromN(gameRooms.getRoomStatus(3)));
+        server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));
+        server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
+        serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
+        setLobby1(gameRooms.getNumPlayers(0), roomStatusFromN(gameRooms.getRoomStatus(0)));
+        setLobby2(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
+        setLobby3(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
         lock.unlock();
     }
 

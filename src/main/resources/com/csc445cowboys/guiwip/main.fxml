@@ -41,7 +41,7 @@
          </Label>
          <Separator layoutX="2.0" layoutY="77.0" prefHeight="1.0" prefWidth="360.0" />
          <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label fx:id="lobby1_game_status_label" alignment="CENTER" layoutX="105.0" layoutY="119.0" prefHeight="39.0" prefWidth="140.0" text="Waiting..">
+         <Label fx:id="lobby1_game_status_label" alignment="CENTER" layoutX="9.0" layoutY="119.0" prefHeight="39.0" prefWidth="336.0" text="Waiting..">
             <font>
                <Font size="16.0" />
             </font>
@@ -74,7 +74,7 @@
          </Label>
          <Separator layoutX="2.0" layoutY="77.0" prefHeight="1.0" prefWidth="360.0" />
          <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label fx:id="lobby2_game_status_label" alignment="CENTER" layoutX="105.0" layoutY="119.0" prefHeight="39.0" prefWidth="140.0" text="Waiting..">
+         <Label fx:id="lobby2_game_status_label" alignment="CENTER" layoutX="8.0" layoutY="119.0" prefHeight="39.0" prefWidth="347.0" text="Waiting..">
             <font>
                <Font size="16.0" />
             </font>
@@ -101,7 +101,7 @@
          </Label>
          <Separator layoutX="2.0" layoutY="77.0" prefHeight="1.0" prefWidth="360.0" />
          <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0" />
-         <Label fx:id="lobby3_game_status_label" alignment="CENTER" layoutX="105.0" layoutY="119.0" prefHeight="39.0" prefWidth="140.0" text="Waiting..">
+         <Label fx:id="lobby3_game_status_label" alignment="CENTER" layoutX="9.0" layoutY="119.0" prefHeight="39.0" prefWidth="336.0" text="Waiting..">
             <font>
                <Font size="16.0" />
             </font>
@@ -114,20 +114,20 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Label fx:id="server1_name_label" alignment="CENTER" layoutX="29.0" layoutY="78.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
+      <Label fx:id="server1_name_label" alignment="CENTER" layoutX="29.0" layoutY="78.0" prefHeight="39.0" prefWidth="146.0" text="Rho">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
       <Separator layoutX="2.0" layoutY="257.0" prefHeight="1.0" prefWidth="360.0" />
       <Separator layoutY="116.0" prefHeight="3.0" prefWidth="360.0" />
-      <Label fx:id="server2_name_label" alignment="CENTER" layoutX="29.0" layoutY="119.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
+      <Label fx:id="server2_name_label" alignment="CENTER" layoutX="29.0" layoutY="119.0" prefHeight="39.0" prefWidth="146.0" text="Moxie">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
       <Separator layoutX="2.0" layoutY="157.0" prefHeight="3.0" prefWidth="360.0" />
-      <Label fx:id="server3_name_label" alignment="CENTER" layoutX="28.0" layoutY="154.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
+      <Label fx:id="server3_name_label" alignment="CENTER" layoutX="28.0" layoutY="154.0" prefHeight="39.0" prefWidth="146.0" text="Pi">
          <font>
             <Font size="16.0" />
          </font>

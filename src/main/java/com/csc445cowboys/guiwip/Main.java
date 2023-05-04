@@ -21,35 +21,34 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
-        ServerConfig serverConfig = new ServerConfig();
-        FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml"));
-        Parent mainMenuPane = mainLdr.load();
-        Scene mainMenuScene = new Scene(mainMenuPane);
+        FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml")); // Load Main Menu FXML
+        Parent mainMenuPane = mainLdr.load();  // Load Main Menu Pane
+        Scene mainMenuScene = new Scene(mainMenuPane);  // Create Main Menu Scene
 
-        FXMLLoader battle = new FXMLLoader(getClass().getResource("battle.fxml"));
-        Parent battlePane = battle.load();
-        Scene battleScene = new Scene(battlePane);
+        FXMLLoader battle = new FXMLLoader(getClass().getResource("battle.fxml"));  // Load Battle Screen FXML
+        Parent battlePane = battle.load();  // Load Battle Screen Pane
+        Scene battleScene = new Scene(battlePane); // Create Battle Screen Scene
 
 
-        MainLobbyController mainLobbyController = mainLdr.getController();
-        mainLobbyController.setBattleScreen(battleScene);
+        MainLobbyController mainLobbyController = mainLdr.getController();  // Get Main Menu Controller
+        mainLobbyController.setBattleScreen(battleScene);  // Set Battle Screen Scene instance to the Main Menu Controller
         mainLobbyController.appendToWriter("Starting 445 Cowboys Client...");
         mainLobbyController.appendToWriter("Yeehaw! Giddyup Cowboys!");
 
-        BattleScreenController battleScreenController = battle.getController();
-        battleScreenController.setMainScreen(mainMenuScene);
+        BattleScreenController battleScreenController = battle.getController();  // Get Battle Screen Controller instance to the Battle Screen Controller
+        battleScreenController.setMainScreen(mainMenuScene);  // Set Main Menu Scene instance to the Battle Screen Controller
 
-        battleScreenController.setMainLobbyController(mainLobbyController);
+        battleScreenController.setMainLobbyController(mainLobbyController);  // set references in both controllers
         mainLobbyController.setBattleScreenController(battleScreenController);
 
-        stage.setScene(mainMenuScene);
-        stage.setTitle("Main Menu");
-        stage.show();
-        MainNet mainNet = new MainNet(mainLobbyController);
-        mainNet.sendAwake();
-        mainNet.initServResp();
-        Thread mainNetThread = new Thread(mainNet);
-        mainNetThread.start();
+        stage.setScene(mainMenuScene);  // Set Main Menu Scene to the Stage
+        stage.setTitle("Main Menu");  // Set Stage Title
+        stage.show();  // Show Stage
+        MainNet mainNet = new MainNet(mainLobbyController);  // Create MainNet instance with Main Menu Controller
+        mainNet.sendAwake();  // Send Awake message to server
+        mainNet.initServResp();  // Initialize Server Response Thread
+        Thread mainNetThread = new Thread(mainNet); // Create MainNet Thread
+        mainNetThread.start(); // Start MainNet Thread
     }
 
 }
