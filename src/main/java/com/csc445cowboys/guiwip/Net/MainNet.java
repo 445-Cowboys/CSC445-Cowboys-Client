@@ -108,6 +108,7 @@ public class MainNet implements Runnable {
                         break;
                     }
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
+                    System.out.println("Error: " + e.getMessage());
                     mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                     retries.getAndIncrement();
                 }
