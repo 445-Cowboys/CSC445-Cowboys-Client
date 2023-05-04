@@ -2,13 +2,13 @@ package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
-import com.csc445cowboys.guiwip.packets.GameStart;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,11 +37,12 @@ public class MainNet implements Runnable {
 
     /**
      * Sends a packet to the server upon client startup to wake the server up
+     *
      * @param server Server IP Address
-*    * @param port Server Port Number
+     *               * @param port Server Port Number
      * @throws IOException If the packet fails to send
      */
-    public void sendAwake(String server, int port) throws IOException {
+    public void sendAwake(String server, int port) throws IOException, UnresolvedAddressException {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.put((byte) 20);
         buf.flip();
@@ -55,20 +56,20 @@ public class MainNet implements Runnable {
      */
     public void packetReceive() throws ExecutionException, InterruptedException, TimeoutException {
         FutureTask<ByteBuffer> futureTask = new FutureTask<>(new Callable<ByteBuffer>() {
-        @Override
-        public ByteBuffer call() throws Exception {
-            // Receive Game Start Packet
-            channel.receive(receivedData);
-            // Flip
-            receivedData.flip();
-            return receivedData;
-        }
+            @Override
+            public ByteBuffer call() throws Exception {
+                // Receive Game Start Packet
+                channel.receive(receivedData);
+                // Flip
+                receivedData.flip();
+                return receivedData;
+            }
         });
         // Start the long-running operation
         new Thread(futureTask).start();
 
         // Exp backoff
-        this.receivedData = futureTask.get((long) timeout.get() * retries.get(), TimeUnit.MILLISECONDS);
+        this.receivedData = futureTask.get(timeout.get(), TimeUnit.MILLISECONDS);
 
         // Check for timeout
         if (this.receivedData == null) {
@@ -76,72 +77,61 @@ public class MainNet implements Runnable {
         }// Ctr a d lol
     }
 
-
-    /*
-    * Main Menu Net Thread.
-    *  Server Initialization
-    *  For Each Server in ServerConfig.SERVER_NAMES
-    * -> Send Awake Packet
-    * -> Attempt to Receive Packet
-    * -> If GAME_ROOM Packet is received, break out of loop
-    * --> If no packet is received, increment retries
-    * --> Increment backoff time
-    * --> If retries > MAX_RETRIES, attempt to connect to next server
-    * --> If no servers are available, exit the program
-    * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
-    *
-    * --> Then Enter Main Run State
-     */
     @Override
     public void run() {
+        if (!roundRobinServerFind()) System.exit(-5); // If no server is found, exit the program fast
+    }
+
+    /*
+     * Round Robin Server Find goes in a circle of defined possible servers and attempts to connect to each one
+     * If a server is found, the server is set to connected and the game rooms are update and connected is set to true
+     * and also returns true
+     * At the end of the loop, if no server is found, connected is set to false and returns false, which should be handled
+     * by the caller
+     *  For Each Server in ServerConfig.SERVER_NAMES
+     * -> Send Awake Packet
+     * -> Attempt to Receive Packet
+     * -> If GAME_ROOM Packet is received, break out of loop
+     * --> If no packet is received, increment retries
+     * --> Increment backoff time
+     * --> If retries > MAX_RETRIES, attempt to connect to next server
+     * --> If no servers are available, exit the program
+     * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
+     */
+    public Boolean roundRobinServerFind() {
         // Server Round Robin to attempt to connect to a server
         for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
-            while ((retries.get() < MAX_RETRIES.get()) | !this.connected.get()) {
+            // While retries less than max retries and not connected to a server
+            while ((retries.get() < MAX_RETRIES.get())) {
                 try {
                     // Send awake packet to server
                     sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                     // Attempt to receive a packet from the server
                     packetReceive();
-                    // Break out of loop if server is awake
+                    // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToWriter("Server is awake");
                         mainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
-                        break;
+                        this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
+                        this.retries.set(1);
+                        return true;
                     }
-                } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
-                    System.out.println("Error: " + e.getMessage());
-                    mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    // If no packet is received or other failure occurs, increment retries and backoff time
+                } catch (ExecutionException | InterruptedException | TimeoutException | IOException |
+                         UnresolvedAddressException e) {
+                    // Current retry delay
                     retries.getAndIncrement();
+                    timeout.getAndAdd(timeout.get());
+                    System.out.println("Error: " + e.getMessage());
+                    // Exponential backoff
+                    mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
-            if (this.connected.get()) {
-                this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
-                break;
-            }
-            if (i == ServerConfig.SERVER_NAMES.length - 1) {  // If no servers are available, exit the program
-                mainLobbyController.appendToWriter("No servers available. Exiting...");
-                System.exit(0);
-            }
+            // Reset backoff loop
             retries.set(1);
+            timeout.set(1000);
         }
-    }
-
-    public void mainMenuRun(){
-        while (this.connected.get(){
-            try {
-                packetReceive();
-                if (receivedData.get(0) == 6) {
-                    mainLobbyController.appendToWriter("Game Start Packet Received");
-                    mainLobbyController.setGameStart(new GameStart(receivedData));
-                    this.inGame.set(true);
-                    break;
-                }
-            } catch (ExecutionException | InterruptedException | TimeoutException | IOException e) {
-                System.out.println("Error: " + e.getMessage());
-                mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i]  + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
-                retries.getAndIncrement();
-            }
-        }
+        return false;
     }
 }
