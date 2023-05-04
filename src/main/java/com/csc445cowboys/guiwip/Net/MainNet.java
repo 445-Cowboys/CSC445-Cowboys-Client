@@ -80,6 +80,7 @@ public class MainNet implements Runnable {
     @Override
     public void run() {
         if (!roundRobinServerFind()) System.exit(-5); // If no server is found, exit the program fast
+
     }
 
     /*
@@ -102,7 +103,7 @@ public class MainNet implements Runnable {
         // Server Round Robin to attempt to connect to a server
         for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
             // While retries less than max retries and not connected to a server
-            while ((retries.get() < MAX_RETRIES.get())) {
+            while ((retries.get()-1 < MAX_RETRIES.get())) {
                 try {
                     // Send awake packet to server
                     sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -132,6 +133,8 @@ public class MainNet implements Runnable {
             retries.set(1);
             timeout.set(1000);
         }
+        // If no server is found, set connected to false and return false
+        System.out.println("No server found");
         return false;
     }
 }
