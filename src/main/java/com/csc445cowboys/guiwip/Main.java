@@ -44,9 +44,7 @@ public class Main extends Application {
         stage.setScene(mainMenuScene);  // Set Main Menu Scene to the Stage
         stage.setTitle("Main Menu");  // Set Stage Title
         stage.show();  // Show Stage
-        MainNet mainNet = new MainNet(mainLobbyController);  // Create MainNet instance with Main Menu Controller
-        mainNet.sendAwake();  // Send Awake message to server
-        mainNet.initServResp();  // Initialize Server Response Thread
+        MainNet mainNet = new MainNet(mainLobbyController);  // Create MainNet instance with Main Menu Controller// Initialize Server Response Thread
         Thread mainNetThread = new Thread(mainNet); // Create MainNet Thread
         mainNetThread.start(); // Start MainNet Thread
     }

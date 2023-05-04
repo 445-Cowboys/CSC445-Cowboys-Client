@@ -37,57 +37,18 @@ public class MainNet implements Runnable {
 
     /**
      * Sends a packet to the server upon client startup to wake the server up
+     * @param server Server IP Address
+*    * @param port Server Port Number
+     * @throws IOException If the packet fails to send
      */
-    public void sendAwake() throws IOException {
+    public void sendAwake(String server, int port) throws IOException {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.put((byte) 20);
         buf.flip();
-        SocketAddress sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[0], ServerConfig.SERVER_PORTS[0]);
+        SocketAddress sa = new InetSocketAddress(server, port);
         channel.send(buf, sa);
         System.out.println("Sent awake packet to server");
     }
-
-    /**
-     * Attempts to receive a packet from the server to get the initial game room data
-     */
-    public void initServResp() {
-        GameRooms gameRooms = null;
-        try {
-            ByteBuffer buf = ByteBuffer.allocate(1024);
-            FutureTask<GameRooms> futureTask = new FutureTask<>(() -> {
-                // Receive Game Start Packet
-                channel.receive(buf);
-                // Check if the packet is game room packet
-                if (buf.get(0) != 5) {
-                    throw new RuntimeException();
-                }
-                buf.flip();
-                return new GameRooms(buf);
-            });
-            // Start the long-running operation
-            new Thread(futureTask).start();
-            // Get the result of the long-running operation
-            gameRooms = futureTask.get(1, TimeUnit.SECONDS);
-            if (gameRooms == null) {
-                throw new TimeoutException();
-            }
-        } catch (TimeoutException e) {
-            System.out.println("Server is not awake: Timeout Exception");
-        } catch (RuntimeException e) {
-            System.out.println("Server is not awake: Runtime Exception");
-        } catch (InterruptedException e) {
-            System.out.println("Server is not awake: Interrupted Exception");
-        } catch (ExecutionException e) {
-            System.out.println("Server is not awake: Execution Exception");
-        }
-        if (gameRooms != null) {
-            System.out.println("Server is awake");
-            mainLobbyController.appendToWriter("Server is awake");
-            mainLobbyController.setGameRooms(gameRooms);
-        }
-    }
-
-
 
     /**
      * General receive method for receiving packets from the server
@@ -98,6 +59,8 @@ public class MainNet implements Runnable {
         public ByteBuffer call() throws Exception {
             // Receive Game Start Packet
             channel.receive(receivedData);
+            // Flip
+            receivedData.flip();
             return receivedData;
         }
         });
@@ -128,12 +91,12 @@ public class MainNet implements Runnable {
      */
     @Override
     public void run() {
-        // Ctr a d lol
+        // Server Round Robin to attempt to connect to a server
         for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
             while ((retries.get() < MAX_RETRIES.get()) | !this.connected.get()) {
                 try {
                     // Send awake packet to server
-                    sendAwake();
+                    sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                     // Attempt to receive a packet from the server
                     packetReceive();
                     // Break out of loop if server is awake
@@ -148,8 +111,8 @@ public class MainNet implements Runnable {
                     retries.getAndIncrement();
                 }
             }
-            if (this.connected.get()) break;
-            if (i == ServerConfig.SERVER_NAMES.length - 1) {
+            if (this.connected.get()) break;  // Break out of loop if server is awake
+            if (i == ServerConfig.SERVER_NAMES.length - 1) {  // If no servers are available, exit the program
                 mainLobbyController.appendToWriter("No servers available. Exiting...");
                 System.exit(0);
             }
