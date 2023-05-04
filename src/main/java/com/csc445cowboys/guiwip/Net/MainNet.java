@@ -113,7 +113,7 @@ public class MainNet implements Runnable {
                 }
             }
             if (this.connected.get()) {
-                this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);\
+                this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                 break;
             }
             if (i == ServerConfig.SERVER_NAMES.length - 1) {  // If no servers are available, exit the program
