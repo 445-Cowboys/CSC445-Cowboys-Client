@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
+import com.csc445cowboys.guiwip.packets.EnterRoomAck;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class MainNet implements Runnable {
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean inGame = new AtomicBoolean(false);
     AtomicBoolean connected = new AtomicBoolean(false);
+    AtomicBoolean gameLocked = new AtomicBoolean(false);
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
@@ -86,7 +88,7 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData));  // start a new thread to handle the packet
+                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData,this));  // start a new thread to handle the packet
                     thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -128,7 +130,7 @@ public class MainNet implements Runnable {
                     packetReceive();
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
-                        mainLobbyController.appendToWriter("Server is awake");
+                        MainLobbyController.appendToWriter2("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -143,7 +145,7 @@ public class MainNet implements Runnable {
                     timeout.getAndAdd(timeout.get());
                     System.out.println("Error: " + e.getMessage());
                     // Exponential backoff
-                    mainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    MainLobbyController.appendToWriter2("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
             // Reset backoff loop
@@ -154,4 +156,19 @@ public class MainNet implements Runnable {
         System.out.println("No server found");
         return false;
     }
+
+    /*  Processes enter room packets and lets
+    user know if packet is successful, successful likely means waiting on other players
+     a failure is from the server, likely room is full
+     */
+    public void setRoomLock(EnterRoomAck enterRoomAck) {
+        if (enterRoomAck.getResult()) {
+            this.gameLocked.set(true);
+            MainLobbyController.appendToWriter2("Request to Enter Room Successful!  Waiting on other players\n");
+        } else {
+            this.gameLocked.set(false);
+            MainLobbyController.appendToWriter2("Request to Enter Room Failed!  Room is full or other server error\n");
+        }
+    }
+
 }

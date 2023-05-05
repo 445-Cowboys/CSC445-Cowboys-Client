@@ -1,6 +1,5 @@
 package com.csc445cowboys.guiwip.Controllers;
 
-import com.csc445cowboys.guiwip.Net.GameSession;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
@@ -71,7 +70,7 @@ public class BattleScreenController {
     public static ImageView boss_picture;
     public static MainLobbyController mainLobbyController;
     private int clientPlayer;
-    private Scene scene;
+    private static Scene scene;
 
     /*
      *  Called upon initial game instantiation, sets the bosses fields
@@ -190,7 +189,6 @@ public class BattleScreenController {
     public void onUseAbilityClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Use Ability Clicked");
-            mainLobbyController.getGameSession().useAbility();
         } else {
             notTurn();
         }
@@ -201,7 +199,6 @@ public class BattleScreenController {
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
-        mainLobbyController.getGameSession().leaveGame();
         OpenMainMenuScreen(actionEvent);
     }
 
@@ -212,7 +209,6 @@ public class BattleScreenController {
     public void onFireClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Fire Clicked");
-            mainLobbyController.getGameSession().fire();
         } else {
             notTurn();
         }
@@ -225,7 +221,6 @@ public class BattleScreenController {
     public void onReloadClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Reload Clicked");
-            mainLobbyController.getGameSession().reload();
         } else {
             notTurn();
         }
@@ -251,7 +246,7 @@ public class BattleScreenController {
         player3_picture.setImage(image);
     }
 
-    public void setMainScreen(Scene mainMenuScene) {
+    public static void setMainScreen(Scene mainMenuScene) {
         scene = mainMenuScene;
     }
 
@@ -260,8 +255,8 @@ public class BattleScreenController {
         stage.setScene(scene);
     }
 
-    public void setMainLobbyController(MainLobbyController mainLobbyController) {
-        this.mainLobbyController = mainLobbyController;
+    public static void setMainLobbyController(MainLobbyController mainLobbyController) {
+        BattleScreenController.mainLobbyController = mainLobbyController;
     }
 
     private void notTurn() {

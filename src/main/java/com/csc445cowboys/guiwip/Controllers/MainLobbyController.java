@@ -1,7 +1,5 @@
 package com.csc445cowboys.guiwip.Controllers;
 
-import com.csc445cowboys.guiwip.Net.GameSession;
-import com.csc445cowboys.guiwip.Net.ServerConfig;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -18,13 +16,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MainLobbyController {
-
-    static public GameSession gameSession;
     static int lobby1_curr_players;
     static int lobby2_curr_players;
     static int lobby3_curr_players;
-    public Label lobby2_label;
-    public Label lobby_label3;
     public Label server1_name_label;
     public Label main_server_status_label;
     public Label server2_name_label;
@@ -41,8 +35,8 @@ public class MainLobbyController {
     public static Label lobby2_game_status_label;
     public static Label lobby3_game_status_label;
     public static Label lobby3_curr_players_label;
-    public TextArea main_menu_act_writer;
-    private Scene scene;
+    public static TextArea main_menu_act_writer;
+    private static   Scene scene;
     private final int[] server_status_int = new int[3];
     private final int[] lobby_status = new int[3];
     static Lock lock = new ReentrantLock();
@@ -52,7 +46,6 @@ public class MainLobbyController {
         if (checkFull(lobby1_curr_players)) {
             appendToWriter("Lobby 1 is full, cannot join...");
             gameFullAlert();
-
         } else {
             appendToWriter("Lobby 1 is not full, attempting to join...");
 
@@ -104,19 +97,14 @@ public class MainLobbyController {
         return curr_players == 3;
     }
 
-    public void setBattleScreen(Scene battle) {
-        this.scene = battle;
+    public static void setBattleScreen(Scene battle) {
+        scene = battle;
     }
 
     public void OpenBattleScreen(ActionEvent actionEvent, int l) throws IOException {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setTitle("Battling: Game Room " + l);
         stage.setScene(scene);
-    }
-
-    public void setBattleScreenController(BattleScreenController battleScreenController) {
-        this.battleScreenController = battleScreenController;
-
     }
 
     public void gameFullAlert() {
@@ -161,12 +149,14 @@ public class MainLobbyController {
         System.exit(0);
     }
 
-    public GameSession getGameSession() {
-        return gameSession;
+    public  void appendToWriter(String s) {
+        System.out.println(s);
+//        main_menu_act_writer.appendText(s+"\n");
     }
 
-    public void appendToWriter(String s) {
+
+    public static void appendToWriter2(String s) {
         System.out.println(s);
-        main_menu_act_writer.appendText(s+"\n");
+//        main_menu_act_writer.appendText(s+"\n");
     }
 }
