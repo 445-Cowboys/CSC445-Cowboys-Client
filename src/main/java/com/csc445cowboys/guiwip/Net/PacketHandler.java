@@ -23,7 +23,6 @@ public class PacketHandler implements Runnable {
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet, MainNet mainNet) throws IOException {
         try {
-
             this.mainNet = mainNet;
             this.packet = packet;
             packet.flip();

@@ -11,6 +11,7 @@ public class GameStart extends Packet {
     */
 
     private final byte[] data;
+    // TODO - This is a placeholder implemen the actual player character, needs the id for all players
     private final int character;
     private final SecretKey symmetricKey;
     public byte[] cryptoKey;
@@ -46,6 +47,11 @@ public class GameStart extends Packet {
     }
 
     public int getClientPlayer() {
+        return 1;
+    }
+
+    // TODO - This is a placeholder implemen the actual player number
+    public int getPlayerNumber() {
         return 1;
     }
 }

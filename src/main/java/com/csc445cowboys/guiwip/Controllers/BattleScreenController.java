@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,7 +34,6 @@ public class BattleScreenController {
     public static Label curr_server_name_label;
     public static Label curr_player_label;
     static Lock lock = new ReentrantLock();
-    private static int playerTurn;
     public Button action_user_ability_button;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
@@ -69,7 +69,9 @@ public class BattleScreenController {
     public static Label boss_name_label;
     public static ImageView boss_picture;
     public static MainLobbyController mainLobbyController;
-    private int clientPlayer;
+    static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
+    static AtomicInteger roundNumber = new AtomicInteger(0);
+    static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
     private static Scene scene;
 
     /*
@@ -130,6 +132,7 @@ public class BattleScreenController {
         setPlayer1Fields(gameStart);
         setPlayer2Fields(gameStart);
         setPlayer3Fields(gameStart);
+
     }
 
     public static void appendTextToWriter(String text) {
@@ -147,6 +150,7 @@ public class BattleScreenController {
      */
     public static void setGameStart(GameStart gameStart, SocketAddress sa) {
         lock.lock();
+        clietPlayerNumber.set(gameStart.getPlayerNumber());
         setAllFields(gameStart);
         lock.unlock();
     }
@@ -171,11 +175,12 @@ public class BattleScreenController {
         player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
         player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
-        playerTurn = gs.getCurrentPlayer();
+        // TODO - Implement round indicator
+        CurrentPlayer = gs.getCurrentPlayer();
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
         round_indicator.setText(String.valueOf(gs.getBlockNum()));
         // TODO - Implement current player label
-        curr_player_label.setText(Integer.toString(playerTurn));
+        curr_player_label.setText(Integer.toString(CurrentPlayer));
         // TODO - Implement server name label
         curr_server_name_label.setText(sa.toString());
         appendTextToWriter(s);
@@ -187,7 +192,7 @@ public class BattleScreenController {
      * action if it is not their turn
      */
     public void onUseAbilityClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
+        if (clietPlayerNumber == ) {
             System.out.println("Use Ability Clicked");
         } else {
             notTurn();

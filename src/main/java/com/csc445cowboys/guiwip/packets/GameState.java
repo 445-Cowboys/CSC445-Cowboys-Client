@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.packets;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameState extends Packet {
 
@@ -84,6 +85,10 @@ public class GameState extends Packet {
 
     public int getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public AtomicInteger getCurrentPlayerAtomic() {
+        return new AtomicInteger(currentPlayer);
     }
 
     public int getBlockNum() {
