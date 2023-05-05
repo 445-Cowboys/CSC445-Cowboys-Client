@@ -29,23 +29,23 @@ public class MainLobbyController {
     public Label main_server_status_label;
     public Label server2_name_label;
     public Label server3_name_label;
-    public Label serve3_status_label;
-    public Label server2_status_label;
-    public Label server1_status_label;
+    public static Label serve3_status_label;
+    public static Label server2_status_label;
+    public static Label server1_status_label;
     public Label players_in_game_label;
     public Label player_in_main_lobby_label;
     public BattleScreenController battleScreenController;
-    public Label lobby1_curr_players_label;
-    public Label lobby1_game_status_label;
-    public Label lobby2_curr_players_label1;
-    public Label lobby2_game_status_label;
-    public Label lobby3_game_status_label;
-    public Label lobby3_curr_players_label;
+    public static Label lobby1_curr_players_label;
+    public static Label lobby1_game_status_label;
+    public static Label lobby2_curr_players_label1;
+    public static Label lobby2_game_status_label;
+    public static Label lobby3_game_status_label;
+    public static Label lobby3_curr_players_label;
     public TextArea main_menu_act_writer;
     private Scene scene;
     private final int[] server_status_int = new int[3];
     private final int[] lobby_status = new int[3];
-    Lock lock = new ReentrantLock();
+    static Lock lock = new ReentrantLock();
 
 
 
@@ -84,19 +84,19 @@ public class MainLobbyController {
         }
     }
 
-    public void setLobby1(int curr_players, String game_status) {
+    public static void setLobby1(int curr_players, String game_status) {
         lobby1_curr_players_label.setText(String.valueOf(curr_players));
         lobby1_game_status_label.setText(game_status);
         lobby1_curr_players = curr_players;
     }
 
-    public void setLobby2(int curr_players, String game_status) {
+    public static void setLobby2(int curr_players, String game_status) {
         lobby2_curr_players_label1.setText(String.valueOf(curr_players));
         lobby2_game_status_label.setText(game_status);
         lobby2_curr_players = curr_players;
     }
 
-    public void setLobby3(int curr_players, String game_status) {
+    public static void setLobby3(int curr_players, String game_status) {
         lobby3_curr_players_label.setText(String.valueOf(curr_players));
         lobby3_game_status_label.setText(game_status);
         lobby3_curr_players = curr_players;
@@ -139,7 +139,7 @@ public class MainLobbyController {
         Alerts.displayAlert("Game is full", "The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION);
     }
 
-    public String serverStatusFromN(int n) {
+    public static String serverStatusFromN(int n) {
         return switch (n) {
             case 0 -> "Offline";  // Server is reporting server as offline
             case 1 -> "Main";  // Server is elected leader in zookeeper
@@ -148,7 +148,7 @@ public class MainLobbyController {
         };
     }
 
-    public String roomStatusFromN(int n) {
+    public static String roomStatusFromN(int n) {
         return switch (n) {
             case 0 -> "Waiting for Players";
             case 1 -> "Game in Progress";
@@ -158,7 +158,7 @@ public class MainLobbyController {
     }
 
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
-    public void setGameRooms(GameRooms gameRooms) {
+    public static void setGameRooms(GameRooms gameRooms) {
         // Update Server Status Labels
         lock.lock();
         server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));
@@ -175,12 +175,6 @@ public class MainLobbyController {
     public void exitGameButton(ActionEvent actionEvent) {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
         System.exit(0);
-    }
-
-    public void SetServerNames(ServerConfig sc) {
-        server1_name_label.setText(ServerConfig.SERVER_NAMES[0]);
-        server2_name_label.setText(ServerConfig.SERVER_NAMES[1]);
-        server3_name_label.setText(ServerConfig.SERVER_NAMES[2]);
     }
 
     public int getServer_status_val(int i, int s) {

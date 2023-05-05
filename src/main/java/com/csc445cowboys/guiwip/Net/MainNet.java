@@ -80,23 +80,18 @@ public class MainNet implements Runnable {
     @Override
     public void run() {
         for(;;){
-            // Will always fail on first attempt and attempt to round robin find a server
+            // Will always fail on first attempt and attempt to round-robin find a server
             while (this.connected.get()){
-                // Set Heartbeack to 60 seconds
+                // Set Heartbeat to 60 seconds
                 this.timeout.set(1000 * 60);
                 try {
-                    Thread heartbeat = new Thread(new Heartbeat(sa));
-                    heartbeat.start();
-                    packetReceive();  // Attempt to receive a packet from the server, will timeout after 60 seconds
-                    if (receivedData.get(0) == 5) {  // If a packet is received, check if it is a @GameRooms packet
-                        mainLobbyController.setGameRooms(new GameRooms(receivedData));  // Update the game rooms frame
-                        System.out.println("Game Rooms Updated");
-                    }
+                    packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
+                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData));
+                    thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
                     this.connected.set(false);
-
-                } catch (ExecutionException | InterruptedException | IOException e) {
+                } catch (ExecutionException | InterruptedException | RuntimeException | IOException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
             }

@@ -1,11 +1,10 @@
 package com.csc445cowboys.guiwip.packets;
 
-public abstract class Packet implements Runnable{
+import java.net.SocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+
+public abstract class Packet {
     public abstract int getOpcode();
 
-
-    @Override
-    public void run() {
-        System.out.println("Packet received");
-    }
 }

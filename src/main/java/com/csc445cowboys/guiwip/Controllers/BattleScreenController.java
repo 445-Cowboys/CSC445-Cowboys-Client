@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,9 +26,9 @@ public class BattleScreenController {
     public Button action_user_fire_button;
     public Button action_user_reload_button;
     public Label boss_weapon_type_label;
-    public Label boss_curr_health_label;
+    public static Label boss_curr_health_label;
     public Label boss_max_health_label;
-    public Label boss_curr_ammo_label;
+    public static Label boss_curr_ammo_label;
     public Label boss_max_ammo_label;
     public Label boss_ability_label;
     public Label boss_ability_status;
@@ -36,9 +37,9 @@ public class BattleScreenController {
     public Label player1_name_label;
     public ImageView player1_picture;
     public Label player1_weapon_type_label;
-    public Label player1_curr_health_label;
+    public static Label player1_curr_health_label;
     public Label player1_max_health_label;
-    public Label player1_curr_ammo_label;
+    public static Label player1_curr_ammo_label;
     public Label player1_max_ammo_label;
     public Label player1_ability_label;
     public Label player1_ability_status1;
@@ -46,9 +47,9 @@ public class BattleScreenController {
     public Label player2_name_label;
     public ImageView player2_picture;
     public Label player2_weapon_type_label;
-    public Label player2_curr_health_label;
+    public static Label player2_curr_health_label;
     public Label player2_max_health_label;
-    public Label player2_curr_ammo_label;
+    public static Label player2_curr_ammo_label;
     public Label player2_max_ammo_label;
     public Label player2_ability_label;
     public Label player2_ability_status1;
@@ -56,24 +57,28 @@ public class BattleScreenController {
     public Label player3_name_label;
     public ImageView player3_picture;
     public Label player3_weapon_type_label;
-    public Label player3_curr_health_label;
+    public static Label player3_curr_health_label;
     public Label player3_max_health_label;
-    public Label player3_curr_ammo_label;
+    public static Label player3_curr_ammo_label;
     public Label player3_max_ammo_label;
     public Label player3_ability_label;
     public Label player3_ability_status1;
     public VBox boss_frame;
     public Label boss_name_label;
     public ImageView boss_picture;
-    public Label round_indicator;
+    public static Label round_indicator;
     public MainLobbyController mainLobbyController;
-    public Label curr_server_name_label;
-    public Label curr_player_label;
-    private int playerTurn;
+    public static Label curr_server_name_label;
+    public static Label curr_player_label;
+    private static int playerTurn;
     private int clientPlayer;
     private Scene scene;
-    Lock lock = new ReentrantLock();
+    static Lock lock = new ReentrantLock();
 
+    /*
+    * Called when the player clicks the use ability button, it will block the players
+    * action if it is not their turn
+     */
     public void onUseAbilityClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Use Ability Clicked");
@@ -83,12 +88,19 @@ public class BattleScreenController {
         }
     }
 
+    /*
+    * Called when the player clicks the leave game button, it will block the players
+     */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
         mainLobbyController.getGameSession().leaveGame();
         OpenMainMenuScreen(actionEvent);
     }
 
+    /*
+    * Called when the player clicks the fire button, it will block the players
+    * action if it is not their turn
+     */
     public void onFireClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Fire Clicked");
@@ -98,6 +110,10 @@ public class BattleScreenController {
         }
     }
 
+    /*
+    * Called when the player clicks the reload button, it will block the players
+    * action if it is not their turn
+     */
     public void onReloadClick(ActionEvent actionEvent) {
         if (clientPlayer == playerTurn) {
             System.out.println("Reload Clicked");
@@ -107,6 +123,11 @@ public class BattleScreenController {
         }
     }
 
+    /*
+    *  Called upon initial game instantiation, sets the bosses fields
+    *  according to the bosses stats
+    * TODO set the bosses fields according to the bosses stats, based on int catalog value from GameStartPacket
+     */
     public void setBossFields() {
         boss_name_label.setText("Boss");
         boss_weapon_type_label.setText("Weapon Type");
@@ -182,7 +203,7 @@ public class BattleScreenController {
         setPlayer3Fields();
     }
 
-    public void appendTextToWriter(String text) {
+    public static void appendTextToWriter(String text) {
         // If Last not \n
         if (!text.endsWith("\n")) {
             text = text.concat("\n");
@@ -199,30 +220,28 @@ public class BattleScreenController {
         stage.setScene(scene);
     }
 
-
-    public void updateFromGameStatePacket(GameState gs) {
-        // Boss Stats
+    public static void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
         boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
         // Player Stats
         // Player 1
-        player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
-        player1_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(1)));
+        player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(0)));
+        player1_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(0)));
         // Player 2
-        player2_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
-        player2_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
+        player2_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
+        player2_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(1)));
         // Player 3
-        player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(3)));
-        player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(3)));
+        player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
+        player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
         playerTurn = gs.getCurrentPlayer();
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
         round_indicator.setText(String.valueOf(gs.getBlockNum()));
         // TODO - Implement current player label
-        curr_player_label.setText("NOT IMPLEMENTED");
+        curr_player_label.setText(Integer.toString(playerTurn));
         // TODO - Implement server name label
-        curr_server_name_label.setText("NOT IMPLEMENTED");
+        curr_server_name_label.setText(sa.toString());
         appendTextToWriter(s);
         lock.unlock();
     }

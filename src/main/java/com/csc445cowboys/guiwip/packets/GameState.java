@@ -23,7 +23,6 @@ public class GameState extends Packet {
     private final String actionMessage;
 
     public GameState(ByteBuffer buffer) {
-
         int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
