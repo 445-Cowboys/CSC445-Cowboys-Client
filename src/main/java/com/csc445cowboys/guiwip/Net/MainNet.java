@@ -88,6 +88,10 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
+                    PacketHandler packetHandler = new PacketHandler(this.sa, this.receivedData,this);  // start a new thread to handle the packet
+                    if(this.gameLocked.get()){
+                        packetHandler.AddRoom(MainLobbyController.GameRoom);
+                    }
                     Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData,this));  // start a new thread to handle the packet
                     thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,

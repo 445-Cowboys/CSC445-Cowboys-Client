@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -36,10 +37,15 @@ public class MainLobbyController {
     public static Label lobby3_game_status_label;
     public static Label lobby3_curr_players_label;
     public static TextArea main_menu_act_writer;
-    private static   Scene scene;
-    private final int[] server_status_int = new int[3];
-    private final int[] lobby_status = new int[3];
+    private static Scene scene;
     static Lock lock = new ReentrantLock();
+    static ActionEvent actionEvent;
+    public static AtomicInteger GameRoom = new AtomicInteger(0);
+
+
+    public static AtomicInteger getGameRoom() {
+        return GameRoom;
+    }
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToWriter("Attempting to Enter Lobby 1...");
@@ -48,18 +54,23 @@ public class MainLobbyController {
             gameFullAlert();
         } else {
             appendToWriter("Lobby 1 is not full, attempting to join...");
-
+            GameRoom.set(0);
+            setActionEvent(actionEvent);
         }
     }
 
+    public void setActionEvent(ActionEvent actionEvent) {
+        MainLobbyController.actionEvent = actionEvent;
+    }
     public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToWriter("Attempting to Enter Lobby 2...");
         if (checkFull(lobby2_curr_players)) {
             appendToWriter("Lobby 2 is full,cannot join...");
             gameFullAlert();
-
         } else {
             appendToWriter("Lobby 2 is not full, attempting to join...");
+            GameRoom.set(1);
+            setActionEvent(actionEvent);
         }
     }
 
@@ -70,6 +81,8 @@ public class MainLobbyController {
             appendToWriter("Lobby 3 is full, cannot join.");
         } else {
             appendToWriter("Lobby 3 is not full, attempting to join...");
+            GameRoom.set(2);
+            setActionEvent(actionEvent);
         }
     }
 
@@ -101,10 +114,17 @@ public class MainLobbyController {
         scene = battle;
     }
 
-    public void OpenBattleScreen(ActionEvent actionEvent, int l) throws IOException {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setTitle("Battling: Game Room " + l);
-        stage.setScene(scene);
+    /*
+    *   Attempts to open the battle screen
+     */
+    public static void OpenBattleScreen(ActionEvent actionEvent, AtomicInteger l) throws IOException {
+        try {
+            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            stage.setTitle("Battling: Game Room " + l);
+            stage.setScene(scene);
+        } catch (Exception e) {
+            MainLobbyController.appendToWriter("Error opening battle screen: " + e.getMessage());
+        }
     }
 
     public void gameFullAlert() {
@@ -149,7 +169,7 @@ public class MainLobbyController {
         System.exit(0);
     }
 
-    public  void appendToWriter(String s) {
+    public static void appendToWriter(String s) {
         System.out.println(s);
 //        main_menu_act_writer.appendText(s+"\n");
     }

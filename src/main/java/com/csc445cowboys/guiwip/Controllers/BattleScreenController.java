@@ -196,6 +196,7 @@ public class BattleScreenController {
 
     /*
      * Called when the player clicks the leave game button, it will block the players
+     * TODO Implement leave handling to server
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         System.out.println("Leave Game Clicked");
