@@ -86,7 +86,7 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData));
+                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData));  // start a new thread to handle the packet
                     thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -115,7 +115,7 @@ public class MainNet implements Runnable {
      * --> If retries > MAX_RETRIES, attempt to connect to next server
      * --> If no servers are available, exit the program
      * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
-     */
+     * TODO Make it so it tries each server and round robins*/
     public Boolean roundRobinServerFind() {
         // Server Round Robin to attempt to connect to a server
         for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {

@@ -43,22 +43,11 @@ public class GuiTester {
         stage.show();
     }
 
-    public void setAllFields() {
-        this.battleScreenController.setPlayer1Fields();
-        this.battleScreenController.setPlayer2Fields();
-        this.battleScreenController.setPlayer3Fields();
-        this.battleScreenController.setBossFields();
-        this.battleScreenController.setBossImage("file:src/main/resources/com/csc445cowboys/guiwip/img/boss_angel.jpeg");
-        this.battleScreenController.setPlayer1Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_grit.jpeg");
-        this.battleScreenController.setPlayer2Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_jango.jpeg");
-        this.battleScreenController.setPlayer3Image("file:src/main/resources/com/csc445cowboys/guiwip/img/player_no_name.jpeg");
-    }
-
     public void writerAppend() {
         // iterate 50 times with random actions
         for (int i = 0; i < 50; i++) {
             // Get random bytes
-            this.battleScreenController.appendTextToWriter("Player 1 attacks Boss for 10 damage!\n");
+            BattleScreenController.appendTextToWriter("Player 1 attacks Boss for 10 damage!\n");
         }
     }
 }

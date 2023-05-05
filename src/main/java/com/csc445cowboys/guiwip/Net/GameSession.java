@@ -15,8 +15,7 @@ import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.*;
 
-public class GameSession implements Runnable {
-    ServerConfig serverConfig = new ServerConfig();
+public class GameSession  {
     ByteBuffer buf;
     DatagramChannel client;
     InetSocketAddress serverAddress;
@@ -78,27 +77,6 @@ public class GameSession implements Runnable {
     public void leaveGame() throws IOException {
         // TODO : Implement LEAVE ROOM COURTESY ACK
         client.close();
-    }
-
-    @Override
-    public void run() {
-        // If game State packet
-        if (buf.getInt(0) == 9) {
-            try {
-                client.receive(buf);
-                buf = ByteBuffer.wrap(aead.decrypt(buf.array()));
-                GameState gameState = new GameState(buf);
-                // Put in a lock here for safety
-                battleScreenController.updateFromGameStatePacket(gameState);
-            } catch (GeneralSecurityException | IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    // Get Game Start
-    public GameStart getGameStart() {
-        return gameStart;
     }
 
     public void fire() {

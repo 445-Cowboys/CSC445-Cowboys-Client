@@ -57,7 +57,7 @@ public class MainLobbyController {
 
         } else {
             appendToWriter("Lobby 1 is not full, attempting to join...");
-            JoinGame2(actionEvent, 1);
+
         }
     }
 
@@ -69,7 +69,6 @@ public class MainLobbyController {
 
         } else {
             appendToWriter("Lobby 2 is not full, attempting to join...");
-            JoinGame2(actionEvent, 2);
         }
     }
 
@@ -80,7 +79,6 @@ public class MainLobbyController {
             appendToWriter("Lobby 3 is full, cannot join.");
         } else {
             appendToWriter("Lobby 3 is not full, attempting to join...");
-            JoinGame2(actionEvent, 3);
         }
     }
 
@@ -102,18 +100,6 @@ public class MainLobbyController {
         lobby3_curr_players = curr_players;
     }
 
-
-
-    public void JoinGame2(ActionEvent actionEvent, int n) throws IOException, GeneralSecurityException, TimeoutException {
-        gameSession = new GameSession(battleScreenController, n);
-        if(gameSession.requestJoin(n)){
-            battleScreenController.updateFromGameStartPacket(gameSession.getGameStart());
-            battleScreenController.setGameSession(gameSession);
-            OpenBattleScreen(actionEvent, n);
-        }   else{
-            appendToWriter("Failed to join game.");
-        }
-    };
 
 
     public boolean checkFull(int curr_players) {

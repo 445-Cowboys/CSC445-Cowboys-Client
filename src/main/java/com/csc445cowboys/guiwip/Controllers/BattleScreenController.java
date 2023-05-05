@@ -21,114 +21,64 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BattleScreenController {
+    public static Label boss_curr_health_label;
+    public static Label boss_curr_ammo_label;
+    public static TextArea activity_writer;
+    public static Label player1_curr_health_label;
+    public static Label player1_curr_ammo_label;
+    public static Label player2_curr_health_label;
+    public static Label player2_curr_ammo_label;
+    public static Label player3_curr_health_label;
+    public static Label player3_curr_ammo_label;
+    public static Label round_indicator;
+    public static Label curr_server_name_label;
+    public static Label curr_player_label;
+    static Lock lock = new ReentrantLock();
+    private static int playerTurn;
     public Button action_user_ability_button;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
     public Button action_user_reload_button;
-    public Label boss_weapon_type_label;
-    public static Label boss_curr_health_label;
-    public Label boss_max_health_label;
-    public static Label boss_curr_ammo_label;
-    public Label boss_max_ammo_label;
-    public Label boss_ability_label;
-    public Label boss_ability_status;
-    public TextArea activity_writer;
+    public static Label boss_weapon_type_label;
+    public static Label boss_max_health_label;
+    public static Label boss_max_ammo_label;
+    public static Label boss_ability_label;
+    public static Label boss_ability_status;
     public VBox player1_frame;
-    public Label player1_name_label;
-    public ImageView player1_picture;
-    public Label player1_weapon_type_label;
-    public static Label player1_curr_health_label;
-    public Label player1_max_health_label;
-    public static Label player1_curr_ammo_label;
-    public Label player1_max_ammo_label;
-    public Label player1_ability_label;
-    public Label player1_ability_status1;
-    public VBox player2_frame;
-    public Label player2_name_label;
-    public ImageView player2_picture;
-    public Label player2_weapon_type_label;
-    public static Label player2_curr_health_label;
-    public Label player2_max_health_label;
-    public static Label player2_curr_ammo_label;
-    public Label player2_max_ammo_label;
-    public Label player2_ability_label;
-    public Label player2_ability_status1;
-    public VBox player3_frame;
-    public Label player3_name_label;
-    public ImageView player3_picture;
-    public Label player3_weapon_type_label;
-    public static Label player3_curr_health_label;
-    public Label player3_max_health_label;
-    public static Label player3_curr_ammo_label;
-    public Label player3_max_ammo_label;
-    public Label player3_ability_label;
-    public Label player3_ability_status1;
+    public static Label player1_name_label;
+    public static ImageView player1_picture;
+    public static Label player1_weapon_type_label;
+    public static Label player1_max_health_label;
+    public static Label player1_max_ammo_label;
+    public static Label player1_ability_label;
+    public static Label player1_ability_status1;
+    public static Label player2_name_label;
+    public static ImageView player2_picture;
+    public static Label player2_weapon_type_label;
+    public static Label player2_max_health_label;
+    public static Label player2_max_ammo_label;
+    public static Label player2_ability_label;
+    public static Label player2_ability_status1;
+    public static Label player3_name_label;
+    public static ImageView player3_picture;
+    public static Label player3_weapon_type_label;
+    public static Label player3_max_health_label;
+    public static Label player3_max_ammo_label;
+    public static Label player3_ability_label;
+    public static Label player3_ability_status1;
     public VBox boss_frame;
-    public Label boss_name_label;
-    public ImageView boss_picture;
-    public static Label round_indicator;
-    public MainLobbyController mainLobbyController;
-    public static Label curr_server_name_label;
-    public static Label curr_player_label;
-    private static int playerTurn;
+    public static Label boss_name_label;
+    public static ImageView boss_picture;
+    public static MainLobbyController mainLobbyController;
     private int clientPlayer;
     private Scene scene;
-    static Lock lock = new ReentrantLock();
 
     /*
-    * Called when the player clicks the use ability button, it will block the players
-    * action if it is not their turn
+     *  Called upon initial game instantiation, sets the bosses fields
+     *  according to the bosses stats
+     * TODO set the bosses fields according to the bosses stats, based on int catalog value from GameStartPacket
      */
-    public void onUseAbilityClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
-            System.out.println("Use Ability Clicked");
-            mainLobbyController.getGameSession().useAbility();
-        } else {
-            notTurn();
-        }
-    }
-
-    /*
-    * Called when the player clicks the leave game button, it will block the players
-     */
-    public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
-        System.out.println("Leave Game Clicked");
-        mainLobbyController.getGameSession().leaveGame();
-        OpenMainMenuScreen(actionEvent);
-    }
-
-    /*
-    * Called when the player clicks the fire button, it will block the players
-    * action if it is not their turn
-     */
-    public void onFireClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
-            System.out.println("Fire Clicked");
-            mainLobbyController.getGameSession().fire();
-        } else {
-            notTurn();
-        }
-    }
-
-    /*
-    * Called when the player clicks the reload button, it will block the players
-    * action if it is not their turn
-     */
-    public void onReloadClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
-            System.out.println("Reload Clicked");
-            mainLobbyController.getGameSession().reload();
-        } else {
-            notTurn();
-        }
-    }
-
-    /*
-    *  Called upon initial game instantiation, sets the bosses fields
-    *  according to the bosses stats
-    * TODO set the bosses fields according to the bosses stats, based on int catalog value from GameStartPacket
-     */
-    public void setBossFields() {
+    public static void setBossFields(GameStart gameStart) {
         boss_name_label.setText("Boss");
         boss_weapon_type_label.setText("Weapon Type");
         boss_curr_health_label.setText("Current Health");
@@ -140,7 +90,7 @@ public class BattleScreenController {
         boss_picture.setImage(null);
     }
 
-    public void setPlayer1Fields() {
+    public static void setPlayer1Fields(GameStart gameStart) {
         player1_name_label.setText("Player 1");
         player1_weapon_type_label.setText("Weapon Type");
         player1_curr_health_label.setText("Current Health");
@@ -152,7 +102,7 @@ public class BattleScreenController {
         player1_picture.setImage(null);
     }
 
-    public void setPlayer2Fields() {
+    public static void setPlayer2Fields(GameStart gameStart) {
         player2_name_label.setText("Player 2");
         player2_weapon_type_label.setText("Weapon Type");
         player2_curr_health_label.setText("Current Health");
@@ -164,7 +114,7 @@ public class BattleScreenController {
         player2_picture.setImage(null);
     }
 
-    public void setPlayer3Fields() {
+    public static void setPlayer3Fields(GameStart gameStart) {
         player3_name_label.setText("Player 3");
         player3_weapon_type_label.setText("Weapon Type");
         player3_curr_health_label.setText("Current Health");
@@ -176,31 +126,11 @@ public class BattleScreenController {
         player3_picture.setImage(null);
     }
 
-    public void setBossImage(String path) {
-        Image image = new Image(path);
-        boss_picture.setImage(image);
-    }
-
-    public void setPlayer1Image(String path) {
-        Image image = new Image(path);
-        player1_picture.setImage(image);
-    }
-
-    public void setPlayer2Image(String path) {
-        Image image = new Image(path);
-        player2_picture.setImage(image);
-    }
-
-    public void setPlayer3Image(String path) {
-        Image image = new Image(path);
-        player3_picture.setImage(image);
-    }
-
-    public void setAllFields() {
-        setBossFields();
-        setPlayer1Fields();
-        setPlayer2Fields();
-        setPlayer3Fields();
+    public static void setAllFields(GameStart gameStart) {
+        setBossFields(gameStart);
+        setPlayer1Fields(gameStart);
+        setPlayer2Fields(gameStart);
+        setPlayer3Fields(gameStart);
     }
 
     public static void appendTextToWriter(String text) {
@@ -211,15 +141,22 @@ public class BattleScreenController {
         activity_writer.appendText(text);
     }
 
-    public void setMainScreen(Scene mainMenuScene) {
-        scene = mainMenuScene;
+    /*
+        *  Called upon receiving a GameStartPacket, sets the fields according ot the Character library
+        * according to the GameStartPacket
+        *
+     */
+    public static void setGameStart(GameStart gameStart, SocketAddress sa) {
+        lock.lock();
+        setAllFields(gameStart);
+        lock.unlock();
     }
 
-    public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-    }
-
+    /*
+        *  Called upon receiving a GameStatePacket, updates the fields
+        * according to the GameStatePacket
+        * May be some issues with parsing
+     */
     public static void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
@@ -246,6 +183,83 @@ public class BattleScreenController {
         lock.unlock();
     }
 
+    /*
+     * Called when the player clicks the use ability button, it will block the players
+     * action if it is not their turn
+     */
+    public void onUseAbilityClick(ActionEvent actionEvent) {
+        if (clientPlayer == playerTurn) {
+            System.out.println("Use Ability Clicked");
+            mainLobbyController.getGameSession().useAbility();
+        } else {
+            notTurn();
+        }
+    }
+
+    /*
+     * Called when the player clicks the leave game button, it will block the players
+     */
+    public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
+        System.out.println("Leave Game Clicked");
+        mainLobbyController.getGameSession().leaveGame();
+        OpenMainMenuScreen(actionEvent);
+    }
+
+    /*
+     * Called when the player clicks the fire button, it will block the players
+     * action if it is not their turn
+     */
+    public void onFireClick(ActionEvent actionEvent) {
+        if (clientPlayer == playerTurn) {
+            System.out.println("Fire Clicked");
+            mainLobbyController.getGameSession().fire();
+        } else {
+            notTurn();
+        }
+    }
+
+    /*
+     * Called when the player clicks the reload button, it will block the players
+     * action if it is not their turn
+     */
+    public void onReloadClick(ActionEvent actionEvent) {
+        if (clientPlayer == playerTurn) {
+            System.out.println("Reload Clicked");
+            mainLobbyController.getGameSession().reload();
+        } else {
+            notTurn();
+        }
+    }
+
+    public void setBossImage(String path) {
+        Image image = new Image(path);
+        boss_picture.setImage(image);
+    }
+
+    public void setPlayer1Image(String path) {
+        Image image = new Image(path);
+        player1_picture.setImage(image);
+    }
+
+    public void setPlayer2Image(String path) {
+        Image image = new Image(path);
+        player2_picture.setImage(image);
+    }
+
+    public void setPlayer3Image(String path) {
+        Image image = new Image(path);
+        player3_picture.setImage(image);
+    }
+
+    public void setMainScreen(Scene mainMenuScene) {
+        scene = mainMenuScene;
+    }
+
+    public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+    }
+
     public void setMainLobbyController(MainLobbyController mainLobbyController) {
         this.mainLobbyController = mainLobbyController;
     }
@@ -253,14 +267,6 @@ public class BattleScreenController {
     private void notTurn() {
         // Disable all buttons
         Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
-    }
-
-    // TODO - Implement game start packet update
-    public void updateFromGameStartPacket(GameStart gameStart) {
-
-    }
-
-    public void setGameSession(GameSession gameSession) {
     }
 
 }

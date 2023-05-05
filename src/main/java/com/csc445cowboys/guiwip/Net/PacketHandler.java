@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 
 import java.io.IOException;
@@ -30,16 +31,13 @@ public class PacketHandler implements Runnable {
     // doesn't really need to do anything else
     @Override
     public void run() {
-    switch(this.packet.get()){
-        case 4: // GAME START PACKET
-            BattleScreenController.
-            break;
-        case 5:  // GAME ROOMS PACKET
-            MainLobbyController.setGameRooms(new GameRooms(this.packet));
-            break;
-        case 9: // GAME STATE PACKET
-            BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
-            break;
-    }
+        switch (this.packet.get()) {
+            case 4 -> // GAME START PACKET
+                    BattleScreenController.setGameStart(new GameStart(this.packet), this.sa);
+            case 5 ->  // GAME ROOMS PACKET
+                    MainLobbyController.setGameRooms(new GameRooms(this.packet));
+            case 9 -> // GAME STATE PACKET
+                    BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
+        }
     }
 }
