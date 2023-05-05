@@ -129,7 +129,7 @@ public class MainNet implements Runnable {
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToWriter("Server is awake");
-                        mainLobbyController.setGameRooms(new GameRooms(receivedData));
+                        MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                         this.retries.set(1);

@@ -47,8 +47,6 @@ public class MainLobbyController {
     private final int[] lobby_status = new int[3];
     static Lock lock = new ReentrantLock();
 
-
-
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToWriter("Attempting to Enter Lobby 1...");
         if (checkFull(lobby1_curr_players)) {
@@ -161,22 +159,6 @@ public class MainLobbyController {
     public void exitGameButton(ActionEvent actionEvent) {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
         System.exit(0);
-    }
-
-    public int getServer_status_val(int i, int s) {
-        return this.server_status_int[i];
-    }
-
-    public void setServer_status_int(int i, int s) {
-        this.server_status_int[i] = s;
-    }
-
-    public int getLobby_status(int i, int s) {
-        return this.lobby_status[i];
-    }
-
-    public void setLobby_status(int i, int s) {
-        this.lobby_status[i] = s;
     }
 
     public GameSession getGameSession() {
