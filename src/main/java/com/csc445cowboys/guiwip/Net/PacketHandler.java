@@ -19,7 +19,6 @@ public class PacketHandler implements Runnable {
     ByteBuffer packet;
     DatagramChannel channel;
     SocketAddress sa;
-    AtomicInteger programState;
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
         try {
@@ -46,14 +45,14 @@ public class PacketHandler implements Runnable {
     @Override
     public void run() {
         try {
-            switch (this.programState.get()) {
+            switch (MainNet.programState.get()) {
                 case 0 -> MainMenuContext();
                 case 1 -> GameRequestedContext();
                 case 2 -> InGameContext();
             }
         } catch (GeneralSecurityException | IOException e) {
             System.out.println("Failed to handle packet");
-            if(this.programState.get() == 2 | this.programState.get() == 1){
+            if(MainNet.programState.get() == 2 | MainNet.programState.get() == 1){
                 MainNet.voidGameSession();
             }
         }
