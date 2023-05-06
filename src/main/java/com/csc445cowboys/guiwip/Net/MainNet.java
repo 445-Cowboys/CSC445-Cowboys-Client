@@ -40,7 +40,7 @@ public class MainNet implements Runnable {
     public MainNet() throws IOException, GeneralSecurityException {
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
-        channel.configureBlocking(false);
+        channel.configureBlocking(true);
         System.out.println("Client bound to port: " + channel.getLocalAddress());
         aead = new AEAD();
     }
