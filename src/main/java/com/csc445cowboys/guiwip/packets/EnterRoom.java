@@ -5,53 +5,49 @@ import java.nio.ByteBuffer;
 public class EnterRoom extends Packet {
 
     /*
-    07 <Room they are entering> 0 <String of username>
+    07 <Room they are entering> 0 <Port Number of Client> 0 <String of username>
     */
 
     private final byte[] data;
     private final int roomNum;
+    private final int portNum;
     private final String userName;
 
 
     public EnterRoom(ByteBuffer buffer) {
 
-        int totalLength = buffer.limit();
+    int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
         this.roomNum = buffer.getInt(1);
         int offset = 6;
-
+        buffer.position(offset);
+        this.portNum = buffer.getInt(offset);
+        offset = 11;
+        buffer.position(offset);
         byte[] userNameBytes = new byte[totalLength - offset];
         buffer.position(offset);
         buffer.get(userNameBytes, 0, userNameBytes.length);
         userName = new String(userNameBytes);
-
     }
 
-
-    public EnterRoom(int roomNum, String userName) {
-        this.roomNum = roomNum;
-        this.userName = userName;
-        data = toBytes();
-    }
 
     @Override
-    public int getOpcode() {
+    public int getOpcode(){
         return 9;
     }
 
-    public int getRoomNum() {
+    public int getRoomNum(){
         return roomNum;
     }
 
-    public String getuserName() {
+    public int getPortNum() {
+        return portNum;
+    }
+
+    public String getuserName(){
         return userName;
     }
-
-    public byte[] toBytes() {
-        return this.data;
-    }
-
 
 }

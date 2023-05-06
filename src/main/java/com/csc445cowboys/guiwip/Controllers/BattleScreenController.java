@@ -1,5 +1,8 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Net.MainNet;
+import com.csc445cowboys.guiwip.Net.PacketHandler;
+import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
@@ -34,17 +37,11 @@ public class BattleScreenController {
     public static Label round_indicator;
     public static Label curr_server_name_label;
     public static Label curr_player_label;
-    static Lock lock = new ReentrantLock();
-    public Button action_user_ability_button;
-    public Button action_user_leave_button;
-    public Button action_user_fire_button;
-    public Button action_user_reload_button;
     public static Label boss_weapon_type_label;
     public static Label boss_max_health_label;
     public static Label boss_max_ammo_label;
     public static Label boss_ability_label;
     public static Label boss_ability_status;
-    public VBox player1_frame;
     public static Label player1_name_label;
     public static ImageView player1_picture;
     public static Label player1_weapon_type_label;
@@ -66,13 +63,19 @@ public class BattleScreenController {
     public static Label player3_max_ammo_label;
     public static Label player3_ability_label;
     public static Label player3_ability_status1;
-    public VBox boss_frame;
     public static Label boss_name_label;
     public static ImageView boss_picture;
+    static Lock lock = new ReentrantLock();
     static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
     static AtomicInteger roundNumber = new AtomicInteger(0);
     static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
     private static Scene scene;
+    public Button action_user_ability_button;
+    public Button action_user_leave_button;
+    public Button action_user_fire_button;
+    public Button action_user_reload_button;
+    public VBox player1_frame;
+    public VBox boss_frame;
 
     /*
      *  Called upon initial game instantiation, sets the bosses fields
@@ -143,9 +146,9 @@ public class BattleScreenController {
     }
 
     /*
-        *  Called upon receiving a GameStartPacket, sets the fields according ot the Character library
-        * according to the GameStartPacket
-        *
+     *  Called upon receiving a GameStartPacket, sets the fields according ot the Character library
+     * according to the GameStartPacket
+     *
      */
     public static void setGameStart(GameStart gameStart, SocketAddress sa) {
         lock.lock();
@@ -155,9 +158,9 @@ public class BattleScreenController {
     }
 
     /*
-        *  Called upon receiving a GameStatePacket, updates the fields
-        * according to the GameStatePacket
-        * May be some issues with parsing
+     *  Called upon receiving a GameStatePacket, updates the fields
+     * according to the GameStatePacket
+     * May be some issues with parsing
      */
     public static void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
@@ -188,9 +191,9 @@ public class BattleScreenController {
      * Called when the player clicks the use ability button, it will block the players
      * action if it is not their turn
      */
-    public void onUseAbilityClick(ActionEvent actionEvent) {
+    public void onUseAbilityClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            System.out.println("Use Ability Clicked");
+            new PacketHandler(MainNet.sa).sendActionPacket(0);
         } else {
             notTurn();
         }
@@ -201,7 +204,7 @@ public class BattleScreenController {
      * TODO Implement leave handling to server
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
-        System.out.println("Leave Game Clicked");
+        new PacketHandler(MainNet.sa).sendActionPacket(1);
         OpenMainMenuScreen(actionEvent);
     }
 
@@ -209,9 +212,9 @@ public class BattleScreenController {
      * Called when the player clicks the fire button, it will block the players
      * action if it is not their turn
      */
-    public void onFireClick(ActionEvent actionEvent) {
+    public void onFireClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            System.out.println("Fire Clicked");
+            new PacketHandler(MainNet.sa).sendActionPacket(2);
         } else {
             notTurn();
         }
@@ -221,9 +224,9 @@ public class BattleScreenController {
      * Called when the player clicks the reload button, it will block the players
      * action if it is not their turn
      */
-    public void onReloadClick(ActionEvent actionEvent) {
+    public void onReloadClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            System.out.println("Reload Clicked");
+            new PacketHandler(MainNet.sa).sendActionPacket(3);
         } else {
             notTurn();
         }

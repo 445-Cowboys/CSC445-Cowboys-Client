@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.EnterRoomAck;
+import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
 import javafx.event.ActionEvent;
@@ -20,7 +21,7 @@ public class PacketHandler implements Runnable {
     SocketAddress sa;
     AtomicInteger programState;
 
-    public PacketHandler(SocketAddress sa, ByteBuffer packet, AtomicInteger programState) throws IOException {
+    public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
         try {
             this.packet = packet.flip();  // May not need to actually flip?  TODO Look into this during testing
             this.sa = sa;
@@ -31,6 +32,14 @@ public class PacketHandler implements Runnable {
         }
     }
 
+    /*
+    Emty constructor
+     */
+    public PacketHandler(SocketAddress sa) throws IOException {
+        this.packet = ByteBuffer.allocate(1024);
+        this.sa = sa;
+        this.channel = DatagramChannel.open().bind(null);
+    }
 
     // Heartbeat sends a packet to the server every minute to let it know the client is still connected
     // doesn't really need to do anything else
@@ -77,12 +86,18 @@ public class PacketHandler implements Runnable {
     public void InGameContext() throws GeneralSecurityException {
         // Decrypt packet
         this.packet = ByteBuffer.wrap(MainNet.aead.decrypt(this.packet.array()));
-        switch (this.packet.get(0)) {
-            case 9 -> // GAME STATE PACKET
-                BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
-            default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
+        // GAME STATE PACKET
+        if (this.packet.get(0) == 9) {
+            BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
+        } else {
+            System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
         }
     }
 
     public void MainMenuContext(){}
+
+    public void sendActionPacket(int i) throws IOException {
+        this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
+        channel.send(packet, sa);
+    }
 }

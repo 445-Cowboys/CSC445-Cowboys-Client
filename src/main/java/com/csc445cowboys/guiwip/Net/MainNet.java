@@ -20,7 +20,7 @@ public class MainNet implements Runnable {
     final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
     ByteBuffer receivedData;
     DatagramChannel channel;
-    SocketAddress sa;
+    static public SocketAddress sa;
     static public AEAD aead;
     AtomicInteger timeout = new AtomicInteger(1000);
     AtomicInteger retries = new AtomicInteger(1);
@@ -32,8 +32,8 @@ public class MainNet implements Runnable {
     2 - In Game Context
      */
     static public byte[] SessionKey;
-    static AtomicInteger roomID = new AtomicInteger(-1);
-    static AtomicInteger programState = new AtomicInteger(0);
+    static public AtomicInteger roomID = new AtomicInteger(-1);
+    static public AtomicInteger programState = new AtomicInteger(0);
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
@@ -96,11 +96,12 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData, programState));  // start a new thread to handle the packet
+                    Thread thead = new Thread(new PacketHandler(sa, this.receivedData));  // start a new thread to handle the packet
                     thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
                     this.connected.set(false);
+                    voidGameSession();
                 } catch (ExecutionException | InterruptedException | RuntimeException | IOException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
@@ -141,7 +142,7 @@ public class MainNet implements Runnable {
                         MainLobbyController.appendToWriter2("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
-                        this.sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
+                        sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                         this.retries.set(1);
                         return true;
                     }
