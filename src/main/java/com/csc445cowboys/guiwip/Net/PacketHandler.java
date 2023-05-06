@@ -13,6 +13,8 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PacketHandler implements Runnable {
@@ -45,6 +47,15 @@ public class PacketHandler implements Runnable {
     @Override
     public void run() {
         try {
+            if(this.packet.get(0) == -1){
+                this.packet = new Factory().makeHeartbeatAckPacket();
+                channel.send(packet, sa);
+                // Time now
+                DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm:ss");
+                System.out.printf("Heartbeat sent to %s @ %s\n", sa.toString(),LocalDateTime.now().format(format));
+                return;
+            }
+
             switch (MainNet.programState.get()) {
                 case 0 -> MainMenuContext();
                 case 1 -> GameRequestedContext();
@@ -85,6 +96,7 @@ public class PacketHandler implements Runnable {
     public void InGameContext() throws GeneralSecurityException {
         // Decrypt packet
         this.packet = ByteBuffer.wrap(MainNet.aead.decrypt(this.packet.array()));
+        // TODO May need to flip after encryption/decryption??
         // GAME STATE PACKET
         if (this.packet.get(0) == 9) {
             BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
