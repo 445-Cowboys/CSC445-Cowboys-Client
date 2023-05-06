@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -176,11 +177,12 @@ public class BattleScreenController {
         player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
         // TODO - Implement round indicator
-        CurrentPlayer = gs.getCurrentPlayer();
+        int temp = gs.getCurrentPlayer();
+        serverPlayerNumber = new AtomicInteger(temp);
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
         round_indicator.setText(String.valueOf(gs.getBlockNum()));
         // TODO - Implement current player label
-        curr_player_label.setText(Integer.toString(CurrentPlayer));
+        curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
         // TODO - Implement server name label
         curr_server_name_label.setText(sa.toString());
         appendTextToWriter(s);
@@ -192,7 +194,7 @@ public class BattleScreenController {
      * action if it is not their turn
      */
     public void onUseAbilityClick(ActionEvent actionEvent) {
-        if (clietPlayerNumber == ) {
+        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
             System.out.println("Use Ability Clicked");
         } else {
             notTurn();
@@ -213,7 +215,7 @@ public class BattleScreenController {
      * action if it is not their turn
      */
     public void onFireClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
+        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
             System.out.println("Fire Clicked");
         } else {
             notTurn();
@@ -225,7 +227,7 @@ public class BattleScreenController {
      * action if it is not their turn
      */
     public void onReloadClick(ActionEvent actionEvent) {
-        if (clientPlayer == playerTurn) {
+        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
             System.out.println("Reload Clicked");
         } else {
             notTurn();
