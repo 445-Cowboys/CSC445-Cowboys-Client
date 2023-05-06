@@ -31,14 +31,9 @@ public class Main extends Application {
 
 
         MainLobbyController mainLobbyController = mainLdr.getController();  // Get Main Menu Controller
-        mainLobbyController.appendToWriter("Starting 445 Cowboys Client...");
-        mainLobbyController.appendToWriter("Yeehaw! Giddyup Cowboys!");
-
-        MainLobbyController.setBattleScreen(battleScene);  // Set Battle Screen Scene
+        MainLobbyController.appendToWriter("Starting 445 Cowboys Client...");
+        MainLobbyController.appendToWriter("Yeehaw! Giddyup Cowboys!");
         BattleScreenController battleScreenController = battle.getController();  // Get Battle Screen Controller
-        BattleScreenController.setMainScreen(mainMenuScene);  // Set Main Menu Scene
-//
-
 
         stage.setScene(mainMenuScene);  // Set Main Menu Scene to the Stage
         stage.setTitle("Main Menu");  // Set Stage Title

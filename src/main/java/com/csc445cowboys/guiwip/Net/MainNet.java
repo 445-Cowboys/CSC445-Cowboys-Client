@@ -1,8 +1,8 @@
 package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
-import com.csc445cowboys.guiwip.packets.EnterRoomAck;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.google.crypto.tink.Aead;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,6 +10,7 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.UnresolvedAddressException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,20 +22,29 @@ public class MainNet implements Runnable {
     ByteBuffer receivedData;
     DatagramChannel channel;
     SocketAddress sa;
+    static public AEAD aead;
     AtomicInteger timeout = new AtomicInteger(1000);
     AtomicInteger retries = new AtomicInteger(1);
-    AtomicBoolean inGame = new AtomicBoolean(false);
     AtomicBoolean connected = new AtomicBoolean(false);
-    AtomicBoolean gameLocked = new AtomicBoolean(false);
+    // Triggered when user attempts to enter a room
+    /*
+    0 - Main Lobby Context
+    1 - Game Requested Context
+    2 - In Game Context
+     */
+    static public byte[] SessionKey;
+    static AtomicInteger roomID = new AtomicInteger(-1);
+    static AtomicInteger programState = new AtomicInteger(0);
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
-    public MainNet(MainLobbyController mainLobbyController) throws IOException {
+    public MainNet(MainLobbyController mainLobbyController) throws IOException, GeneralSecurityException {
         this.mainLobbyController = mainLobbyController;
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
         channel.configureBlocking(false);
         System.out.println("Client bound to port: " + channel.getLocalAddress());
+        aead = new AEAD();
     }
 
     /**
@@ -88,11 +98,7 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    PacketHandler packetHandler = new PacketHandler(this.sa, this.receivedData,this);  // start a new thread to handle the packet
-                    if(this.gameLocked.get()){
-                        packetHandler.AddRoom(MainLobbyController.GameRoom);
-                    }
-                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData,this));  // start a new thread to handle the packet
+                    Thread thead = new Thread(new PacketHandler(this.sa, this.receivedData, programState));  // start a new thread to handle the packet
                     thead.start();
                 }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -121,12 +127,12 @@ public class MainNet implements Runnable {
      * --> If retries > MAX_RETRIES, attempt to connect to next server
      * --> If no servers are available, exit the program
      * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
-     * TODO Make it so it tries each server and round robins*/
+     * TODO Make it so that it tries each server before attempting a longer delay*/
     public Boolean roundRobinServerFind() {
         // Server Round Robin to attempt to connect to a server
         for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
             // While retries less than max retries and not connected to a server
-            while ((retries.get()-1 < MAX_RETRIES.get())) {
+            while ((retries.get() <= MAX_RETRIES.get())) {
                 try {
                     // Send awake packet to server
                     sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -161,17 +167,10 @@ public class MainNet implements Runnable {
         return false;
     }
 
-    /*  Processes enter room packets and lets
-    user know if packet is successful, successful likely means waiting on other players
-     a failure is from the server, likely room is full
-     */
-    public void setRoomLock(EnterRoomAck enterRoomAck) {
-        if (enterRoomAck.getResult()) {
-            this.gameLocked.set(true);
-            MainLobbyController.appendToWriter2("Request to Enter Room Successful!  Waiting on other players\n");
-        } else {
-            this.gameLocked.set(false);
-            MainLobbyController.appendToWriter2("Request to Enter Room Failed!  Room is full or other server error\n");
-        }
+    public static void voidGameSession() {
+        programState.set(0);
+        roomID.set(-1);
+        SessionKey = null;
     }
+
 }

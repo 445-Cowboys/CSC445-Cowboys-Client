@@ -29,7 +29,6 @@ public class MainLobbyController {
     public static Label server1_status_label;
     public Label players_in_game_label;
     public Label player_in_main_lobby_label;
-    public BattleScreenController battleScreenController;
     public static Label lobby1_curr_players_label;
     public static Label lobby1_game_status_label;
     public static Label lobby2_curr_players_label1;
@@ -37,15 +36,10 @@ public class MainLobbyController {
     public static Label lobby3_game_status_label;
     public static Label lobby3_curr_players_label;
     public static TextArea main_menu_act_writer;
-    private static Scene scene;
     static Lock lock = new ReentrantLock();
-    static ActionEvent actionEvent;
+    static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
     public static AtomicInteger GameRoom = new AtomicInteger(0);
 
-
-    public static AtomicInteger getGameRoom() {
-        return GameRoom;
-    }
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToWriter("Attempting to Enter Lobby 1...");
@@ -104,23 +98,17 @@ public class MainLobbyController {
         lobby3_curr_players = curr_players;
     }
 
-
-
     public boolean checkFull(int curr_players) {
         return curr_players == 3;
-    }
-
-    public static void setBattleScreen(Scene battle) {
-        scene = battle;
     }
 
     /*
     *   Attempts to open the battle screen
      */
-    public static void OpenBattleScreen(ActionEvent actionEvent, AtomicInteger l) throws IOException {
+    public static void OpenBattleScreen() throws IOException {
         try {
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setTitle("Battling: Game Room " + l);
+            stage.setTitle("Battling: Game Room " + GameRoom.get());
             stage.setScene(scene);
         } catch (Exception e) {
             MainLobbyController.appendToWriter("Error opening battle screen: " + e.getMessage());

@@ -175,14 +175,11 @@ public class BattleScreenController {
         player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
         player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
-        // TODO - Implement round indicator
         int temp = gs.getCurrentPlayer();
         serverPlayerNumber = new AtomicInteger(temp);
         String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
         round_indicator.setText(String.valueOf(gs.getBlockNum()));
-        // TODO - Implement current player label
         curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
-        // TODO - Implement server name label
         curr_server_name_label.setText(sa.toString());
         appendTextToWriter(s);
         lock.unlock();
@@ -253,17 +250,9 @@ public class BattleScreenController {
         player3_picture.setImage(image);
     }
 
-    public static void setMainScreen(Scene mainMenuScene) {
-        scene = mainMenuScene;
-    }
-
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
-    }
-
-    public static void setMainLobbyController(MainLobbyController mainLobbyController) {
-        BattleScreenController.mainLobbyController = mainLobbyController;
     }
 
     private void notTurn() {

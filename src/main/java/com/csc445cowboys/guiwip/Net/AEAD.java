@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 
 public final class AEAD {
-
     final static String keyType = "AES128_GCM";
     private Aead aead;
     private KeysetHandle keysetHandle;
