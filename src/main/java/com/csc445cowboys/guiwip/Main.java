@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 //7806
 public class Main extends Application {
@@ -20,7 +21,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
+    public void start(Stage stage) throws IOException, InterruptedException, GeneralSecurityException {
         FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml")); // Load Main Menu FXML
         Parent mainMenuPane = mainLdr.load();  // Load Main Menu Pane
         Scene mainMenuScene = new Scene(mainMenuPane);  // Create Main Menu Scene
@@ -38,7 +39,7 @@ public class Main extends Application {
         stage.setScene(mainMenuScene);  // Set Main Menu Scene to the Stage
         stage.setTitle("Main Menu");  // Set Stage Title
         stage.show();  // Show Stage
-        MainNet mainNet = new MainNet(mainLobbyController);  // Create MainNet instance with Main Menu Controller// Initialize Server Response Thread
+        MainNet mainNet = new MainNet();  // Create MainNet instance with Main Menu Controller// Initialize Server Response Thread
         Thread mainNetThread = new Thread(mainNet); // Create MainNet Thread
         mainNetThread.start(); // Start MainNet Thread
     }

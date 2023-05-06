@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainNet implements Runnable {
     // Atomics
     final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
-    MainLobbyController mainLobbyController;  // Reference to Main Menu Controller
     ByteBuffer receivedData;
     DatagramChannel channel;
     SocketAddress sa;
@@ -38,8 +37,7 @@ public class MainNet implements Runnable {
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
-    public MainNet(MainLobbyController mainLobbyController) throws IOException, GeneralSecurityException {
-        this.mainLobbyController = mainLobbyController;
+    public MainNet() throws IOException, GeneralSecurityException {
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
         channel.configureBlocking(false);

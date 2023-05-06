@@ -69,7 +69,6 @@ public class BattleScreenController {
     public VBox boss_frame;
     public static Label boss_name_label;
     public static ImageView boss_picture;
-    public static MainLobbyController mainLobbyController;
     static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
     static AtomicInteger roundNumber = new AtomicInteger(0);
     static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
@@ -259,5 +258,4 @@ public class BattleScreenController {
         // Disable all buttons
         Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
     }
-
 }

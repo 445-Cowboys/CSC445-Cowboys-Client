@@ -36,6 +36,7 @@ public class MainLobbyController {
     public static Label lobby3_game_status_label;
     public static Label lobby3_curr_players_label;
     public static TextArea main_menu_act_writer;
+    private static Scene scene;
     static Lock lock = new ReentrantLock();
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
     public static AtomicInteger GameRoom = new AtomicInteger(0);
@@ -105,7 +106,7 @@ public class MainLobbyController {
     /*
     *   Attempts to open the battle screen
      */
-    public static void OpenBattleScreen() throws IOException {
+    public static void OpenBattleScreen() {
         try {
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Battling: Game Room " + GameRoom.get());
