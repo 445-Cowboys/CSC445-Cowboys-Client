@@ -174,5 +174,4 @@ public class MainNet implements Runnable {
             MainLobbyController.appendToWriter2("Request to Enter Room Failed!  Room is full or other server error\n");
         }
     }
-
 }

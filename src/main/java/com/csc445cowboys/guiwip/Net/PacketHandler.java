@@ -41,7 +41,7 @@ public class PacketHandler implements Runnable {
         this.room = room;
     }
 
-    // Heatbeat sends a packet to the server every minute to let it know the client is still connected
+    // Heartbeat sends a packet to the server every minute to let it know the client is still connected
     // doesn't really need to do anything else
     @Override
     public void run() {

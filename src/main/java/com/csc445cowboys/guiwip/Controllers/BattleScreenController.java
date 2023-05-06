@@ -133,7 +133,6 @@ public class BattleScreenController {
         setPlayer1Fields(gameStart);
         setPlayer2Fields(gameStart);
         setPlayer3Fields(gameStart);
-
     }
 
     public static void appendTextToWriter(String text) {
