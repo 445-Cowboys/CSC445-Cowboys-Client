@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip.Net;
 
+import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 
@@ -34,16 +35,18 @@ public class MainNet implements Runnable {
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
     MainLobbyController mainLobbyController;
+    BattleScreenController battleScreenController;
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
-    public MainNet(MainLobbyController mainLobbyController) throws IOException, GeneralSecurityException {
+    public MainNet(MainLobbyController mainLobbyController, BattleScreenController battleScreenController) throws IOException, GeneralSecurityException {
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
         channel.configureBlocking(true);
         System.out.println("Client bound to port: " + channel.getLocalAddress());
         aead = new AEAD();
         this.mainLobbyController = mainLobbyController;
+        this.battleScreenController = battleScreenController;
     }
 
     /**
@@ -145,7 +148,7 @@ public class MainNet implements Runnable {
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
-                        MainLobbyController.setGameRooms(new GameRooms(receivedData));
+                        mainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
                         this.retries.set(1);
@@ -157,7 +160,6 @@ public class MainNet implements Runnable {
                     // Current retry delay
                     retries.getAndIncrement();
                     timeout.getAndAdd(timeout.get());
-                    System.out.println("Error: " + e.getMessage());
                     // Exponential backoff
                     mainLobbyController.appendToMainLobbyWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }

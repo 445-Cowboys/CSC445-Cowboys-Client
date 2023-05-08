@@ -3,7 +3,6 @@ package com.csc445cowboys.guiwip;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.Net.MainNet;
-import com.csc445cowboys.guiwip.Net.ServerConfig;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,7 +41,7 @@ public class Main extends Application {
         stage.setScene(mainMenuScene);  // Set Main Menu Scene to the Stage
         stage.setTitle("Main Menu");  // Set Stage Title
         stage.show();  // Show Stage
-        MainNet mainNet = new MainNet(mainLobbyController);  // Create MainNet instance with Main Menu Controller// Initialize Server Response Thread
+        MainNet mainNet = new MainNet(mainLobbyController,battleScreenController);  // Create MainNet instance with Main Menu Controller// Initialize Server Response Thread
         Thread mainNetThread = new Thread(mainNet); // Create MainNet Thread
         mainNetThread.start(); // Start MainNet Thread
     }

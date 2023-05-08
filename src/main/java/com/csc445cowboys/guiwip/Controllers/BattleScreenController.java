@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BattleScreenController {
     public Label boss_curr_health_label;
     public Label boss_curr_ammo_label;
-    public TextArea activity_writer = new TextArea();
+    public TextArea activity_writer;
     public Label player1_curr_health_label;
     public Label player1_curr_ammo_label;
     public Label player2_curr_health_label;
@@ -91,42 +91,6 @@ public class BattleScreenController {
         boss_ability_label.setText("Ability");
         boss_ability_status.setText("Ability Status");
         boss_picture.setImage(null);
-    }
-
-    public void setPlayer1Fields(GameStart gameStart) {
-        player1_name_label.setText("Player 1");
-        player1_weapon_type_label.setText("Weapon Type");
-        player1_curr_health_label.setText("Current Health");
-        player1_max_health_label.setText("Max Health");
-        player1_curr_ammo_label.setText("Current Ammo");
-        player1_max_ammo_label.setText("Max Ammo");
-        player1_ability_label.setText("Ability");
-        player1_ability_status1.setText("Ability Status");
-        player1_picture.setImage(null);
-    }
-
-    public void setPlayer2Fields(GameStart gameStart) {
-        player2_name_label.setText("Player 2");
-        player2_weapon_type_label.setText("Weapon Type");
-        player2_curr_health_label.setText("Current Health");
-        player2_max_health_label.setText("Max Health");
-        player2_curr_ammo_label.setText("Current Ammo");
-        player2_max_ammo_label.setText("Max Ammo");
-        player2_ability_label.setText("Ability");
-        player2_ability_status1.setText("Ability Status");
-        player2_picture.setImage(null);
-    }
-
-    public void setPlayer3Fields(GameStart gameStart) {
-        player3_name_label.setText("Player 3");
-        player3_weapon_type_label.setText("Weapon Type");
-        player3_curr_health_label.setText("Current Health");
-        player3_max_health_label.setText("Max Health");
-        player3_curr_ammo_label.setText("Current Ammo");
-        player3_max_ammo_label.setText("Max Ammo");
-        player3_ability_label.setText("Ability");
-        player3_ability_status1.setText("Ability Status");
-        player3_picture.setImage(null);
     }
 
     public void setAllFields(GameStart gameStart) {

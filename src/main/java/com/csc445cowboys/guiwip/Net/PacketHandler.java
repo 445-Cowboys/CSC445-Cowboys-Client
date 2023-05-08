@@ -21,6 +21,8 @@ public class PacketHandler implements Runnable {
     ByteBuffer packet;
     DatagramChannel channel;
     SocketAddress sa;
+    public BattleScreenController bsc;
+    public MainLobbyController mlc;
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
         try {
@@ -88,8 +90,8 @@ public class PacketHandler implements Runnable {
                 MainNet.SessionKey = gameStart.getSymmetricKey().getKeySetAsJSON();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
-                BattleScreenController.setGameStart(gameStart, this.sa);
-                MainLobbyController.OpenBattleScreen();
+                bsc.setGameStart(gameStart, this.sa);
+                mlc.OpenBattleScreen();
             }
             default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
         }
@@ -101,7 +103,7 @@ public class PacketHandler implements Runnable {
         // TODO May need to flip after encryption/decryption??
         // GAME STATE PACKET
         if (this.packet.get(0) == 9) {
-            BattleScreenController.updateFromGameStatePacket(new GameState(this.packet), this.sa);
+            bsc.updateFromGameStatePacket(new GameState(this.packet), this.sa);
         } else {
             System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
         }
@@ -116,4 +118,6 @@ public class PacketHandler implements Runnable {
         this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort(),"" );
         channel.send(packet, sa);
     }
+
+
 }
