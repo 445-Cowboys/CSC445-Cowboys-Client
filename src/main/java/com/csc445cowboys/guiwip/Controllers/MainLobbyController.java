@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Controllers;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -155,12 +156,17 @@ public class MainLobbyController {
     public void setGameRooms(GameRooms gameRooms) {
         // Update Server Status Labels
         lock.lock();
-        server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));
-        server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
-        serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
-        setLobby1(gameRooms.getNumPlayers(0), roomStatusFromN(gameRooms.getRoomStatus(0)));
-        setLobby2(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
-        setLobby3(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));
+                server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
+                serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
+                setLobby1(gameRooms.getNumPlayers(0), roomStatusFromN(gameRooms.getRoomStatus(0)));
+                setLobby2(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
+                setLobby3(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
+            }
+        });
         lock.unlock();
     }
 

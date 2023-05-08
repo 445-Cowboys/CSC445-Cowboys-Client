@@ -17,6 +17,8 @@ public class GameRooms extends Packet {
     private final int[] roomStatus;
     private final int[] serverStatus;
 
+    private final int numOfTotalPlayers;
+
 
     public GameRooms(ByteBuffer buffer){
 
@@ -43,7 +45,10 @@ public class GameRooms extends Packet {
             this.serverStatus[i] = buffer.getInt(offset);
             if ( i < 2 ) offset += 4;
         }
+        numOfTotalPlayers = buffer.getInt(offset);
     }
+
+
 
     @Override
     public int getOpcode(){
