@@ -33,7 +33,7 @@ public class MainNet implements Runnable {
     static public byte[] SessionKey;
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
-    AtomicInteger timeout = new AtomicInteger(1000);
+    AtomicInteger timeout = new AtomicInteger(250);
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean connected = new AtomicBoolean(false);
     static AtomicInteger playerNumber = new AtomicInteger(-1);
@@ -171,7 +171,7 @@ public class MainNet implements Runnable {
 
         // Reset backoff loop
         retries.set(1);
-        timeout.set(1000);
+        timeout.set(250);
         // If no server is found, set connected to false and return false
         System.out.println("No server found");
         return false;
