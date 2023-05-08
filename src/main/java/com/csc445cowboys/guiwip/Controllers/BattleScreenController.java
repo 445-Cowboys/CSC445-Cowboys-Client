@@ -132,9 +132,6 @@ public class BattleScreenController {
 
     public static void setAllFields(GameStart gameStart) {
         setBossFields(gameStart);
-        setPlayer1Fields(gameStart);
-        setPlayer2Fields(gameStart);
-        setPlayer3Fields(gameStart);
     }
 
     public static void appendTextToWriter(String text) {
@@ -152,7 +149,7 @@ public class BattleScreenController {
      */
     public static void setGameStart(GameStart gameStart, SocketAddress sa) {
         lock.lock();
-        clietPlayerNumber.set(gameStart.());
+        clietPlayerNumber.set(gameStart.getCharacter());
         setAllFields(gameStart);
         lock.unlock();
     }
@@ -192,18 +189,6 @@ public class BattleScreenController {
     }
 
     /*
-     * Called when the player clicks the use ability button, it will block the players
-     * action if it is not their turn
-     */
-    public void onUseAbilityClick(ActionEvent actionEvent) throws IOException {
-        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(0);
-        } else {
-            notTurn();
-        }
-    }
-
-    /*
      * Called when the player clicks the leave game button, it will block the players
      * TODO Implement leave handling to server
      */
@@ -239,21 +224,6 @@ public class BattleScreenController {
     public void setBossImage(String path) {
         Image image = new Image(path);
         boss_picture.setImage(image);
-    }
-
-    public void setPlayer1Image(String path) {
-        Image image = new Image(path);
-        player1_picture.setImage(image);
-    }
-
-    public void setPlayer2Image(String path) {
-        Image image = new Image(path);
-        player2_picture.setImage(image);
-    }
-
-    public void setPlayer3Image(String path) {
-        Image image = new Image(path);
-        player3_picture.setImage(image);
     }
 
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {

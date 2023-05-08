@@ -83,7 +83,7 @@ public class PacketHandler implements Runnable {
             }
             case 4 -> {  // GAME START PACKET received from server
                 GameStart gameStart = new GameStart(this.packet);
-                MainNet.SessionKey = gameStart.cryptoKey;
+                MainNet.SessionKey = gameStart.getSymmetricKey().getKeySetAsJSON();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
                 BattleScreenController.setGameStart(gameStart, this.sa);
