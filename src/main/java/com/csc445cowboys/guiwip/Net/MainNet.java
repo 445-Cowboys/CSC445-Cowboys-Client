@@ -107,7 +107,11 @@ public class MainNet implements Runnable {
                 }
             }
             // Attempt to connect to a server if connection is lost
-            if(!roundRobinServerFind()) System.exit(-5);
+//            if(!roundRobinServerFind()) System.exit(-5);
+            if(!roundRobinServerFind()) {
+//                System.out.println("No Servers found, restarting round robin");//System.exit(-5);
+                MainLobbyController.appendToWriter("No Servers found, restarting round robin");
+            }
         }
     }
 
