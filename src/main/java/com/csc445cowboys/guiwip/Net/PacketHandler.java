@@ -2,6 +2,7 @@ package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.packets.EnterRoomAck;
 import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
@@ -90,7 +91,7 @@ public class PacketHandler implements Runnable {
                 MainNet.SessionKey = gameStart.getSymmetricKey().getKeySetAsJSON();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
-                bsc.setGameStart(gameStart, this.sa);
+                MainNet.playerNumber.set(gameStart.getCharacter());
                 mlc.OpenBattleScreen();
             }
             default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
