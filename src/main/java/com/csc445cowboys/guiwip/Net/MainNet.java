@@ -139,7 +139,7 @@ public class MainNet implements Runnable {
                     packetReceive();
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
-                        MainLobbyController.appendToWriter2("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
+                        MainLobbyController.appendToWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -154,7 +154,7 @@ public class MainNet implements Runnable {
                     timeout.getAndAdd(timeout.get());
                     System.out.println("Error: " + e.getMessage());
                     // Exponential backoff
-                    MainLobbyController.appendToWriter2("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    MainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
             // Reset backoff loop

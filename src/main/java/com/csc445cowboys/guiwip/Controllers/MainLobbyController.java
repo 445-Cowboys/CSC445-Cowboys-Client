@@ -173,12 +173,8 @@ public class MainLobbyController {
 
     public static void appendToWriter(String s) {
         System.out.println(s);
-    }
-
-
-    public static void appendToWriter2(String s) {
-        System.out.println(s);
         main_menu_act_writer.appendText(s+"\n");
+
     }
 
     public void waitingForGame() {
