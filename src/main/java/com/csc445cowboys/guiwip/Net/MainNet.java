@@ -104,14 +104,14 @@ public class MainNet implements Runnable {
                     this.connected.set(false);
                     voidGameSession();
                 } catch (ExecutionException | InterruptedException | RuntimeException | IOException e) {
-                    System.out.println("Error: " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
             // Attempt to connect to a server if connection is lost
 //            if(!roundRobinServerFind()) System.exit(-5);
             if(!roundRobinServerFind()) {
 //                System.out.println("No Servers found, restarting round robin");//System.exit(-5);
-                mainLobbyController.appendToMainLobbyWriter("No Servers found, restarting round robin");
+                System.exit(-5);
             }
         }
     }

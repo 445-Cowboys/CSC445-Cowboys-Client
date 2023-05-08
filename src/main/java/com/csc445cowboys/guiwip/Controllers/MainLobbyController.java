@@ -19,25 +19,25 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MainLobbyController {
-    static int lobby1_curr_players;
-    static int lobby2_curr_players;
-    static int lobby3_curr_players;
+     int lobby1_curr_players;
+     int lobby2_curr_players;
+     int lobby3_curr_players;
     public Label server1_name_label;
     public Label main_server_status_label;
     public Label server2_name_label;
     public Label server3_name_label;
-    public static Label serve3_status_label;
-    public static Label server2_status_label;
-    public static Label server1_status_label;
+    public Label serve3_status_label;
+    public Label server2_status_label;
+    public Label server1_status_label;
     public Label players_in_game_label;
     public Label player_in_main_lobby_label;
-    public static Label lobby1_curr_players_label;
-    public static Label lobby1_game_status_label;
-    public static Label lobby2_curr_players_label1;
-    public static Label lobby2_game_status_label;
-    public static Label lobby3_game_status_label;
-    public static Label lobby3_curr_players_label;
-    public static TextArea main_menu_act_writer = new TextArea();
+    public Label lobby1_curr_players_label;
+    public Label lobby1_game_status_label;
+    public Label lobby2_curr_players_label1;
+    public Label lobby2_game_status_label;
+    public Label lobby3_game_status_label;
+    public Label lobby3_curr_players_label;
+    public TextArea main_menu_act_writer;
     private static Scene scene;
     static Lock lock = new ReentrantLock();
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
@@ -94,19 +94,19 @@ public class MainLobbyController {
             MainNet.programState.set(1);
     }
 
-    public static void setLobby1(int curr_players, String game_status) {
+    public void setLobby1(int curr_players, String game_status) {
         lobby1_curr_players_label.setText(String.valueOf(curr_players));
         lobby1_game_status_label.setText(game_status);
         lobby1_curr_players = curr_players;
     }
 
-    public static void setLobby2(int curr_players, String game_status) {
+    public void setLobby2(int curr_players, String game_status) {
         lobby2_curr_players_label1.setText(String.valueOf(curr_players));
         lobby2_game_status_label.setText(game_status);
         lobby2_curr_players = curr_players;
     }
 
-    public static void setLobby3(int curr_players, String game_status) {
+    public void setLobby3(int curr_players, String game_status) {
         lobby3_curr_players_label.setText(String.valueOf(curr_players));
         lobby3_game_status_label.setText(game_status);
         lobby3_curr_players = curr_players;
@@ -119,7 +119,7 @@ public class MainLobbyController {
     /*
     *   Attempts to open the battle screen
      */
-    public static void OpenBattleScreen() {
+    public void OpenBattleScreen() {
         try {
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setTitle("Battling: Game Room " + GameRoom.get());
@@ -152,7 +152,7 @@ public class MainLobbyController {
     }
 
     // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
-    public static void setGameRooms(GameRooms gameRooms) {
+    public void setGameRooms(GameRooms gameRooms) {
         // Update Server Status Labels
         lock.lock();
         server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));

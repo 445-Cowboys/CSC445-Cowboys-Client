@@ -25,52 +25,51 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BattleScreenController {
-    public static Label boss_curr_health_label;
-    public static Label boss_curr_ammo_label;
-    public static TextArea activity_writer = new TextArea();
-    public static Label player1_curr_health_label;
-    public static Label player1_curr_ammo_label;
-    public static Label player2_curr_health_label;
-    public static Label player2_curr_ammo_label;
-    public static Label player3_curr_health_label;
-    public static Label player3_curr_ammo_label;
-    public static Label round_indicator;
-    public static Label curr_server_name_label;
-    public static Label curr_player_label;
-    public static Label boss_weapon_type_label;
-    public static Label boss_max_health_label;
-    public static Label boss_max_ammo_label;
-    public static Label boss_ability_label;
-    public static Label boss_ability_status;
-    public static Label player1_name_label;
-    public static ImageView player1_picture;
-    public static Label player1_weapon_type_label;
-    public static Label player1_max_health_label;
-    public static Label player1_max_ammo_label;
-    public static Label player1_ability_label;
-    public static Label player1_ability_status1;
-    public static Label player2_name_label;
-    public static ImageView player2_picture;
-    public static Label player2_weapon_type_label;
-    public static Label player2_max_health_label;
-    public static Label player2_max_ammo_label;
-    public static Label player2_ability_label;
-    public static Label player2_ability_status1;
-    public static Label player3_name_label;
-    public static ImageView player3_picture;
-    public static Label player3_weapon_type_label;
-    public static Label player3_max_health_label;
-    public static Label player3_max_ammo_label;
-    public static Label player3_ability_label;
-    public static Label player3_ability_status1;
-    public static Label boss_name_label;
-    public static ImageView boss_picture;
+    public Label boss_curr_health_label;
+    public Label boss_curr_ammo_label;
+    public TextArea activity_writer = new TextArea();
+    public Label player1_curr_health_label;
+    public Label player1_curr_ammo_label;
+    public Label player2_curr_health_label;
+    public Label player2_curr_ammo_label;
+    public Label player3_curr_health_label;
+    public Label player3_curr_ammo_label;
+    public Label round_indicator;
+    public Label curr_server_name_label;
+    public Label curr_player_label;
+    public Label boss_weapon_type_label;
+    public Label boss_max_health_label;
+    public  Label boss_max_ammo_label;
+    public  Label boss_ability_label;
+    public  Label boss_ability_status;
+    public  Label player1_name_label;
+    public  ImageView player1_picture;
+    public  Label player1_weapon_type_label;
+    public  Label player1_max_health_label;
+    public  Label player1_max_ammo_label;
+    public  Label player1_ability_label;
+    public  Label player1_ability_status1;
+    public  Label player2_name_label;
+    public  ImageView player2_picture;
+    public  Label player2_weapon_type_label;
+    public  Label player2_max_health_label;
+    public  Label player2_max_ammo_label;
+    public  Label player2_ability_label;
+    public  Label player2_ability_status1;
+    public  Label player3_name_label;
+    public  ImageView player3_picture;
+    public  Label player3_weapon_type_label;
+    public  Label player3_max_health_label;
+    public  Label player3_max_ammo_label;
+    public  Label player3_ability_label;
+    public  Label player3_ability_status1;
+    public  Label boss_name_label;
+    public  ImageView boss_picture;
     static Lock lock = new ReentrantLock();
     static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
     static AtomicInteger roundNumber = new AtomicInteger(0);
     static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
     private Scene scene;
-    public Button action_user_ability_button;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
     public Button action_user_reload_button;
@@ -82,7 +81,7 @@ public class BattleScreenController {
      *  according to the bosses stats
      * TODO set the bosses fields according to the bosses stats, based on int catalog value from GameStartPacket
      */
-    public static void setBossFields(GameStart gameStart) {
+    public void setBossFields(GameStart gameStart) {
         boss_name_label.setText("Boss");
         boss_weapon_type_label.setText("Weapon Type");
         boss_curr_health_label.setText("Current Health");
@@ -94,7 +93,7 @@ public class BattleScreenController {
         boss_picture.setImage(null);
     }
 
-    public static void setPlayer1Fields(GameStart gameStart) {
+    public void setPlayer1Fields(GameStart gameStart) {
         player1_name_label.setText("Player 1");
         player1_weapon_type_label.setText("Weapon Type");
         player1_curr_health_label.setText("Current Health");
@@ -106,7 +105,7 @@ public class BattleScreenController {
         player1_picture.setImage(null);
     }
 
-    public static void setPlayer2Fields(GameStart gameStart) {
+    public void setPlayer2Fields(GameStart gameStart) {
         player2_name_label.setText("Player 2");
         player2_weapon_type_label.setText("Weapon Type");
         player2_curr_health_label.setText("Current Health");
@@ -118,7 +117,7 @@ public class BattleScreenController {
         player2_picture.setImage(null);
     }
 
-    public static void setPlayer3Fields(GameStart gameStart) {
+    public void setPlayer3Fields(GameStart gameStart) {
         player3_name_label.setText("Player 3");
         player3_weapon_type_label.setText("Weapon Type");
         player3_curr_health_label.setText("Current Health");
@@ -130,11 +129,11 @@ public class BattleScreenController {
         player3_picture.setImage(null);
     }
 
-    public static void setAllFields(GameStart gameStart) {
+    public void setAllFields(GameStart gameStart) {
         setBossFields(gameStart);
     }
 
-    public static void appendToBattleWriter(String text) {
+    public void appendToBattleWriter(String text) {
         // If Last not \n
         if (!text.endsWith("\n")) {
             text = text.concat("\n");
@@ -147,7 +146,7 @@ public class BattleScreenController {
      * according to the GameStartPacket
      *
      */
-    public static void setGameStart(GameStart gameStart, SocketAddress sa) {
+    public void setGameStart(GameStart gameStart, SocketAddress sa) {
         lock.lock();
         clietPlayerNumber.set(gameStart.getCharacter());
         setAllFields(gameStart);
@@ -159,7 +158,7 @@ public class BattleScreenController {
      * according to the GameStatePacket
      * May be some issues with parsing
      */
-    public static void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
+    public void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
         boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
         boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
