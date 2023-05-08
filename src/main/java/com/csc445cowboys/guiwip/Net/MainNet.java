@@ -151,16 +151,17 @@ public class MainNet implements Runnable {
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         mainLobbyController.setGameRooms(new GameRooms(receivedData));
-                        this.connected.set(true);
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
+                        this.connected.set(true);
                         this.retries.set(1);
+                        this.timeout.set(250);
                         return true;
                     }
                     // If no packet is received or other failure occurs, increment retries and backoff time
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException |
                          UnresolvedAddressException e) {
                     // Exponential backoff
-                    mainLobbyController.appendToMainLobbyWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    mainLobbyController.appendToMainLobbyWriter("No response from server: " + ServerConfig.SERVER_NAMES[i] + ".\nRetrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
             // Current retry delay
@@ -169,9 +170,6 @@ public class MainNet implements Runnable {
 
         }
 
-        // Reset backoff loop
-        retries.set(1);
-        timeout.set(250);
         // If no server is found, set connected to false and return false
         System.out.println("No server found");
         return false;
