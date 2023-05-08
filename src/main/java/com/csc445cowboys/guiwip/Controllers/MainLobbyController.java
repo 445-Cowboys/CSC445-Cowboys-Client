@@ -41,6 +41,10 @@ public class MainLobbyController {
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
     public static AtomicInteger GameRoom = new AtomicInteger(0);
 
+    public static void setBattleScreen(Scene battleScene) {
+        scene = battleScene;
+    }
+
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToWriter("Attempting to Enter Lobby 1...");

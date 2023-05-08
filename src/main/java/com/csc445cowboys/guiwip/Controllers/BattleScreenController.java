@@ -187,6 +187,10 @@ public class BattleScreenController {
         lock.unlock();
     }
 
+    public static void setMainScreen(Scene mainMenuScene) {
+        scene = mainMenuScene;
+    }
+
     /*
      * Called when the player clicks the use ability button, it will block the players
      * action if it is not their turn
