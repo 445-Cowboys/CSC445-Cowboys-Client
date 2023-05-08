@@ -34,6 +34,7 @@ public class MainNet implements Runnable {
     AtomicInteger timeout = new AtomicInteger(1000);
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean connected = new AtomicBoolean(false);
+    static AtomicInteger playerNumber = new AtomicInteger(-1);
     MainLobbyController mainLobbyController;
     BattleScreenController battleScreenController;
 
@@ -52,6 +53,7 @@ public class MainNet implements Runnable {
     public static void voidGameSession() {
         programState.set(0);
         roomID.set(-1);
+        playerNumber.set(-1);
         SessionKey = null;
     }
 

@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip.packets;
 
+
 import java.nio.ByteBuffer;
 
 public class GameRooms extends Packet {
@@ -12,11 +13,11 @@ public class GameRooms extends Packet {
      */
 
     private final byte[] data;
-    // 4th position it total clients connected
     private final int[] numPlayers;
     private final boolean[] roomFull;
     private final int[] roomStatus;
     private final int[] serverStatus;
+    private final int totalNumOfPlayers;
 
 
     public GameRooms(ByteBuffer buffer){
@@ -44,6 +45,8 @@ public class GameRooms extends Packet {
             this.serverStatus[i] = buffer.getInt(offset);
             if ( i < 2 ) offset += 4;
         }
+        offset+=4;
+        this.totalNumOfPlayers = buffer.getInt(offset);
     }
 
     @Override
@@ -66,6 +69,5 @@ public class GameRooms extends Packet {
     public int getServerStatus(int server) {
         return serverStatus[server];
     }
-
 
 }

@@ -1,6 +1,4 @@
 package com.csc445cowboys.guiwip.packets;
-
-
 import java.nio.ByteBuffer;
 
 public class Factory {
@@ -94,8 +92,8 @@ public class Factory {
         return buffer;
     }
 
-    public ByteBuffer makeGameRooms(int[] numPlayers, boolean[] roomFull, int[] roomStatus, int[] serverStatus) {
-        ByteBuffer buffer = ByteBuffer.allocate(43); // Total length of packet is 42 bytes
+    public ByteBuffer makeGameRooms(int[] numPlayers, boolean[] roomFull, int[] roomStatus, int[] serverStatus, int totalNumOfPlayers) {
+        ByteBuffer buffer = ByteBuffer.allocate(47); // Total length of packet is 42 bytes
 
         buffer.put((byte) 0x05);
 
@@ -108,7 +106,7 @@ public class Factory {
         for (int i = 0; i < 3; i++) {
             buffer.putInt(serverStatus[i]);
         }
-
+        buffer.putInt(totalNumOfPlayers);
         buffer.flip();
         return buffer;
     }

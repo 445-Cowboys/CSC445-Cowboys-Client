@@ -76,26 +76,6 @@ public class BattleScreenController {
     public VBox boss_frame;
     private Scene scene;
 
-    /*
-     *  Called upon initial game instantiation, sets the bosses fields
-     *  according to the bosses stats
-     * TODO set the bosses fields according to the bosses stats, based on int catalog value from GameStartPacket
-     */
-    public void setBossFields(GameStart gameStart) {
-        boss_name_label.setText("Boss");
-        boss_weapon_type_label.setText("Weapon Type");
-        boss_curr_health_label.setText("Current Health");
-        boss_max_health_label.setText("Max Health");
-        boss_curr_ammo_label.setText("Current Ammo");
-        boss_max_ammo_label.setText("Max Ammo");
-        boss_ability_label.setText("Ability");
-        boss_ability_status.setText("Ability Status");
-        boss_picture.setImage(null);
-    }
-
-    public void setAllFields(GameStart gameStart) {
-        setBossFields(gameStart);
-    }
 
     public void appendToBattleWriter(String text) {
         // If Last not \n
@@ -103,18 +83,6 @@ public class BattleScreenController {
             text = text.concat("\n");
         }
         activity_writer.appendText(text);
-    }
-
-    /*
-     *  Called upon receiving a GameStartPacket, sets the fields according ot the Character library
-     * according to the GameStartPacket
-     *
-     */
-    public void setGameStart(GameStart gameStart, SocketAddress sa) {
-        lock.lock();
-        clietPlayerNumber.set(gameStart.getCharacter());
-        setAllFields(gameStart);
-        lock.unlock();
     }
 
     /*
