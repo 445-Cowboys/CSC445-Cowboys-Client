@@ -161,7 +161,7 @@ public class BattleScreenController {
      * TODO Implement leave handling to server
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
-        new PacketHandler(MainNet.sa).sendActionPacket(1);
+        new PacketHandler(MainNet.sa).sendCourtesyLeave();
         OpenMainMenuScreen(actionEvent);
     }
 
@@ -171,7 +171,7 @@ public class BattleScreenController {
      */
     public void onFireClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(2);
+            new PacketHandler(MainNet.sa).sendActionPacket(1);
         } else {
             notTurn();
         }
@@ -179,7 +179,7 @@ public class BattleScreenController {
 
     public void onReloadClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(3);
+            new PacketHandler(MainNet.sa).sendActionPacket(2);
         } else {
             notTurn();
         }

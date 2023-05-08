@@ -119,5 +119,9 @@ public class PacketHandler implements Runnable {
         channel.send(packet, sa);
     }
 
+    public void sendCourtesyLeave() throws IOException {
+        this.packet = new Factory().makeCourtesyLeave();
+        channel.send(packet, sa);
+    }
 
 }

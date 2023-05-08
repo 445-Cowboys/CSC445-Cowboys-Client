@@ -137,7 +137,7 @@ public class MainLobbyController {
         return switch (n) {
             case 0 -> "Offline";  // Server is reporting server as offline
             case 1 -> "Main";  // Server is elected leader in zookeeper
-            case 2 -> "Backup"; // Server is not elected leader in zookeeper
+            case 2 -> "Follower"; // Server is not elected leader in zookeeper
             default -> "Unknown"; // Server is reporting unknown status
         };
     }
