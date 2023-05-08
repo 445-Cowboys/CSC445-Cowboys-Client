@@ -18,13 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MainNet implements Runnable {
     // Atomics
     final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
-    ByteBuffer receivedData;
     static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
-    AtomicInteger timeout = new AtomicInteger(1000);
-    AtomicInteger retries = new AtomicInteger(1);
-    AtomicBoolean connected = new AtomicBoolean(false);
     // Triggered when user attempts to enter a room
     /*
     0 - Main Lobby Context
@@ -34,6 +30,10 @@ public class MainNet implements Runnable {
     static public byte[] SessionKey;
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
+    ByteBuffer receivedData;
+    AtomicInteger timeout = new AtomicInteger(1000);
+    AtomicInteger retries = new AtomicInteger(1);
+    AtomicBoolean connected = new AtomicBoolean(false);
     MainLobbyController mainLobbyController;
     BattleScreenController battleScreenController;
 
@@ -47,6 +47,12 @@ public class MainNet implements Runnable {
         aead = new AEAD();
         this.mainLobbyController = mainLobbyController;
         this.battleScreenController = battleScreenController;
+    }
+
+    public static void voidGameSession() {
+        programState.set(0);
+        roomID.set(-1);
+        SessionKey = null;
     }
 
     /**
@@ -93,16 +99,17 @@ public class MainNet implements Runnable {
 
     @Override
     public void run() {
-        for(;;){
+        for (; ; ) {
             // Will always fail on first attempt and attempt to round-robin find a server
-            while (this.connected.get()){
+            while (this.connected.get()) {
                 // Set Heartbeat to 60 seconds
                 this.timeout.set(1000 * 60);
                 try {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
                     Thread thead = new Thread(new PacketHandler(sa, this.receivedData));  // start a new thread to handle the packet
                     thead.start();
-                }catch (TimeoutException e){  // If no packet is received, set connected to false and attempt to connect to a server,
+                } catch (
+                        TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
                     this.connected.set(false);
                     voidGameSession();
@@ -110,10 +117,7 @@ public class MainNet implements Runnable {
                     e.printStackTrace();
                 }
             }
-            // Attempt to connect to a server if connection is lost
-//            if(!roundRobinServerFind()) System.exit(-5);
-            if(!roundRobinServerFind()) {
-//                System.out.println("No Servers found, restarting round robin");//System.exit(-5);
+            if (!roundRobinServerFind()) {
                 System.exit(-5);
             }
         }
@@ -137,9 +141,11 @@ public class MainNet implements Runnable {
      * TODO Make it so that it tries each server before attempting a longer delay*/
     public Boolean roundRobinServerFind() {
         // Server Round Robin to attempt to connect to a server
-        for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
-            // While retries less than max retries and not connected to a server
-            while ((retries.get() <= MAX_RETRIES.get())) {
+
+        // While retries less than max retries and not connected to a server
+        int init = 0;
+        while ((retries.get() <= MAX_RETRIES.get())) {
+            for (int i = init; i < ServerConfig.SERVER_NAMES.length; i++) {
                 try {
                     // Send awake packet to server
                     sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -157,26 +163,22 @@ public class MainNet implements Runnable {
                     // If no packet is received or other failure occurs, increment retries and backoff time
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException |
                          UnresolvedAddressException e) {
-                    // Current retry delay
-                    retries.getAndIncrement();
-                    timeout.getAndAdd(timeout.get());
                     // Exponential backoff
                     mainLobbyController.appendToMainLobbyWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
-            // Reset backoff loop
-            retries.set(1);
-            timeout.set(1000);
+            // Current retry delay
+            retries.getAndIncrement();
+            timeout.getAndAdd(timeout.get());
+
         }
+
+        // Reset backoff loop
+        retries.set(1);
+        timeout.set(1000);
         // If no server is found, set connected to false and return false
         System.out.println("No server found");
         return false;
-    }
-
-    public static void voidGameSession() {
-        programState.set(0);
-        roomID.set(-1);
-        SessionKey = null;
     }
 
 }

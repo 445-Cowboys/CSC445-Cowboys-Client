@@ -2,7 +2,6 @@ package com.csc445cowboys.guiwip.Net;
 
 
 public enum Character {
-
     THE_MAN_WITH_SOME_NAME("The Man With Some Name",
             10, 10, 100, 6,
             "shoots %p with his revolver",

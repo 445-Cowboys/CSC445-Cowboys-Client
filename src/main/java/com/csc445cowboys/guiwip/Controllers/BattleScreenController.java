@@ -2,9 +2,9 @@ package com.csc445cowboys.guiwip.Controllers;
 
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
-import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -25,6 +25,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BattleScreenController {
+    static Lock lock = new ReentrantLock();
+    static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
+    static AtomicInteger roundNumber = new AtomicInteger(0);
+    static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
     public Label boss_curr_health_label;
     public Label boss_curr_ammo_label;
     public TextArea activity_writer;
@@ -39,42 +43,38 @@ public class BattleScreenController {
     public Label curr_player_label;
     public Label boss_weapon_type_label;
     public Label boss_max_health_label;
-    public  Label boss_max_ammo_label;
-    public  Label boss_ability_label;
-    public  Label boss_ability_status;
-    public  Label player1_name_label;
-    public  ImageView player1_picture;
-    public  Label player1_weapon_type_label;
-    public  Label player1_max_health_label;
-    public  Label player1_max_ammo_label;
-    public  Label player1_ability_label;
-    public  Label player1_ability_status1;
-    public  Label player2_name_label;
-    public  ImageView player2_picture;
-    public  Label player2_weapon_type_label;
-    public  Label player2_max_health_label;
-    public  Label player2_max_ammo_label;
-    public  Label player2_ability_label;
-    public  Label player2_ability_status1;
-    public  Label player3_name_label;
-    public  ImageView player3_picture;
-    public  Label player3_weapon_type_label;
-    public  Label player3_max_health_label;
-    public  Label player3_max_ammo_label;
-    public  Label player3_ability_label;
-    public  Label player3_ability_status1;
-    public  Label boss_name_label;
-    public  ImageView boss_picture;
-    static Lock lock = new ReentrantLock();
-    static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
-    static AtomicInteger roundNumber = new AtomicInteger(0);
-    static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
-    private Scene scene;
+    public Label boss_max_ammo_label;
+    public Label boss_ability_label;
+    public Label boss_ability_status;
+    public Label player1_name_label;
+    public ImageView player1_picture;
+    public Label player1_weapon_type_label;
+    public Label player1_max_health_label;
+    public Label player1_max_ammo_label;
+    public Label player1_ability_label;
+    public Label player1_ability_status1;
+    public Label player2_name_label;
+    public ImageView player2_picture;
+    public Label player2_weapon_type_label;
+    public Label player2_max_health_label;
+    public Label player2_max_ammo_label;
+    public Label player2_ability_label;
+    public Label player2_ability_status1;
+    public Label player3_name_label;
+    public ImageView player3_picture;
+    public Label player3_weapon_type_label;
+    public Label player3_max_health_label;
+    public Label player3_max_ammo_label;
+    public Label player3_ability_label;
+    public Label player3_ability_status1;
+    public Label boss_name_label;
+    public ImageView boss_picture;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
     public Button action_user_reload_button;
     public VBox player1_frame;
     public VBox boss_frame;
+    private Scene scene;
 
     /*
      *  Called upon initial game instantiation, sets the bosses fields
@@ -124,30 +124,35 @@ public class BattleScreenController {
      */
     public void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
-        boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
-        boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
-        // Player Stats
-        // Player 1
-        player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(0)));
-        player1_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(0)));
-        // Player 2
-        player2_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
-        player2_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(1)));
-        // Player 3
-        player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
-        player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
+                boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
+                // Player Stats
+                // Player 1
+                player1_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(0)));
+                player1_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(0)));
+                // Player 2
+                player2_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(1)));
+                player2_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(1)));
+                // Player 3
+                player3_curr_health_label.setText(Integer.toString(gs.getPlayerHealth(2)));
+                player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
-        int temp = gs.getCurrentPlayer();
-        serverPlayerNumber = new AtomicInteger(temp);
-        String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
-        round_indicator.setText(String.valueOf(gs.getBlockNum()));
-        curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
-        curr_server_name_label.setText(sa.toString());
-        appendToBattleWriter(s);
+                int temp = gs.getCurrentPlayer();
+                serverPlayerNumber = new AtomicInteger(temp);
+                String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
+                round_indicator.setText(String.valueOf(gs.getBlockNum()));
+                curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
+                curr_server_name_label.setText(sa.toString());
+                appendToBattleWriter(s);
+            }
+        });
         lock.unlock();
     }
 
-    public  void setMainScreen(Scene mainMenuScene) {
+    public void setMainScreen(Scene mainMenuScene) {
         this.scene = mainMenuScene;
     }
 
@@ -156,7 +161,7 @@ public class BattleScreenController {
      * TODO Implement leave handling to server
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
-        new PacketHandler(MainNet.sa).sendActionPacket(1);
+        new PacketHandler(MainNet.sa).sendCourtesyLeave();
         OpenMainMenuScreen(actionEvent);
     }
 
@@ -166,7 +171,7 @@ public class BattleScreenController {
      */
     public void onFireClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(2);
+            new PacketHandler(MainNet.sa).sendActionPacket(1);
         } else {
             notTurn();
         }
@@ -174,7 +179,7 @@ public class BattleScreenController {
 
     public void onReloadClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(3);
+            new PacketHandler(MainNet.sa).sendActionPacket(2);
         } else {
             notTurn();
         }
