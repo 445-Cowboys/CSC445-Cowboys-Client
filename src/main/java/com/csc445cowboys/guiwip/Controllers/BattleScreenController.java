@@ -152,7 +152,7 @@ public class BattleScreenController {
      */
     public static void setGameStart(GameStart gameStart, SocketAddress sa) {
         lock.lock();
-        clietPlayerNumber.set(gameStart.getPlayerNumber());
+        clietPlayerNumber.set(gameStart.());
         setAllFields(gameStart);
         lock.unlock();
     }

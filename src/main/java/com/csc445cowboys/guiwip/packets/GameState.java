@@ -1,7 +1,7 @@
 package com.csc445cowboys.guiwip.packets;
 
+
 import java.nio.ByteBuffer;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameState extends Packet {
 
@@ -24,7 +24,8 @@ public class GameState extends Packet {
     private final String actionMessage;
 
     public GameState(ByteBuffer buffer) {
-        int totalLength = buffer.limit();
+
+    int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
@@ -53,10 +54,10 @@ public class GameState extends Packet {
         buffer.position(offset);
         buffer.get(actionMessageBytes, 0, actionMessageBytes.length);
         this.actionMessage = new String(actionMessageBytes);
-    }
+}
 
     @Override
-    public int getOpcode() {
+    public int getOpcode(){
         return 9;
     }
 
@@ -69,35 +70,29 @@ public class GameState extends Packet {
     }
 
     public int getPlayerHealth(int player) {
-        player--;
-        return playerHealth[player];
+        return this.playerHealth[player];
     }
 
     public int getPlayerAmmo(int player) {
-        player--;
-        return playerAmmo[player];
+        return this.playerAmmo[player];
     }
 
-    public int[] getPlayerAbilityCD(int player) {
-        player--;
-        return playerAbilityCD;
+    public int getPlayerAbilityCD(int player) {
+        return this.playerAbilityCD[player];
     }
 
     public int getCurrentPlayer() {
         return currentPlayer;
     }
 
-    public AtomicInteger getCurrentPlayerAtomic() {
-        return new AtomicInteger(currentPlayer);
-    }
-
-    public int getBlockNum() {
+    public int getBlockNum(){
         return blockNum;
     }
 
     public String getActionMessage() {
         return actionMessage;
     }
+
 
 
 }

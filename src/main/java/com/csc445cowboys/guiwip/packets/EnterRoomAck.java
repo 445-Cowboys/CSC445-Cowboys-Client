@@ -1,9 +1,8 @@
 package com.csc445cowboys.guiwip.packets;
 
-
 import java.nio.ByteBuffer;
 
-public class EnterRoomAck extends Packet {
+public class EnterRoomAck extends Packet{
 
     /*
     06 |0| <Successfully entered room>
@@ -12,21 +11,21 @@ public class EnterRoomAck extends Packet {
     private final byte[] data;
     private final boolean result;
 
-    public EnterRoomAck(ByteBuffer buffer) {
+    public EnterRoomAck(ByteBuffer buffer){
 
-        int totalLength = buffer.limit();
+    int totalLength = buffer.limit();
         this.data = new byte[totalLength];
         buffer.get(data, 0, data.length);
         buffer.rewind();
-        this.result = (buffer.get(2) & 0x01) != 0;
+            this.result = (buffer.get(2) & 0x01) != 0;
     }
 
     @Override
-    public int getOpcode() {
+    public int getOpcode(){
         return 6;
     }
 
-    public boolean getResult() {
+    public boolean getResult(){
         return result;
     }
 }

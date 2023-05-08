@@ -2,6 +2,8 @@ package com.csc445cowboys.guiwip.packets;
 
 import java.nio.ByteBuffer;
 
+import java.nio.ByteBuffer;
+
 public class EnterRoom extends Packet {
 
     /*
@@ -10,6 +12,7 @@ public class EnterRoom extends Packet {
 
     private final byte[] data;
     private final int roomNum;
+
     private final int portNum;
     private final String userName;
 
@@ -30,6 +33,7 @@ public class EnterRoom extends Packet {
         buffer.position(offset);
         buffer.get(userNameBytes, 0, userNameBytes.length);
         userName = new String(userNameBytes);
+
     }
 
 
