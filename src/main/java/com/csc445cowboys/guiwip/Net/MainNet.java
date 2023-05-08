@@ -19,7 +19,7 @@ public class MainNet implements Runnable {
     // Atomics
     final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
     ByteBuffer receivedData;
-    DatagramChannel channel;
+    static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
     AtomicInteger timeout = new AtomicInteger(1000);

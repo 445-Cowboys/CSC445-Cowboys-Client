@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class BattleScreenController {
     public static Label boss_curr_health_label;
     public static Label boss_curr_ammo_label;
-    public static TextArea activity_writer;
+    public static TextArea activity_writer = new TextArea();
     public static Label player1_curr_health_label;
     public static Label player1_curr_ammo_label;
     public static Label player2_curr_health_label;
@@ -209,7 +209,7 @@ public class BattleScreenController {
         }
     }
 
-    /*
+    /*getKeySetAsJSON();
      * Called when the player clicks the reload button, it will block the players
      * action if it is not their turn
      */

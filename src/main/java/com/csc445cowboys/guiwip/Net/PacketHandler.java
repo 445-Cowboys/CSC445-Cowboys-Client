@@ -69,6 +69,9 @@ public class PacketHandler implements Runnable {
         }
     }
 
+    private void MainMenuContext() {
+    }
+
     public void GameRequestedContext() throws GeneralSecurityException, IOException {
         switch (this.packet.get(0)) {
             case 6 -> {  // ; GAME ROOMS PACKET received from server
@@ -105,10 +108,13 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void MainMenuContext(){}
-
     public void sendActionPacket(int i) throws IOException {
         this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
+        channel.send(packet, sa);
+    }
+
+    public void sendGameRequestPacket(int room) throws IOException {
+        this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort(),"" );
         channel.send(packet, sa);
     }
 }

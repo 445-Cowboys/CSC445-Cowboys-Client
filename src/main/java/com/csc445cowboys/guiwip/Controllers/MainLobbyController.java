@@ -1,5 +1,7 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Net.MainNet;
+import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -35,7 +37,7 @@ public class MainLobbyController {
     public static Label lobby2_game_status_label;
     public static Label lobby3_game_status_label;
     public static Label lobby3_curr_players_label;
-    public static TextArea main_menu_act_writer;
+    public static TextArea main_menu_act_writer = new TextArea();
     private static Scene scene;
     static Lock lock = new ReentrantLock();
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
@@ -45,16 +47,15 @@ public class MainLobbyController {
         scene = battleScene;
     }
 
-
-    public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
+    public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException {
         appendToWriter("Attempting to Enter Lobby 1...");
         if (checkFull(lobby1_curr_players)) {
             appendToWriter("Lobby 1 is full, cannot join...");
             gameFullAlert();
-        } else {
-            appendToWriter("Lobby 1 is not full, attempting to join...");
-            GameRoom.set(0);
-            setActionEvent(actionEvent);
+        } else if (MainNet.programState.get() == 1){
+            waitingForGame();
+        }else{
+            enterGameRequest(0, actionEvent);
         }
     }
 
@@ -66,10 +67,10 @@ public class MainLobbyController {
         if (checkFull(lobby2_curr_players)) {
             appendToWriter("Lobby 2 is full,cannot join...");
             gameFullAlert();
-        } else {
-            appendToWriter("Lobby 2 is not full, attempting to join...");
-            GameRoom.set(1);
-            setActionEvent(actionEvent);
+        } else if(MainNet.programState.get() == 1){
+            waitingForGame();
+        }else {
+            enterGameRequest(1, actionEvent);
         }
     }
 
@@ -78,11 +79,19 @@ public class MainLobbyController {
         if (checkFull(lobby3_curr_players)) {
             gameFullAlert();
             appendToWriter("Lobby 3 is full, cannot join.");
+        } else if (MainNet.programState.get() == 1){
+            waitingForGame();
         } else {
-            appendToWriter("Lobby 3 is not full, attempting to join...");
-            GameRoom.set(2);
-            setActionEvent(actionEvent);
+            enterGameRequest(2, actionEvent);
         }
+    }
+
+    public void enterGameRequest(int room, ActionEvent actionEvent) throws IOException {
+            appendToWriter("Lobby 1 is not full, attempting to join...");
+            GameRoom.set(room);
+            setActionEvent(actionEvent);
+            new PacketHandler(MainNet.sa).sendGameRequestPacket(room);
+            MainNet.programState.set(1);
     }
 
     public static void setLobby1(int curr_players, String game_status) {
@@ -164,12 +173,15 @@ public class MainLobbyController {
 
     public static void appendToWriter(String s) {
         System.out.println(s);
-//        main_menu_act_writer.appendText(s+"\n");
     }
 
 
     public static void appendToWriter2(String s) {
         System.out.println(s);
-//        main_menu_act_writer.appendText(s+"\n");
+        main_menu_act_writer.appendText(s+"\n");
+    }
+
+    public void waitingForGame() {
+        Alerts.displayAlert("Waiting for Game", "Waiting for game to start...", Alert.AlertType.INFORMATION);
     }
 }

@@ -50,7 +50,7 @@
    </AnchorPane>
    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
       <Pane prefHeight="360.0" prefWidth="360.0" styleClass="border-box" stylesheets="@cowboys.css">
-         <TextArea fx:id="main_menu_act_writer" layoutX="14.0" layoutY="14.0" prefHeight="266.0" prefWidth="336.0" />
+         <TextArea fx:id="main_menu_act_writer" layoutX="14.0" layoutY="14.0" prefHeight="266.0" prefWidth="336.0" text="asdasd" />
          <Button layoutX="102.0" layoutY="299.0" mnemonicParsing="false" onAction="#exitGameButton" prefHeight="47.0" prefWidth="157.0" text="Exit Game" />
       </Pane>
    </AnchorPane>
