@@ -70,4 +70,7 @@ public class GameRooms extends Packet {
         return serverStatus[server];
     }
 
+    public int getTotalNumOfPlayers() {
+        return totalNumOfPlayers;
+    }
 }
