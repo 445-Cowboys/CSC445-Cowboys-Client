@@ -2,7 +2,6 @@ package com.csc445cowboys.guiwip.Net;
 
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
-import com.google.crypto.tink.Aead;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -34,15 +33,17 @@ public class MainNet implements Runnable {
     static public byte[] SessionKey;
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
+    MainLobbyController mainLobbyController;
 
     // Main Menu Net Constructor, set the mainLobbyController reference, binds a reception channel to a random port
     // and sets the channel to non-blocking
-    public MainNet() throws IOException, GeneralSecurityException {
+    public MainNet(MainLobbyController mainLobbyController) throws IOException, GeneralSecurityException {
         receivedData = ByteBuffer.allocate(1024);
         channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
         channel.configureBlocking(true);
         System.out.println("Client bound to port: " + channel.getLocalAddress());
         aead = new AEAD();
+        this.mainLobbyController = mainLobbyController;
     }
 
     /**
@@ -110,7 +111,7 @@ public class MainNet implements Runnable {
 //            if(!roundRobinServerFind()) System.exit(-5);
             if(!roundRobinServerFind()) {
 //                System.out.println("No Servers found, restarting round robin");//System.exit(-5);
-                MainLobbyController.appendToWriter("No Servers found, restarting round robin");
+                mainLobbyController.appendToWriter("No Servers found, restarting round robin");
             }
         }
     }
@@ -143,7 +144,7 @@ public class MainNet implements Runnable {
                     packetReceive();
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
-                        MainLobbyController.appendToWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
+                        mainLobbyController.appendToWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -158,7 +159,7 @@ public class MainNet implements Runnable {
                     timeout.getAndAdd(timeout.get());
                     System.out.println("Error: " + e.getMessage());
                     // Exponential backoff
-                    MainLobbyController.appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
             // Reset backoff loop

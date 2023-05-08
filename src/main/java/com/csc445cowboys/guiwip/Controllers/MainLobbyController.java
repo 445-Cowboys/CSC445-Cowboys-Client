@@ -125,7 +125,7 @@ public class MainLobbyController {
             stage.setTitle("Battling: Game Room " + GameRoom.get());
             stage.setScene(scene);
         } catch (Exception e) {
-            MainLobbyController.appendToWriter("Error opening battle screen: " + e.getMessage());
+            appendToWriter("Error opening battle screen: " + e.getMessage());
         }
     }
 
@@ -171,9 +171,11 @@ public class MainLobbyController {
         System.exit(0);
     }
 
-    public static void appendToWriter(String s) {
-        System.out.println(s);
-        main_menu_act_writer.appendText(s+"\n");
+    public void appendToWriter(String text) {
+        if (!text.endsWith("\n")) {
+            text = text.concat("\n");
+        }
+        main_menu_act_writer.appendText(text);
 
     }
 
