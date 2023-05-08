@@ -45,7 +45,6 @@
          </Pane>
          <Button id="button" fx:id="action_user_fire_button" mnemonicParsing="false" onAction="#onFireClick" prefHeight="47.0" prefWidth="163.0" text="Fire" />
          <Button id="button" fx:id="action_user_reload_button" mnemonicParsing="false" onAction="#onReloadClick" prefHeight="47.0" prefWidth="163.0" text="Reload" />
-         <Button id="button" fx:id="action_user_ability_button" mnemonicParsing="false" onAction="#onUseAbilityClick" prefHeight="47.0" prefWidth="163.0" text="Use Ability" />
          <Button id="button" fx:id="action_user_leave_button" mnemonicParsing="false" onAction="#onLeaveGameClick" prefHeight="47.0" prefWidth="163.0" text="Leave Game" />
       </VBox>
    </AnchorPane>
@@ -92,7 +91,7 @@
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
          <Pane>
             <ImageView fx:id="player1_picture" fitHeight="230.0" fitWidth="328.0" layoutX="102.0" pickOnBounds="true" preserveRatio="true">
-               <Image url="@img/player_jango.jpeg" />
+               <Image url="@img/player_no_name.jpeg" />
             </ImageView>
          </Pane>
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
@@ -107,24 +106,24 @@
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label fx:id="player1_weapon_type_label" text="Weapon (D)" GridPane.rowIndex="1" />
-            <Label fx:id="player1_health_label" text="Health (L)" />
-            <Label fx:id="player1_curr_health_label" text="Curr Health (D)" GridPane.columnIndex="1" />
-            <Label fx:id="player1_max_health_label" text="Max Health (D)" GridPane.columnIndex="2" />
-            <Label fx:id="player1_curr_ammo_label" text="Curr Ammo (D)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="player1_max_ammo_label" text="Max Ammo (D)" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="player1_ability_label" text="Ability (D)" GridPane.rowIndex="2" />
-            <Label fx:id="player1_ability_status1" text="Ready/Not Read (D)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="player1_weapon_type_label" text="Shotgun" GridPane.rowIndex="1" />
+            <Label fx:id="player1_health_label" text="Health" />
+            <Label fx:id="player1_curr_health_label" text="100" GridPane.columnIndex="1" />
+            <Label fx:id="player1_max_health_label" text="100" GridPane.columnIndex="2" />
+            <Label fx:id="player1_curr_ammo_label" text="6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="player1_max_ammo_label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="player1_ability_label" GridPane.rowIndex="2" />
+            <Label fx:id="player1_ability_status1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </GridPane>
       </VBox>
    </AnchorPane>
    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
       <VBox id="border-box" fx:id="player2_frame" prefHeight="360.0" prefWidth="360.0" styleClass="border-box">
-         <Label id="char-label" fx:id="player2_name_label" prefHeight="0.0" prefWidth="518.0" text="The Man With Some Name" />
+         <Label id="char-label" fx:id="player2_name_label" prefHeight="0.0" prefWidth="518.0" text="One Thousand Grit Sandpaper" />
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
          <Pane>
             <ImageView fx:id="player2_picture" fitHeight="230.0" fitWidth="328.0" layoutX="102.0" pickOnBounds="true" preserveRatio="true">
-               <Image url="@img/player_jango.jpeg" />
+               <Image url="@img/player_grit.jpeg" />
             </ImageView>
          </Pane>
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
@@ -139,20 +138,20 @@
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label fx:id="player2_weapon_type_label" text="Weapon (D)" GridPane.rowIndex="1" />
-            <Label fx:id="player2_health_label" text="Health (L)" />
-            <Label fx:id="player2_curr_health_label" text="Curr Health (D)" GridPane.columnIndex="1" />
-            <Label fx:id="player2_max_health_label" text="Max Health (D)" GridPane.columnIndex="2" />
-            <Label fx:id="player2_curr_ammo_label" text="Curr Ammo (D)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="player2_max_ammo_label" text="Max Ammo (D)" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="player2_ability_label" text="Ability (D)" GridPane.rowIndex="2" />
-            <Label fx:id="player2_ability_status1" text="Ready/Not Read (D)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="player2_weapon_type_label" text="Revolver" GridPane.rowIndex="1" />
+            <Label fx:id="player2_health_label" text="Health" />
+            <Label fx:id="player2_curr_health_label" text="100" GridPane.columnIndex="1" />
+            <Label fx:id="player2_max_health_label" text="100" GridPane.columnIndex="2" />
+            <Label fx:id="player2_curr_ammo_label" text="6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="player2_max_ammo_label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="player2_ability_label" GridPane.rowIndex="2" />
+            <Label fx:id="player2_ability_status1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </GridPane>
       </VBox>
    </AnchorPane>
    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
       <VBox id="border-box" fx:id="player3_frame" prefHeight="360.0" prefWidth="360.0" styleClass="border-box">
-         <Label id="char-label" fx:id="player3_name_label" prefHeight="0.0" prefWidth="518.0" text="The Man With Some Name" />
+         <Label id="char-label" fx:id="player3_name_label" prefHeight="0.0" prefWidth="518.0" text="Jango the Liberator" />
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
          <Pane>
             <ImageView fx:id="player3_picture" fitHeight="230.0" fitWidth="328.0" layoutX="102.0" pickOnBounds="true" preserveRatio="true">
@@ -171,14 +170,14 @@
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label fx:id="player3_weapon_type_label" text="Weapon (D)" GridPane.rowIndex="1" />
-            <Label fx:id="player3_health_label" text="Health (L)" />
-            <Label fx:id="player3_curr_health_label" text="Curr Health (D)" GridPane.columnIndex="1" />
-            <Label fx:id="player3_max_health_label" text="Max Health (D)" GridPane.columnIndex="2" />
-            <Label fx:id="player3_curr_ammo_label" text="Curr Ammo (D)" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="player3_max_ammo_label" text="Max Ammo (D)" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Label fx:id="player3_ability_label" text="Ability (D)" GridPane.rowIndex="2" />
-            <Label fx:id="player3_ability_status1" text="Ready/Not Read (D)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="player3_weapon_type_label" text="Blaster" GridPane.rowIndex="1" />
+            <Label fx:id="player3_health_label" text="Health" />
+            <Label fx:id="player3_curr_health_label" text="100" GridPane.columnIndex="1" />
+            <Label fx:id="player3_max_health_label" text="100" GridPane.columnIndex="2" />
+            <Label fx:id="player3_curr_ammo_label" text="6" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="player3_max_ammo_label" text="6" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label fx:id="player3_ability_label" GridPane.rowIndex="2" />
+            <Label fx:id="player3_ability_status1" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </GridPane>
       </VBox>
    </AnchorPane>
