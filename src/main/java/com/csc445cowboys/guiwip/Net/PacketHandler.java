@@ -1,14 +1,10 @@
 package com.csc445cowboys.guiwip.Net;
-
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
-import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.packets.EnterRoomAck;
 import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import com.csc445cowboys.guiwip.packets.GameState;
-import javafx.event.ActionEvent;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -16,7 +12,6 @@ import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PacketHandler implements Runnable {
     ByteBuffer packet;
@@ -36,9 +31,6 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    /*
-    Emty constructor
-     */
     public PacketHandler(SocketAddress sa) throws IOException {
         this.packet = ByteBuffer.allocate(1024);
         this.sa = sa;
@@ -60,7 +52,6 @@ public class PacketHandler implements Runnable {
             }
 
             switch (MainNet.programState.get()) {
-                case 0 -> MainMenuContext();
                 case 1 -> GameRequestedContext();
                 case 2 -> InGameContext();
             }
@@ -70,9 +61,6 @@ public class PacketHandler implements Runnable {
                 MainNet.voidGameSession();
             }
         }
-    }
-
-    private void MainMenuContext() {
     }
 
     public void GameRequestedContext() throws GeneralSecurityException, IOException {
@@ -118,6 +106,8 @@ public class PacketHandler implements Runnable {
     public void sendGameRequestPacket(int room) throws IOException {
         this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort(),"" );
         channel.send(packet, sa);
+//        channel.receive(packet);
+//        System.out.println("Received packet");
     }
 
     public void sendCourtesyLeave() throws IOException {

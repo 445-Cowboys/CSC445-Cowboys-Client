@@ -21,6 +21,9 @@ public class MainNet implements Runnable {
     static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
+    final static int PORT = 7086;
+    ByteBuffer receivedData;
+
     // Triggered when user attempts to enter a room
     /*
     0 - Main Lobby Context
@@ -30,7 +33,6 @@ public class MainNet implements Runnable {
     static public byte[] SessionKey;
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
-    ByteBuffer receivedData;
     AtomicInteger timeout = new AtomicInteger(1000);
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean connected = new AtomicBoolean(false);
@@ -57,13 +59,7 @@ public class MainNet implements Runnable {
         SessionKey = null;
     }
 
-    /**
-     * Sends a packet to the server upon client startup to wake the server up
-     *
-     * @param server Server IP Address
-     *               * @param port Server Port Number
-     * @throws IOException If the packet fails to send
-     */
+
     public void sendAwake(String server, int port) throws IOException, UnresolvedAddressException {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.put((byte) 20);
@@ -110,8 +106,7 @@ public class MainNet implements Runnable {
                     packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
                     Thread thead = new Thread(new PacketHandler(sa, this.receivedData));  // start a new thread to handle the packet
                     thead.start();
-                } catch (
-                        TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
+                } catch (TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
                     this.connected.set(false);
                     voidGameSession();
@@ -143,14 +138,13 @@ public class MainNet implements Runnable {
      * TODO Make it so that it tries each server before attempting a longer delay*/
     public Boolean roundRobinServerFind() {
         // Server Round Robin to attempt to connect to a server
-
         // While retries less than max retries and not connected to a server
         int init = 0;
         while ((retries.get() <= MAX_RETRIES.get())) {
             for (int i = init; i < ServerConfig.SERVER_NAMES.length; i++) {
                 try {
                     // Send awake packet to server
-                    sendAwake(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
+                    sendAwake(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
                     // Attempt to receive a packet from the server
                     packetReceive();
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
@@ -158,7 +152,7 @@ public class MainNet implements Runnable {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         mainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
-                        sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
+                        sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
                         this.retries.set(1);
                         return true;
                     }

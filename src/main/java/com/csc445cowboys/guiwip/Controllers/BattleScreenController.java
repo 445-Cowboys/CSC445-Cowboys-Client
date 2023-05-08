@@ -126,7 +126,6 @@ public class BattleScreenController {
 
     /*
      * Called when the player clicks the leave game button, it will block the players
-     * TODO Implement leave handling to server
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         new PacketHandler(MainNet.sa).sendCourtesyLeave();
@@ -151,11 +150,6 @@ public class BattleScreenController {
         } else {
             notTurn();
         }
-    }
-
-    public void setBossImage(String path) {
-        Image image = new Image(path);
-        boss_picture.setImage(image);
     }
 
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
