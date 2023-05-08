@@ -31,7 +31,6 @@ public class MainLobbyController {
     public Label server2_status_label;
     public Label server1_status_label;
     public Label players_in_game_label;
-    public Label player_in_main_lobby_label;
     public Label lobby1_curr_players_label;
     public Label lobby1_game_status_label;
     public Label lobby2_curr_players_label1;
@@ -152,19 +151,6 @@ public class MainLobbyController {
         };
     }
 
-//    // TODO : Implement this method properly. takes in parse gamerooms datagram converted object
-//    public void setGameRooms(GameRooms gameRooms) {
-//        // Update Server Status Labels
-//        lock.lock();
-//        server1_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(0)));
-//        server2_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(1)));
-//        serve3_status_label.setText(serverStatusFromN(gameRooms.getServerStatus(2)));
-//        setLobby1(gameRooms.getNumPlayers(0), roomStatusFromN(gameRooms.getRoomStatus(0)));
-//        setLobby2(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
-//        setLobby3(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
-//        lock.unlock();
-//    }
-
     public void setGameRooms(GameRooms gameRooms) {
         // Update Server Status Labels
         lock.lock();
@@ -177,6 +163,7 @@ public class MainLobbyController {
                 setLobby1(gameRooms.getNumPlayers(0), roomStatusFromN(gameRooms.getRoomStatus(0)));
                 setLobby2(gameRooms.getNumPlayers(1), roomStatusFromN(gameRooms.getRoomStatus(1)));
                 setLobby3(gameRooms.getNumPlayers(2), roomStatusFromN(gameRooms.getRoomStatus(2)));
+                players_in_game_label.setText(String.valueOf(gameRooms.getNumPlayers(3)));
             }
         });
         lock.unlock();

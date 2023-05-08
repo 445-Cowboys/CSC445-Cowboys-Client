@@ -139,16 +139,6 @@
          </font>
       </Label>
       <Separator layoutX="12.0" layoutY="87.0" prefHeight="1.0" prefWidth="360.0" />
-      <Label alignment="CENTER" layoutX="29.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="In-Game">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Label alignment="CENTER" layoutX="12.0" layoutY="307.0" prefHeight="39.0" prefWidth="146.0" text="In Main Lobby">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
       <Separator layoutX="-5.0" layoutY="305.0" prefHeight="1.0" prefWidth="360.0" />
       <Label fx:id="server1_status_label" alignment="CENTER" layoutX="192.0" layoutY="78.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
          <font>
@@ -165,12 +155,7 @@
             <Font size="16.0" />
          </font>
       </Label>
-      <Label fx:id="players_in_game_label" alignment="CENTER" layoutX="185.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Label fx:id="player_in_main_lobby_label" alignment="CENTER" layoutX="185.0" layoutY="307.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
+      <Label fx:id="players_in_game_label" alignment="CENTER" layoutX="102.0" layoutY="260.0" prefHeight="39.0" prefWidth="146.0" text="Waiting...">
          <font>
             <Font size="16.0" />
          </font>

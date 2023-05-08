@@ -12,6 +12,7 @@ public class GameRooms extends Packet {
      */
 
     private final byte[] data;
+    // 4th position it total clients connected
     private final int[] numPlayers;
     private final boolean[] roomFull;
     private final int[] roomStatus;
