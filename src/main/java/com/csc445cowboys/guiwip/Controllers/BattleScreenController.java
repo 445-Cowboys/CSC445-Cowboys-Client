@@ -69,7 +69,7 @@ public class BattleScreenController {
     static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
     static AtomicInteger roundNumber = new AtomicInteger(0);
     static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
-    private static Scene scene;
+    private Scene scene;
     public Button action_user_ability_button;
     public Button action_user_leave_button;
     public Button action_user_fire_button;
@@ -134,7 +134,7 @@ public class BattleScreenController {
         setBossFields(gameStart);
     }
 
-    public static void appendTextToWriter(String text) {
+    public static void appendToBattleWriter(String text) {
         // If Last not \n
         if (!text.endsWith("\n")) {
             text = text.concat("\n");
@@ -180,12 +180,12 @@ public class BattleScreenController {
         round_indicator.setText(String.valueOf(gs.getBlockNum()));
         curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
         curr_server_name_label.setText(sa.toString());
-        appendTextToWriter(s);
+        appendToBattleWriter(s);
         lock.unlock();
     }
 
-    public static void setMainScreen(Scene mainMenuScene) {
-        scene = mainMenuScene;
+    public  void setMainScreen(Scene mainMenuScene) {
+        this.scene = mainMenuScene;
     }
 
     /*
@@ -209,10 +209,6 @@ public class BattleScreenController {
         }
     }
 
-    /*getKeySetAsJSON();
-     * Called when the player clicks the reload button, it will block the players
-     * action if it is not their turn
-     */
     public void onReloadClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
             new PacketHandler(MainNet.sa).sendActionPacket(3);

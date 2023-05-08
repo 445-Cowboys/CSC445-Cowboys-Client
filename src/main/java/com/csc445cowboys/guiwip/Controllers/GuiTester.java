@@ -42,13 +42,6 @@ public class GuiTester {
         stage.setScene(scene);
         stage.show();
     }
-
-    public void writerAppend() {
-        // iterate 50 times with random actions
-        for (int i = 0; i < 50; i++) {
-            // Get random bytes
-            BattleScreenController.appendTextToWriter("Player 1 attacks Boss for 10 damage!\n");
-        }
-    }
+    
 }
 

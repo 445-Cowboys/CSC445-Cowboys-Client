@@ -111,7 +111,7 @@ public class MainNet implements Runnable {
 //            if(!roundRobinServerFind()) System.exit(-5);
             if(!roundRobinServerFind()) {
 //                System.out.println("No Servers found, restarting round robin");//System.exit(-5);
-                mainLobbyController.appendToWriter("No Servers found, restarting round robin");
+                mainLobbyController.appendToMainLobbyWriter("No Servers found, restarting round robin");
             }
         }
     }
@@ -144,7 +144,7 @@ public class MainNet implements Runnable {
                     packetReceive();
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
-                        mainLobbyController.appendToWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
+                        mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         MainLobbyController.setGameRooms(new GameRooms(receivedData));
                         this.connected.set(true);
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], ServerConfig.SERVER_PORTS[i]);
@@ -159,7 +159,7 @@ public class MainNet implements Runnable {
                     timeout.getAndAdd(timeout.get());
                     System.out.println("Error: " + e.getMessage());
                     // Exponential backoff
-                    appendToWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
+                    mainLobbyController.appendToMainLobbyWriter("Server: " + ServerConfig.SERVER_NAMES[i] + ". Retrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
             }
             // Reset backoff loop

@@ -77,11 +77,10 @@ public class PacketHandler implements Runnable {
             case 6 -> {  // ; GAME ROOMS PACKET received from server
                 EnterRoomAck enterRoomAck = new EnterRoomAck(this.packet);
                 if (enterRoomAck.getResult()) {
-                    MainLobbyController.appendToWriter("Room is available, waiting for other players and serve to start: " + MainNet.roomID+ "\n");
-                }
-                if(!enterRoomAck.getResult()){
-                    MainLobbyController.appendToWriter("Failed to enter room: " + MainNet.roomID + "\n");
+                    System.out.printf("Entered room: %d\n", MainNet.roomID.get());
+                }else{
                     MainNet.voidGameSession();
+                    System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
                 }
             }
             case 4 -> {  // GAME START PACKET received from server
