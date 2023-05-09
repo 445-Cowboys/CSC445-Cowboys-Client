@@ -3,6 +3,8 @@ package com.csc445cowboys.guiwip.Controllers;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameRoomsUpdate;
+import com.csc445cowboys.guiwip.packets.PlayerCount;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -43,6 +45,8 @@ public class MainLobbyController {
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
     public static AtomicInteger GameRoom = new AtomicInteger(0);
 
+    public long lastPlayerNumUpdateTime = 0L;
+    public long lastGameLobbyUpdateTime = 0L;
     public void setBattleScreen(Scene battleScene) {
         scene = battleScene;
     }
@@ -166,6 +170,40 @@ public class MainLobbyController {
                 players_in_game_label.setText(String.valueOf(gameRooms.getTotalNumOfPlayers()));
             }
         });
+        lock.unlock();
+    }
+
+    public void updateGameRooms(GameRoomsUpdate gameRoomsUpdate){
+        // Update Server Status Labels
+        lock.lock();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                server1_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(0)));
+                server2_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(1)));
+                serve3_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(2)));
+                setLobby1(gameRoomsUpdate.getNumPlayers(0), roomStatusFromN(gameRoomsUpdate.getRoomStatus(0)));
+                setLobby2(gameRoomsUpdate.getNumPlayers(1), roomStatusFromN(gameRoomsUpdate.getRoomStatus(1)));
+                setLobby3(gameRoomsUpdate.getNumPlayers(2), roomStatusFromN(gameRoomsUpdate.getRoomStatus(2)));
+            }
+        });
+        lock.unlock();
+    }
+
+    public void updatePlayerCount(PlayerCount playerCount){
+        lock.lock();
+        System.out.println(lastPlayerNumUpdateTime);
+        System.out.println(playerCount.getUpdateTime());
+        if(lastPlayerNumUpdateTime < playerCount.getUpdateTime()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    players_in_game_label.setText(String.valueOf(playerCount.getPlayerCount()));
+                }
+            });
+            //update the last updated time
+            lastPlayerNumUpdateTime = playerCount.getUpdateTime();
+        }
         lock.unlock();
     }
 

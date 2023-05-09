@@ -1,10 +1,8 @@
 package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
-import com.csc445cowboys.guiwip.packets.EnterRoomAck;
-import com.csc445cowboys.guiwip.packets.Factory;
-import com.csc445cowboys.guiwip.packets.GameStart;
-import com.csc445cowboys.guiwip.packets.GameState;
+import com.csc445cowboys.guiwip.packets.*;
+
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -20,11 +18,12 @@ public class PacketHandler implements Runnable {
     public BattleScreenController bsc;
     public MainLobbyController mlc;
 
-    public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
+    public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc) throws IOException {
         try {
             this.packet = packet;  // May not need to actually flip?  TODO Look into this during testing
             this.sa = sa;
             channel = DatagramChannel.open().bind(null);
+            this.mlc = mlc;
 
         } catch (IOException e) {
             System.out.println("Failed to open channel");
@@ -42,6 +41,8 @@ public class PacketHandler implements Runnable {
     @Override
     public void run() {
         try {
+            //this clause is in case the server sends an empty buffer
+            if(this.packet.limit() == 0){return;}
             if(this.packet.get(0) == -1){
                 this.packet = new Factory().makeHeartbeatAckPacket();
                 channel.send(packet, sa);
@@ -52,6 +53,7 @@ public class PacketHandler implements Runnable {
             }
 
             switch (MainNet.programState.get()) {
+                case 0 -> InLobbyContext();
                 case 1 -> GameRequestedContext();
                 case 2 -> InGameContext();
             }
@@ -63,8 +65,57 @@ public class PacketHandler implements Runnable {
         }
     }
 
+    private void InLobbyContext() throws IOException {
+        switch (this.packet.get(0)) {
+            case 10 -> {
+                System.out.println("Got player count update...");
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0A);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update player count
+                mlc.updatePlayerCount(new PlayerCount(this.packet));
+            }
+
+
+            case 11 -> {
+                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 5 to
+                //coincide with the opcode of the GameRooms packets themselves
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0B);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update game rooms data
+                this.packet.flip();
+                mlc.updateGameRooms(new GameRoomsUpdate(this.packet));
+            }
+            default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
+        }
+    }
+
     public void GameRequestedContext() throws GeneralSecurityException, IOException {
         switch (this.packet.get(0)) {
+            case 10 -> {
+                System.out.println("Received player count update");
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0A);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update player count
+                mlc.updatePlayerCount(new PlayerCount(this.packet));
+            }
+
+            case 11 -> {
+                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 5 to
+                //coincide with the opcode of the GameRooms packets themselves
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0B);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update game rooms data
+                mlc.updateGameRooms(new GameRoomsUpdate(this.packet));
+            }
+
             case 6 -> {  // ; GAME ROOMS PACKET received from server
                 EnterRoomAck enterRoomAck = new EnterRoomAck(this.packet);
                 if (enterRoomAck.getResult()) {
@@ -104,7 +155,7 @@ public class PacketHandler implements Runnable {
     }
 
     public void sendGameRequestPacket(int room) throws IOException {
-        this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort(),"" );
+        this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort());
         channel.send(packet, sa);
 //        channel.receive(packet);
 //        System.out.println("Received packet");

@@ -1,4 +1,5 @@
 package com.csc445cowboys.guiwip.packets;
+
 import java.nio.ByteBuffer;
 
 public class Factory {
@@ -65,17 +66,13 @@ public class Factory {
         return buffer;
     }
 
-    public ByteBuffer makeEnterRoomPacket(int gameRoom, int port, String userName) {
-        byte[] userNameBytes = userName.getBytes();
-        int messageLength = userNameBytes.length;
-        ByteBuffer buffer = ByteBuffer.allocate(11 + messageLength); // Total length of packet is 6 byte + username
+    public ByteBuffer makeEnterRoomPacket(int gameRoom, int port) {
+        ByteBuffer buffer = ByteBuffer.allocate(10); // Total length of packet is 6 byte + username
 
         buffer.put((byte) 0x07);
         buffer.putInt(gameRoom);
         buffer.put((byte) 0);
         buffer.putInt(port);
-        buffer.put((byte) 0);
-        buffer.put(userNameBytes);
 
         buffer.flip();
         return buffer;
@@ -111,6 +108,28 @@ public class Factory {
         return buffer;
     }
 
+    public ByteBuffer makeGameRoomsUpdate(int[] numPlayers, boolean[] roomFull, int[] roomStatus, int[] serverStatus, long timeStamp) {
+        ByteBuffer buffer = ByteBuffer.allocate(51); // Total length of packet is 42 bytes
+
+        buffer.put((byte) 0x0B);
+
+        for (int i = 0; i < 3; i++) {
+            buffer.putInt(numPlayers[i]);
+            buffer.put((byte) (roomFull[i] ? 0x01 : 0x00));
+            buffer.putInt(roomStatus[i]);
+            buffer.put((byte) 0);
+        }
+        for (int i = 0; i < 3; i++) {
+            buffer.putInt(serverStatus[i]);
+        }
+
+        buffer.putLong(timeStamp);
+        buffer.flip();
+        return buffer;
+    }
+
+
+
 
     public ByteBuffer makeGameStartPacket(int character, int bossNum, int gameRoom, byte[] symmetricKey) {
         ByteBuffer buffer = ByteBuffer.allocate(17 + symmetricKey.length);
@@ -124,6 +143,16 @@ public class Factory {
         buffer.putInt(gameRoom);
         buffer.put((byte) 0);
         buffer.put(symmetricKey);
+
+        buffer.flip();
+        return buffer;
+    }
+
+    public ByteBuffer makePlayerCountPacket(int playerCount){
+        ByteBuffer buffer = ByteBuffer.allocate(6);
+        buffer.put((byte) 0x0A);
+        buffer.put((byte) 0);
+        buffer.putInt(playerCount);
 
         buffer.flip();
         return buffer;
