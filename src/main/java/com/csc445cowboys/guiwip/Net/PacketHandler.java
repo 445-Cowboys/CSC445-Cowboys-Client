@@ -22,7 +22,7 @@ public class PacketHandler implements Runnable {
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
         try {
-            this.packet = packet.flip();  // May not need to actually flip?  TODO Look into this during testing
+            this.packet = packet;  // May not need to actually flip?  TODO Look into this during testing
             this.sa = sa;
             channel = DatagramChannel.open().bind(null);
 

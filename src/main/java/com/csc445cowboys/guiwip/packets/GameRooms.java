@@ -19,8 +19,6 @@ public class GameRooms extends Packet {
     private final int[] serverStatus;
     private final int totalNumOfPlayers;
 
-    private final int numOfTotalPlayers;
-
 
     public GameRooms(ByteBuffer buffer){
 
