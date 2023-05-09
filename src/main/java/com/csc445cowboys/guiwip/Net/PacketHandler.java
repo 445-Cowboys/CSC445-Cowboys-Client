@@ -153,13 +153,10 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void sendActionPacket(int i, int j) throws IOException {
+    public void sendActionPacket(int action, int playerNum) throws IOException {
         Factory factory = new Factory();
-        Packet packet;
-        DatagramChannel channel = DatagramChannel.open().bind(null);
-        SocketAddress sa = new InetSocketAddress("moxie.cs.oswego.edu", 7086);
 
-        ByteBuffer buff = factory.makePlayerActionPacket(1, i, 6);
+        this.packet = factory.makePlayerActionPacket(MainNet.roomID.get(), action, playerNum);
 
         ByteBuffer ackBuf = ByteBuffer.allocate(1);
         Callable<Void> Callable = () -> {
@@ -172,25 +169,26 @@ public class PacketHandler implements Runnable {
         };
         int retryNum = 0;
         for (String server : ServerConfig.SERVER_NAMES) {
+            SocketAddress sa = new InetSocketAddress(server, 7086);
             while (retryNum < 10) {
-                channel.send(buff, sa);
+                channel.send(packet, sa);
                 Future<Void> task = executorService.submit(Callable);
 
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                 } catch (TimeoutException | InterruptedException | ExecutionException e) {
                     retryNum++;
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
                     continue;
                 }
                 if ((int) ackBuf.get(0) == -1) {
-                    //Exit program
+                    //Shouldn't get here so if you see this message there is a problem.
                     System.out.println("Action invalid");
+                    return;
                 }
             }
         }
-        //Maybe delete these, they're old.
-        //this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
-        //channel.send(packet, sa);
     }
 
     public void sendGameRequestPacket(int room) throws IOException {

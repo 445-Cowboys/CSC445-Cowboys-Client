@@ -138,7 +138,7 @@ public class BattleScreenController {
      */
     public void onFireClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(1,2);
+            new PacketHandler(MainNet.sa).sendActionPacket(1, clietPlayerNumber.get());
         } else {
             notTurn();
         }
@@ -146,7 +146,7 @@ public class BattleScreenController {
 
     public void onReloadClick(ActionEvent actionEvent) throws IOException {
         if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(2,1);
+            new PacketHandler(MainNet.sa).sendActionPacket(2, clietPlayerNumber.get());
         } else {
             notTurn();
         }
