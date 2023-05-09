@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.packets.*;
 
 import java.io.IOException;
@@ -83,14 +84,13 @@ public class PacketHandler implements Runnable {
 
 
             case 11 -> {
-                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 5 to
+                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 11 to
                 //coincide with the opcode of the GameRooms packets themselves
                 ByteBuffer ackBuf = ByteBuffer.allocate(1);
                 ackBuf.put((byte) 0x0B);
                 ackBuf.flip();
                 channel.send(ackBuf, sa);
                 //update game rooms data
-                this.packet.flip();
                 mlc.updateGameRooms(new GameRoomsUpdate(this.packet));
             }
             default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
@@ -192,10 +192,68 @@ public class PacketHandler implements Runnable {
     }
 
     public void sendGameRequestPacket(int room) throws IOException {
+        MainNet.programState.set(1);
         this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort());
-        channel.send(packet, sa);
-//        channel.receive(packet);
-//        System.out.println("Received packet");
+        ByteBuffer ackBuf = ByteBuffer.allocate(3);
+        Callable<Void> Callable = () -> {
+            try {
+                channel.receive(ackBuf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        };
+        int retryNum = 0;
+        //try it with mainnet sa first
+        while (retryNum < 10) {
+            channel.send(packet, MainNet.sa);
+            Future<Void> task = executorService.submit(Callable);
+
+            try {
+                task.get(500, TimeUnit.MILLISECONDS);
+                ackBuf.flip();
+                //if we get to this point then we get our ack back
+                EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
+                if (enterRoomAck.getResult()) {
+                    System.out.printf("Entered room: %d\n", MainNet.roomID.get());
+                }else{
+                    System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
+                    MainNet.voidGameSession();
+                }
+                return;
+            } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                retryNum++;
+                channel.close();
+                channel = DatagramChannel.open().bind(null);
+            }
+        }
+
+        retryNum = 0;
+        for (String server : ServerConfig.SERVER_NAMES) {
+            SocketAddress sa = new InetSocketAddress(server, 7086);
+            while (retryNum < 10) {
+                channel.send(packet, sa);
+                Future<Void> task = executorService.submit(Callable);
+
+                try {
+                    task.get(500, TimeUnit.MILLISECONDS);
+                    ackBuf.flip();
+                    //if we get to this point then we get our ack back
+                    EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
+                    if (enterRoomAck.getResult()) {
+                        System.out.printf("Entered room: %d\n", MainNet.roomID.get());
+                    }else{
+                        System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
+                        MainNet.voidGameSession();
+                    }
+                    return;
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    retryNum++;
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
+                }
+            }
+        }
     }
 
     public void sendCourtesyLeave() throws IOException {

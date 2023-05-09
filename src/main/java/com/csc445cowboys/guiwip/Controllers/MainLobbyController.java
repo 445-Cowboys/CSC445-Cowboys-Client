@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.Factory;
@@ -96,9 +97,9 @@ public class MainLobbyController {
     public void enterGameRequest(int room, ActionEvent actionEvent) throws IOException {
             appendToMainLobbyWriter("Lobby 1 is not full, attempting to join...");
             GameRoom.set(room);
+            MainNet.roomID.set(room);
             setActionEvent(actionEvent);
             new PacketHandler(MainNet.sa).sendGameRequestPacket(room);
-            MainNet.programState.set(1);
     }
 
     public void setLobby1(int curr_players, String game_status) {
@@ -179,17 +180,20 @@ public class MainLobbyController {
     public void updateGameRooms(GameRoomsUpdate gameRoomsUpdate){
         // Update Server Status Labels
         lock.lock();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                server1_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(0)));
-                server2_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(1)));
-                serve3_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(2)));
-                setLobby1(gameRoomsUpdate.getNumPlayers(0), roomStatusFromN(gameRoomsUpdate.getRoomStatus(0)));
-                setLobby2(gameRoomsUpdate.getNumPlayers(1), roomStatusFromN(gameRoomsUpdate.getRoomStatus(1)));
-                setLobby3(gameRoomsUpdate.getNumPlayers(2), roomStatusFromN(gameRoomsUpdate.getRoomStatus(2)));
-            }
-        });
+        if(lastGameLobbyUpdateTime < gameRoomsUpdate.getTimeStamp()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    server1_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(0)));
+                    server2_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(1)));
+                    serve3_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(2)));
+                    setLobby1(gameRoomsUpdate.getNumPlayers(0), roomStatusFromN(gameRoomsUpdate.getRoomStatus(0)));
+                    setLobby2(gameRoomsUpdate.getNumPlayers(1), roomStatusFromN(gameRoomsUpdate.getRoomStatus(1)));
+                    setLobby3(gameRoomsUpdate.getNumPlayers(2), roomStatusFromN(gameRoomsUpdate.getRoomStatus(2)));
+                }
+            });
+            lastGameLobbyUpdateTime = gameRoomsUpdate.getTimeStamp();
+        }
         lock.unlock();
     }
 
