@@ -148,11 +148,12 @@ public class Factory {
         return buffer;
     }
 
-    public ByteBuffer makePlayerCountPacket(int playerCount){
+    public ByteBuffer makePlayerCountPacket(int playerCount, long updateTime){
         ByteBuffer buffer = ByteBuffer.allocate(6);
         buffer.put((byte) 0x0A);
         buffer.put((byte) 0);
         buffer.putInt(playerCount);
+        buffer.putLong(updateTime);
 
         buffer.flip();
         return buffer;
@@ -167,11 +168,11 @@ public class Factory {
         return buffer;
     }
 
-    public ByteBuffer makeCourtesyLeave() {
-        ByteBuffer buffer = ByteBuffer.allocate(1);
+    public ByteBuffer makeCourtesyLeave(int port) {
+        ByteBuffer buffer = ByteBuffer.allocate(5);
 
         buffer.put((byte) -5);
-
+        buffer.putInt(port);
         buffer.flip();
         return buffer;
     }

@@ -201,7 +201,7 @@ public class PacketHandler implements Runnable {
     }
 
     public void sendCourtesyLeave() throws IOException {
-        this.packet = new Factory().makeCourtesyLeave();
+        this.packet = new Factory().makeCourtesyLeave(Integer.parseInt(MainNet.channel.getLocalAddress().toString().split("]:")[1]));
         channel.send(packet, sa);
     }
 

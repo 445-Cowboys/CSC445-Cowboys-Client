@@ -2,6 +2,7 @@ package com.csc445cowboys.guiwip.Controllers;
 
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
+import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameRoomsUpdate;
 import com.csc445cowboys.guiwip.packets.PlayerCount;
@@ -15,6 +16,8 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -209,8 +212,11 @@ public class MainLobbyController {
 
     // exitGameButton is called when the user clicks the exit button
     // it completely exits the game
-    public void exitGameButton(ActionEvent actionEvent) {
+    public void exitGameButton(ActionEvent actionEvent) throws IOException {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
+        DatagramChannel channel = DatagramChannel.open().bind(null);
+        InetSocketAddress serverAddress = new InetSocketAddress("localhost", 7086);
+        channel.send(new Factory().makeCourtesyLeave(Integer.parseInt(MainNet.channel.getLocalAddress().toString().split("]:")[1])), serverAddress);
         System.exit(0);
     }
 
