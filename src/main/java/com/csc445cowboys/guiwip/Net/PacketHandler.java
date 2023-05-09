@@ -178,11 +178,14 @@ public class PacketHandler implements Runnable {
                     task.get(500, TimeUnit.MILLISECONDS);
                 } catch (TimeoutException | InterruptedException | ExecutionException e) {
                     retryNum++;
+                    channel.close();
+                    this.channel = DatagramChannel.open().bind(null);
                     continue;
                 }
                 if ((int) ackBuf.get(0) == -1) {
                     //Shouldn't get here so if you see this message there is a problem.
                     System.out.println("Action invalid");
+                    return;
                 }
             }
         }
