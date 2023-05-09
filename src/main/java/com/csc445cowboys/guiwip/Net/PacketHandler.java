@@ -4,6 +4,8 @@ import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.*;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.*;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -17,6 +19,8 @@ public class PacketHandler implements Runnable {
     SocketAddress sa;
     public BattleScreenController bsc;
     public MainLobbyController mlc;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc) throws IOException {
         try {
@@ -149,9 +153,44 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void sendActionPacket(int i) throws IOException {
-        this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
-        channel.send(packet, sa);
+    public void sendActionPacket(int i, int j) throws IOException {
+        Factory factory = new Factory();
+        Packet packet;
+        DatagramChannel channel = DatagramChannel.open().bind(null);
+        SocketAddress sa = new InetSocketAddress("moxie.cs.oswego.edu", 7086);
+
+        ByteBuffer buff = factory.makePlayerActionPacket(1, i, 6);
+
+        ByteBuffer ackBuf = ByteBuffer.allocate(1);
+        Callable<Void> Callable = () -> {
+            try {
+                channel.receive(ackBuf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        };
+        int retryNum = 0;
+        for (String server : ServerConfig.SERVER_NAMES) {
+            while (retryNum < 10) {
+                channel.send(buff, sa);
+                Future<Void> task = executorService.submit(Callable);
+
+                try {
+                    task.get(500, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    retryNum++;
+                    continue;
+                }
+                if ((int) ackBuf.get(0) == -1) {
+                    //Exit program
+                    System.out.println("Action invalid");
+                }
+            }
+        }
+        //Maybe delete these, they're old.
+        //this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
+        //channel.send(packet, sa);
     }
 
     public void sendGameRequestPacket(int room) throws IOException {
