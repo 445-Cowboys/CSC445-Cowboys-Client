@@ -1,11 +1,12 @@
 package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
-import com.csc445cowboys.guiwip.packets.EnterRoomAck;
-import com.csc445cowboys.guiwip.packets.Factory;
-import com.csc445cowboys.guiwip.packets.GameStart;
-import com.csc445cowboys.guiwip.packets.GameState;
+import com.csc445cowboys.guiwip.Main;
+import com.csc445cowboys.guiwip.packets.*;
+
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.*;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -19,12 +20,15 @@ public class PacketHandler implements Runnable {
     SocketAddress sa;
     public BattleScreenController bsc;
     public MainLobbyController mlc;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public PacketHandler(SocketAddress sa, ByteBuffer packet) throws IOException {
+
+    public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc) throws IOException {
         try {
-            this.packet = packet.flip();  // May not need to actually flip?  TODO Look into this during testing
+            this.packet = packet;  // May not need to actually flip?  TODO Look into this during testing
             this.sa = sa;
             channel = DatagramChannel.open().bind(null);
+            this.mlc = mlc;
 
         } catch (IOException e) {
             System.out.println("Failed to open channel");
@@ -42,6 +46,8 @@ public class PacketHandler implements Runnable {
     @Override
     public void run() {
         try {
+            //this clause is in case the server sends an empty buffer
+            if(this.packet.limit() == 0){return;}
             if(this.packet.get(0) == -1){
                 this.packet = new Factory().makeHeartbeatAckPacket();
                 channel.send(packet, sa);
@@ -52,6 +58,7 @@ public class PacketHandler implements Runnable {
             }
 
             switch (MainNet.programState.get()) {
+                case 0 -> InLobbyContext();
                 case 1 -> GameRequestedContext();
                 case 2 -> InGameContext();
             }
@@ -63,8 +70,56 @@ public class PacketHandler implements Runnable {
         }
     }
 
+    private void InLobbyContext() throws IOException {
+        switch (this.packet.get(0)) {
+            case 10 -> {
+                System.out.println("Got player count update...");
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0A);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update player count
+                mlc.updatePlayerCount(new PlayerCount(this.packet));
+            }
+
+
+            case 11 -> {
+                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 11 to
+                //coincide with the opcode of the GameRooms packets themselves
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0B);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update game rooms data
+                mlc.updateGameRooms(new GameRoomsUpdate(this.packet));
+            }
+            default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
+        }
+    }
+
     public void GameRequestedContext() throws GeneralSecurityException, IOException {
         switch (this.packet.get(0)) {
+            case 10 -> {
+                System.out.println("Received player count update");
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0A);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update player count
+                mlc.updatePlayerCount(new PlayerCount(this.packet));
+            }
+
+            case 11 -> {
+                //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 5 to
+                //coincide with the opcode of the GameRooms packets themselves
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x0B);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
+                //update game rooms data
+                mlc.updateGameRooms(new GameRoomsUpdate(this.packet));
+            }
+
             case 6 -> {  // ; GAME ROOMS PACKET received from server
                 EnterRoomAck enterRoomAck = new EnterRoomAck(this.packet);
                 if (enterRoomAck.getResult()) {
@@ -98,20 +153,111 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void sendActionPacket(int i) throws IOException {
-        this.packet = new Factory().makePlayerActionPacket(MainNet.roomID.get(), i,0);
-        channel.send(packet, sa);
+    public void sendActionPacket(int action, int playerNum) throws IOException {
+        Factory factory = new Factory();
+
+        this.packet = factory.makePlayerActionPacket(MainNet.roomID.get(), action, playerNum);
+
+        ByteBuffer ackBuf = ByteBuffer.allocate(1);
+        Callable<Void> Callable = () -> {
+            try {
+                channel.receive(ackBuf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        };
+        int retryNum = 0;
+        for (String server : ServerConfig.SERVER_NAMES) {
+            SocketAddress sa = new InetSocketAddress(server, 7086);
+            while (retryNum < 10) {
+                channel.send(packet, sa);
+                Future<Void> task = executorService.submit(Callable);
+
+                try {
+                    task.get(500, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    retryNum++;
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
+                    continue;
+                }
+                if ((int) ackBuf.get(0) == -1) {
+                    //Shouldn't get here so if you see this message there is a problem.
+                    System.out.println("Action invalid");
+                    return;
+                }
+            }
+        }
     }
 
     public void sendGameRequestPacket(int room) throws IOException {
-        this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort(),"" );
-        channel.send(packet, sa);
-//        channel.receive(packet);
-//        System.out.println("Received packet");
+        MainNet.programState.set(1);
+        this.packet = new Factory().makeEnterRoomPacket(room,MainNet.channel.socket().getLocalPort());
+        ByteBuffer ackBuf = ByteBuffer.allocate(3);
+        Callable<Void> Callable = () -> {
+            try {
+                channel.receive(ackBuf);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        };
+        int retryNum = 0;
+        //try it with mainnet sa first
+        while (retryNum < 10) {
+            channel.send(packet, MainNet.sa);
+            Future<Void> task = executorService.submit(Callable);
+
+            try {
+                task.get(500, TimeUnit.MILLISECONDS);
+                ackBuf.flip();
+                //if we get to this point then we get our ack back
+                EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
+                if (enterRoomAck.getResult()) {
+                    System.out.printf("Entered room: %d\n", MainNet.roomID.get());
+                }else{
+                    System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
+                    MainNet.voidGameSession();
+                }
+                return;
+            } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                retryNum++;
+                channel.close();
+                channel = DatagramChannel.open().bind(null);
+            }
+        }
+
+        retryNum = 0;
+        for (String server : ServerConfig.SERVER_NAMES) {
+            SocketAddress sa = new InetSocketAddress(server, 7086);
+            while (retryNum < 10) {
+                channel.send(packet, sa);
+                Future<Void> task = executorService.submit(Callable);
+
+                try {
+                    task.get(500, TimeUnit.MILLISECONDS);
+                    ackBuf.flip();
+                    //if we get to this point then we get our ack back
+                    EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
+                    if (enterRoomAck.getResult()) {
+                        System.out.printf("Entered room: %d\n", MainNet.roomID.get());
+                    }else{
+                        System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
+                        MainNet.voidGameSession();
+                    }
+                    return;
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    retryNum++;
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
+                }
+            }
+        }
     }
 
     public void sendCourtesyLeave() throws IOException {
-        this.packet = new Factory().makeCourtesyLeave();
+        this.packet = new Factory().makeCourtesyLeave(Integer.parseInt(MainNet.channel.getLocalAddress().toString().split("]:")[1]));
         channel.send(packet, sa);
     }
 

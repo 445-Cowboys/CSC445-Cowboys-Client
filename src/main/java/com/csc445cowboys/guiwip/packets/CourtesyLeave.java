@@ -7,8 +7,10 @@ public class CourtesyLeave extends Packet {
     private final byte[] data;
 
     private final int opcode;
+    private final int portNum;
 
     public CourtesyLeave(ByteBuffer buffer){
+
         //This code readies the bytebuffer data to be read
         int totalLength = buffer.limit();
         this.data = new byte[totalLength];
@@ -17,6 +19,7 @@ public class CourtesyLeave extends Packet {
 
         //This pulls the only byte of the array to the opcode constant
         this.opcode = buffer.get(0);
+        this.portNum = buffer.getInt(1);
     }
 
     @Override
@@ -24,4 +27,7 @@ public class CourtesyLeave extends Packet {
         return -5;
     }
 
+    public int getPortNum() {
+        return portNum;
+    }
 }

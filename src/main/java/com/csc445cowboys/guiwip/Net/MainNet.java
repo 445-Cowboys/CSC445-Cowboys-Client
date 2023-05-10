@@ -5,6 +5,7 @@ import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -60,24 +61,28 @@ public class MainNet implements Runnable {
     }
 
 
-    public void sendAwake(String server, int port) throws IOException, UnresolvedAddressException {
-        ByteBuffer buf = ByteBuffer.allocate(4);
+    public DatagramChannel sendAwake(String server, int port) throws IOException, UnresolvedAddressException {
+        ByteBuffer buf = ByteBuffer.allocate(5);
         buf.put((byte) 20);
+        buf.putInt(port);
         buf.flip();
-        SocketAddress sa = new InetSocketAddress(server, port);
-        channel.send(buf, sa);
+        SocketAddress sa = new InetSocketAddress(server, PORT);
+        DatagramChannel awakeChannel = DatagramChannel.open().bind(null);
+        awakeChannel.send(buf, sa);
         System.out.println("Sent awake packet to server");
+        return awakeChannel;
     }
 
     /**
      * General receive method for receiving packets from the server
      */
-    public void packetReceive() throws ExecutionException, InterruptedException, TimeoutException {
+    public SocketAddress packetReceive() throws ExecutionException, InterruptedException, TimeoutException {
+        final SocketAddress[] serverAdd = new SocketAddress[1];
         FutureTask<ByteBuffer> futureTask = new FutureTask<>(new Callable<ByteBuffer>() {
             @Override
             public ByteBuffer call() throws Exception {
                 // Receive Game Start Packet
-                channel.receive(receivedData);
+                serverAdd[0] = channel.receive(receivedData);
                 // Flip
                 receivedData.flip();
                 return receivedData;
@@ -93,18 +98,45 @@ public class MainNet implements Runnable {
         if (this.receivedData == null) {
             throw new TimeoutException("No Response from Server after Join Request");
         }// Ctr a d lol
+        return serverAdd[0];
+    }
+
+    public SocketAddress packetReceiveRoundRobin(DatagramChannel channel) throws ExecutionException, InterruptedException, TimeoutException {
+        final SocketAddress[] serverAdd = new SocketAddress[1];
+        FutureTask<ByteBuffer> futureTask = new FutureTask<>(new Callable<ByteBuffer>() {
+            @Override
+            public ByteBuffer call() throws Exception {
+                // Receive Game Start Packet
+                serverAdd[0] = channel.receive(receivedData);
+                // Flip
+                receivedData.flip();
+                return receivedData;
+            }
+        });
+        // Start the long-running operation
+        new Thread(futureTask).start();
+
+        // Exp backoff
+        this.receivedData = futureTask.get(timeout.get(), TimeUnit.MILLISECONDS);
+
+        // Check for timeout
+        if (this.receivedData == null) {
+            throw new TimeoutException("No Response from Server after Join Request");
+        }// Ctr a d lol
+        return serverAdd[0];
     }
 
     @Override
     public void run() {
-        for (; ; ) {
+        for (; ;) {
             // Will always fail on first attempt and attempt to round-robin find a server
             while (this.connected.get()) {
+                this.receivedData = ByteBuffer.allocate(1024);
                 // Set Heartbeat to 60 seconds
                 this.timeout.set(1000 * 60);
                 try {
-                    packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(sa, this.receivedData));  // start a new thread to handle the packet
+                    SocketAddress serverAdd = packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
+                    Thread thead = new Thread(new PacketHandler(serverAdd, this.receivedData, mainLobbyController));  // start a new thread to handle the packet
                     thead.start();
                 } catch (TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -144,9 +176,9 @@ public class MainNet implements Runnable {
             for (int i = init; i < ServerConfig.SERVER_NAMES.length; i++) {
                 try {
                     // Send awake packet to server
-                    sendAwake(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
+                    DatagramChannel awakeChannel = sendAwake(ServerConfig.SERVER_NAMES[i], Integer.parseInt(channel.getLocalAddress().toString().split("]:")[1]));
                     // Attempt to receive a packet from the server
-                    packetReceive();
+                    packetReceiveRoundRobin(awakeChannel);
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");

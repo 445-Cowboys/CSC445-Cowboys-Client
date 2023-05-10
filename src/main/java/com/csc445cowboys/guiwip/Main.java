@@ -4,6 +4,7 @@ import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

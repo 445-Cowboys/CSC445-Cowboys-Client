@@ -1,8 +1,12 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
+import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameRoomsUpdate;
+import com.csc445cowboys.guiwip.packets.PlayerCount;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -13,6 +17,8 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.DatagramChannel;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +49,8 @@ public class MainLobbyController {
     static ActionEvent actionEvent; // set when a user clicks on a lobby to join to hold the reference to which window to switch to
     public static AtomicInteger GameRoom = new AtomicInteger(0);
 
+    public long lastPlayerNumUpdateTime = 0L;
+    public long lastGameLobbyUpdateTime = 0L;
     public void setBattleScreen(Scene battleScene) {
         scene = battleScene;
     }
@@ -89,9 +97,9 @@ public class MainLobbyController {
     public void enterGameRequest(int room, ActionEvent actionEvent) throws IOException {
             appendToMainLobbyWriter("Lobby 1 is not full, attempting to join...");
             GameRoom.set(room);
+            MainNet.roomID.set(room);
             setActionEvent(actionEvent);
             new PacketHandler(MainNet.sa).sendGameRequestPacket(room);
-            MainNet.programState.set(1);
     }
 
     public void setLobby1(int curr_players, String game_status) {
@@ -169,10 +177,50 @@ public class MainLobbyController {
         lock.unlock();
     }
 
+    public void updateGameRooms(GameRoomsUpdate gameRoomsUpdate){
+        // Update Server Status Labels
+        lock.lock();
+        if(lastGameLobbyUpdateTime < gameRoomsUpdate.getTimeStamp()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    server1_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(0)));
+                    server2_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(1)));
+                    serve3_status_label.setText(serverStatusFromN(gameRoomsUpdate.getServerStatus(2)));
+                    setLobby1(gameRoomsUpdate.getNumPlayers(0), roomStatusFromN(gameRoomsUpdate.getRoomStatus(0)));
+                    setLobby2(gameRoomsUpdate.getNumPlayers(1), roomStatusFromN(gameRoomsUpdate.getRoomStatus(1)));
+                    setLobby3(gameRoomsUpdate.getNumPlayers(2), roomStatusFromN(gameRoomsUpdate.getRoomStatus(2)));
+                }
+            });
+            lastGameLobbyUpdateTime = gameRoomsUpdate.getTimeStamp();
+        }
+        lock.unlock();
+    }
+
+    public void updatePlayerCount(PlayerCount playerCount){
+        lock.lock();
+        System.out.println(lastPlayerNumUpdateTime);
+        System.out.println(playerCount.getUpdateTime());
+        if(lastPlayerNumUpdateTime < playerCount.getUpdateTime()) {
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    players_in_game_label.setText(String.valueOf(playerCount.getPlayerCount()));
+                }
+            });
+            //update the last updated time
+            lastPlayerNumUpdateTime = playerCount.getUpdateTime();
+        }
+        lock.unlock();
+    }
+
     // exitGameButton is called when the user clicks the exit button
     // it completely exits the game
-    public void exitGameButton(ActionEvent actionEvent) {
+    public void exitGameButton(ActionEvent actionEvent) throws IOException {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
+        DatagramChannel channel = DatagramChannel.open().bind(null);
+        InetSocketAddress serverAddress = new InetSocketAddress("localhost", 7086);
+        channel.send(new Factory().makeCourtesyLeave(Integer.parseInt(MainNet.channel.getLocalAddress().toString().split("]:")[1])), serverAddress);
         System.exit(0);
     }
 
