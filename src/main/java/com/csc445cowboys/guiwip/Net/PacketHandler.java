@@ -23,12 +23,13 @@ public class PacketHandler implements Runnable {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
-    public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc) throws IOException {
+    public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc, BattleScreenController bsc) throws IOException {
         try {
             this.packet = packet;  // May not need to actually flip?  TODO Look into this during testing
             this.sa = sa;
             channel = DatagramChannel.open().bind(null);
             this.mlc = mlc;
+            this.bsc = bsc;
 
         } catch (IOException e) {
             System.out.println("Failed to open channel");
@@ -135,11 +136,12 @@ public class PacketHandler implements Runnable {
                 ackBuf.put((byte) 0x04);
                 ackBuf.flip();
                 channel.send(ackBuf, sa);
+                //set the initial game start values
                 GameStart gameStart = new GameStart(this.packet);
                 MainNet.SessionKey = gameStart.getSymmetricKey();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
-                MainNet.playerNumber.set(gameStart.getCharacter());
+                bsc.setClientPlayerNumber(gameStart.getCharacter());
                 mlc.OpenBattleScreen();
             }
             default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));

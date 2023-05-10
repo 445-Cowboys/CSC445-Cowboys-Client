@@ -134,7 +134,8 @@ public class MainLobbyController {
                 @Override
                 public void run() {
                     Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-                    stage.setTitle("Battling: Game Room " + GameRoom.get());
+                    int gameRoom = GameRoom.get()+1;
+                    stage.setTitle("Battling: Game Room " + gameRoom);
                     stage.setScene(scene);
                 }
             });

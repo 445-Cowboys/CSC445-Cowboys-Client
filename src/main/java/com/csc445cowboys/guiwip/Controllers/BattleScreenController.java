@@ -1,5 +1,6 @@
 package com.csc445cowboys.guiwip.Controllers;
 
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.GameStart;
@@ -26,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BattleScreenController {
     static Lock lock = new ReentrantLock();
-    static AtomicInteger clietPlayerNumber = new AtomicInteger(0);
+    static AtomicInteger clientPlayerNumber = new AtomicInteger(0);
     static AtomicInteger roundNumber = new AtomicInteger(0);
     static AtomicInteger serverPlayerNumber = new AtomicInteger(0);
     public Label boss_curr_health_label;
@@ -76,6 +77,8 @@ public class BattleScreenController {
     public VBox boss_frame;
     private Scene scene;
 
+    private boolean isMyTurn = false;
+
 
     public void appendToBattleWriter(String text) {
         // If Last not \n
@@ -95,6 +98,11 @@ public class BattleScreenController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
+                if(gs.getBossHealth() <= 0){
+                    Alerts.displayAlert("Winner", "Your Posse has beaten Doug Lea! Now you can graduate!", Alert.AlertType.ERROR);
+                    System.exit(0);
+                }
                 boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
                 boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
                 // Player Stats
@@ -109,7 +117,8 @@ public class BattleScreenController {
                 player3_curr_ammo_label.setText(Integer.toString(gs.getPlayerAmmo(2)));
 
                 int temp = gs.getCurrentPlayer();
-                serverPlayerNumber = new AtomicInteger(temp);
+                serverPlayerNumber.set(temp);
+                if(temp == clientPlayerNumber.get()) isMyTurn = true;
                 String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
                 round_indicator.setText(String.valueOf(gs.getBlockNum()));
                 curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
@@ -137,17 +146,19 @@ public class BattleScreenController {
      * action if it is not their turn
      */
     public void onFireClick(ActionEvent actionEvent) throws IOException {
-        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(1, clietPlayerNumber.get());
+        if (clientPlayerNumber.get() == serverPlayerNumber.get()) {
+            new PacketHandler(MainNet.sa).sendActionPacket(1, clientPlayerNumber.get());
+            isMyTurn = false;
         } else {
             notTurn();
         }
     }
 
     public void onReloadClick(ActionEvent actionEvent) throws IOException {
-        if (Objects.equals(clietPlayerNumber, serverPlayerNumber)) {
-            new PacketHandler(MainNet.sa).sendActionPacket(2, clietPlayerNumber.get());
-        } else {
+        if (clientPlayerNumber.get() == serverPlayerNumber.get()) {
+            new PacketHandler(MainNet.sa).sendActionPacket(2, clientPlayerNumber.get());
+            isMyTurn = false;
+        }else {
             notTurn();
         }
     }
@@ -155,6 +166,13 @@ public class BattleScreenController {
     public void OpenMainMenuScreen(ActionEvent actionEvent) throws IOException {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(scene);
+    }
+
+    public void setClientPlayerNumber(int number){
+        //set up the initial client player number info
+        clientPlayerNumber.set(number);
+        if(clientPlayerNumber.get() == 0)
+            isMyTurn = true;
     }
 
     private void notTurn() {

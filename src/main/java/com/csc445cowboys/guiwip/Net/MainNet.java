@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameStart;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -37,7 +38,7 @@ public class MainNet implements Runnable {
     AtomicInteger timeout = new AtomicInteger(500);
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean connected = new AtomicBoolean(false);
-    static AtomicInteger playerNumber = new AtomicInteger(-1);
+    public static AtomicInteger playerNumber = new AtomicInteger(-1);
     MainLobbyController mainLobbyController;
     BattleScreenController battleScreenController;
 
@@ -134,7 +135,7 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     SocketAddress serverAdd = packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(serverAdd, this.receivedData, mainLobbyController));  // start a new thread to handle the packet
+                    Thread thead = new Thread(new PacketHandler(serverAdd, this.receivedData, mainLobbyController, battleScreenController));  // start a new thread to handle the packet
                     thead.start();
                 } catch (TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -144,8 +145,12 @@ public class MainNet implements Runnable {
                     e.printStackTrace();
                 }
             }
-            if (!roundRobinServerFind()) {
-                System.exit(-5);
+            try {
+                if (!roundRobinServerFind()) {
+                    System.exit(-5);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -166,7 +171,7 @@ public class MainNet implements Runnable {
      * --> If no servers are available, exit the program
      * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
      * TODO Make it so that it tries each server before attempting a longer delay*/
-    public Boolean roundRobinServerFind() {
+    public Boolean roundRobinServerFind() throws IOException {
         // Server Round Robin to attempt to connect to a server
         // While retries less than max retries and not connected to a server
         while ((retries.get() <= MAX_RETRIES.get())) {
@@ -191,6 +196,8 @@ public class MainNet implements Runnable {
                     // If no packet is received or other failure occurs, increment retries and backoff time
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException |
                          UnresolvedAddressException e) {
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
                     // Exponential backoff
                     mainLobbyController.appendToMainLobbyWriter("No response from server: " + ServerConfig.SERVER_NAMES[i] + ".\nRetrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
@@ -204,6 +211,12 @@ public class MainNet implements Runnable {
         // If no server is found, set connected to false and return false
         System.out.println("No server found");
         return false;
+    }
+
+    public void setPlayerNumber(int num){
+        playerNumber.set(num);
+        //set it for the battle screen controller as well
+        battleScreenController.setClientPlayerNumber(num);
     }
 
 }
