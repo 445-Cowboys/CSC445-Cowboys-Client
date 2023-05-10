@@ -59,7 +59,7 @@ public class GameStart extends Packet {
     }
     public int getBossNum() { return bossNum;}
     public int getGameRoom() { return gameRoom; }
-    public AEAD getSymmetricKey(){
-        return aead;
+    public byte[] getSymmetricKey(){
+        return symmetricKey;
     }
 }

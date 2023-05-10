@@ -130,8 +130,13 @@ public class PacketHandler implements Runnable {
                 }
             }
             case 4 -> {  // GAME START PACKET received from server
+                //send an ack back letting the server know we got it
+                ByteBuffer ackBuf = ByteBuffer.allocate(1);
+                ackBuf.put((byte) 0x04);
+                ackBuf.flip();
+                channel.send(ackBuf, sa);
                 GameStart gameStart = new GameStart(this.packet);
-                MainNet.SessionKey = gameStart.getSymmetricKey().getKeySetAsJSON();
+                MainNet.SessionKey = gameStart.getSymmetricKey();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
                 MainNet.playerNumber.set(gameStart.getCharacter());
