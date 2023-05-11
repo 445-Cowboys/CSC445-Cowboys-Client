@@ -189,7 +189,7 @@ public class PacketHandler implements Runnable {
         while(retryNum < 10) {
             Future<Void> task = executorService.submit(Callable);
             try {
-                task.get(500, TimeUnit.MILLISECONDS);
+                task.get(100, TimeUnit.MILLISECONDS);
                 ackBuf.flip();
                 //if we get to this point then we get our ack back
                 if ((int) ackBuf.get(0) == -1) {
@@ -208,16 +208,16 @@ public class PacketHandler implements Runnable {
         }
 
         retryNum = 0;
-        for (String server : ServerConfig.SERVER_NAMES) {
+        while (retryNum < 10) {
+            for (String server : ServerConfig.SERVER_NAMES) {
             SocketAddress sa = new InetSocketAddress(server, 7086);
             channel.send(packet, sa);
-            while (retryNum < 10) {
                 Future<Void> task = executorService.submit(Callable);
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                     //make the new sa the one we just successfully got an ack from
                     MainNet.sa = sa;
-                    //set the bsc server name to tne new server we prioirtize
+                    //set the bsc server name to tne new server we prioritize
                     ackBuf.flip();
                     //if we get to this point then we get our ack back
                     if ((int) ackBuf.get(0) == -1) {
@@ -255,9 +255,8 @@ public class PacketHandler implements Runnable {
         while (retryNum < 10) {
             channel.send(packet, MainNet.sa);
             Future<Void> task = executorService.submit(Callable);
-
             try {
-                task.get(500, TimeUnit.MILLISECONDS);
+                task.get(100, TimeUnit.MILLISECONDS);
                 ackBuf.flip();
                 //if we get to this point then we get our ack back
                 EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
@@ -278,12 +277,11 @@ public class PacketHandler implements Runnable {
         }
 
         retryNum = 0;
-        for (String server : ServerConfig.SERVER_NAMES) {
-            SocketAddress sa = new InetSocketAddress(server, 7086);
-            while (retryNum < 10) {
+        while (retryNum < 10) {
+            for (String server : ServerConfig.SERVER_NAMES) {
+                SocketAddress sa = new InetSocketAddress(server, 7086);
                 channel.send(packet, sa);
                 Future<Void> task = executorService.submit(Callable);
-
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                     ackBuf.flip();
@@ -291,7 +289,7 @@ public class PacketHandler implements Runnable {
                     EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
                     if (enterRoomAck.getResult()) {
                         System.out.printf("Entered room: %d\n", MainNet.roomID.get());
-                    }else{
+                    } else {
                         System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
                         MainNet.voidGameSession();
                     }
