@@ -4,11 +4,9 @@ import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
-import com.csc445cowboys.guiwip.packets.GameStart;
 import javafx.scene.control.Alert;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -79,15 +77,12 @@ public class MainNet implements Runnable {
      */
     public SocketAddress packetReceive() throws ExecutionException, InterruptedException, TimeoutException {
         final SocketAddress[] serverAdd = new SocketAddress[1];
-        FutureTask<ByteBuffer> futureTask = new FutureTask<>(new Callable<ByteBuffer>() {
-            @Override
-            public ByteBuffer call() throws Exception {
-                // Receive Game Start Packet
-                serverAdd[0] = channel.receive(receivedData);
-                // Flip
-                receivedData.flip();
-                return receivedData;
-            }
+        FutureTask<ByteBuffer> futureTask = new FutureTask<>(() -> {
+            // Receive Game Start Packet
+            serverAdd[0] = channel.receive(receivedData);
+            // Flip
+            receivedData.flip();
+            return receivedData;
         });
         // Start the long-running operation
         new Thread(futureTask).start();
@@ -104,15 +99,12 @@ public class MainNet implements Runnable {
 
     public SocketAddress packetReceiveRoundRobin(DatagramChannel channel) throws ExecutionException, InterruptedException, TimeoutException {
         final SocketAddress[] serverAdd = new SocketAddress[1];
-        FutureTask<ByteBuffer> futureTask = new FutureTask<>(new Callable<ByteBuffer>() {
-            @Override
-            public ByteBuffer call() throws Exception {
-                // Receive Game Start Packet
-                serverAdd[0] = channel.receive(receivedData);
-                // Flip
-                receivedData.flip();
-                return receivedData;
-            }
+        FutureTask<ByteBuffer> futureTask = new FutureTask<>(() -> {
+            // Receive Game Start Packet
+            serverAdd[0] = channel.receive(receivedData);
+            // Flip
+            receivedData.flip();
+            return receivedData;
         });
         // Start the long-running operation
         new Thread(futureTask).start();
@@ -150,12 +142,11 @@ public class MainNet implements Runnable {
             try {
                 if (!roundRobinServerFind()) {
                     Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION,false);
+                    //noinspection BusyWait
                     Thread.sleep(5000);
                     System.exit(0);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
