@@ -6,6 +6,7 @@ import com.csc445cowboys.guiwip.packets.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.concurrent.*;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -66,9 +67,9 @@ public class PacketHandler implements Runnable {
         } catch (GeneralSecurityException | IOException e) {
             System.out.println("Failed to handle packet");
             System.out.println("code has "+(int) this.packet.get(0));
-            if(MainNet.programState.get() == 2 | MainNet.programState.get() == 1){
-                MainNet.voidGameSession();
-            }
+//            if(MainNet.programState.get() == 2 | MainNet.programState.get() == 1){
+//                MainNet.voidGameSession();
+//            }
         }
     }
 
@@ -142,6 +143,7 @@ public class PacketHandler implements Runnable {
                 MainNet.SessionKey = gameStart.getSymmetricKey();
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
+                MainNet.roomID.set(gameStart.getGameRoom());
                 bsc.setClientPlayerNumber(gameStart.getCharacter());
                 bsc.setServerNameAndRoundLabel();
                 mlc.OpenBattleScreen();
@@ -150,12 +152,16 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void InGameContext() throws GeneralSecurityException {
+    public void InGameContext() throws GeneralSecurityException, IOException {
         // Decrypt packet
-        this.packet = ByteBuffer.wrap(MainNet.aead.decrypt(this.packet.array()));
-        // TODO May need to flip after encryption/decryption??
+        this.packet = ByteBuffer.wrap(MainNet.aead.decrypt(Arrays.copyOfRange(packet.array(), 0, packet.limit())));
+        // TODO May need to flip after encryption/decryption?? (we will not since ByteBuffer.wrap will reset our counter :))
         // GAME STATE PACKET
+        ByteBuffer ackBuf = ByteBuffer.allocate(1);
         if (this.packet.get(0) == 9) {
+            ackBuf.put((byte) 9);
+            ackBuf.flip();
+            channel.send(ackBuf, sa);
             bsc.updateFromGameStatePacket(new GameState(this.packet), this.sa);
         } else {
             System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
@@ -212,6 +218,7 @@ public class PacketHandler implements Runnable {
                     task.get(500, TimeUnit.MILLISECONDS);
                     //make the new sa the one we just successfully got an ack from
                     MainNet.sa = sa;
+                    //set the bsc server name to tne new server we prioirtize
                     ackBuf.flip();
                     //if we get to this point then we get our ack back
                     if ((int) ackBuf.get(0) == -1) {
@@ -219,6 +226,7 @@ public class PacketHandler implements Runnable {
                         System.out.println("Action invalid");
                         return;
                     }
+                    bsc.appendToBattleWriter("Action Received!");
                     return;
                 } catch (TimeoutException | InterruptedException | ExecutionException e) {
                     retryNum++;
@@ -260,6 +268,8 @@ public class PacketHandler implements Runnable {
                     System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
                     MainNet.voidGameSession();
                 }
+                MainNet.sa = sa;
+                //set the bsc sa value to the new server
                 return;
             } catch (TimeoutException | InterruptedException | ExecutionException e) {
                 retryNum++;

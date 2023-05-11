@@ -43,7 +43,7 @@ public final class AEAD {
         return outputStream.toString().getBytes();
     }
 
-    public void TestAEAD() throws GeneralSecurityException, IOException {
+    public static void TestAEAD() throws GeneralSecurityException, IOException {
         AEAD client = new AEAD();
         AEAD server = new AEAD();
         server.genKeySet();
@@ -56,5 +56,14 @@ public final class AEAD {
         byte[] ciphertext = client.encrypt(plaintext.getBytes());
         byte[] decrypted = server.decrypt(ciphertext);
         assert plaintext.equals(new String(decrypted)) : "Assertion Failed";
+        server.parseKey(keyData);
+        plaintext = "Hello World!";
+        ciphertext = server.encrypt(plaintext.getBytes());
+        decrypted = client.decrypt(ciphertext);
+        assert plaintext.equals(new String(decrypted)) : "Assertion Failed";
+    }
+
+    public static void main(String[] args) throws GeneralSecurityException, IOException {
+        TestAEAD();
     }
 }
