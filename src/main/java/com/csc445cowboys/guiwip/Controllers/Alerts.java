@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 
 public final class Alerts {
-    public static void displayAlert(String title, String content, Alert.AlertType alertType) {
+    public static void displayAlert(String title, String content, Alert.AlertType alertType, boolean forceExit) {
             Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
             alert.setTitle(title);

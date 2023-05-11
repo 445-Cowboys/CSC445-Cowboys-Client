@@ -85,7 +85,6 @@ public class PacketHandler implements Runnable {
                 mlc.updatePlayerCount(new PlayerCount(this.packet));
             }
 
-
             case 11 -> {
                 //send back an ack, for ease of use, acks for GameRooms packets will just be the opcode 11 to
                 //coincide with the opcode of the GameRooms packets themselves

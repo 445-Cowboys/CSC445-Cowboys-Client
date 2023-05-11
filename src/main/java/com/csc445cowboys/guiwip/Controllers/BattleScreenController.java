@@ -97,14 +97,22 @@ public class BattleScreenController {
      */
     public void updateFromGameStatePacket(GameState gs, SocketAddress sa) {
         lock.lock();
+
+         if(gs.getBossHealth() <= 0){
+            Alerts.displayAlert("Winner", "Your Posse has beaten Doug Lea! Now you can graduate!", Alert.AlertType.ERROR,true);
+            // Sleep
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.exit(0);
+        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
-                if(gs.getBossHealth() <= 0){
-                    Alerts.displayAlert("Winner", "Your Posse has beaten Doug Lea! Now you can graduate!", Alert.AlertType.ERROR);
-                    System.exit(0);
-                }
+
                 boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
                 boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
                 // Player Stats
