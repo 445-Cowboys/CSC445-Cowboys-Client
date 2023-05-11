@@ -1,9 +1,11 @@
 package com.csc445cowboys.guiwip.Net;
 
+import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameStart;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -19,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainNet implements Runnable {
     // Atomics
-    final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
+    final static AtomicInteger MAX_RETRIES = new AtomicInteger(3);
     static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
@@ -127,7 +129,7 @@ public class MainNet implements Runnable {
 
     @Override
     public void run() {
-        for (; ;) {
+        for (;;) {
             // Will always fail on first attempt and attempt to round-robin find a server
             while (this.connected.get()) {
                 this.receivedData = ByteBuffer.allocate(1024);
@@ -147,9 +149,13 @@ public class MainNet implements Runnable {
             }
             try {
                 if (!roundRobinServerFind()) {
-                    System.exit(-5);
+                    Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION);
+                    Thread.sleep(5000);
+                    System.exit(0);
                 }
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -205,11 +211,9 @@ public class MainNet implements Runnable {
             // Current retry delay
             retries.getAndIncrement();
             timeout.getAndAdd(timeout.get());
-
         }
 
         // If no server is found, set connected to false and return false
-        System.out.println("No server found");
         return false;
     }
 

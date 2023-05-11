@@ -65,6 +65,7 @@ public class PacketHandler implements Runnable {
             }
         } catch (GeneralSecurityException | IOException e) {
             System.out.println("Failed to handle packet");
+            System.out.println("code has "+(int) this.packet.get(0));
             if(MainNet.programState.get() == 2 | MainNet.programState.get() == 1){
                 MainNet.voidGameSession();
             }
@@ -142,6 +143,7 @@ public class PacketHandler implements Runnable {
                 MainNet.aead.parseKey(MainNet.SessionKey);
                 MainNet.programState.set(2);
                 bsc.setClientPlayerNumber(gameStart.getCharacter());
+                bsc.setServerNameAndRoundLabel();
                 mlc.OpenBattleScreen();
             }
             default -> System.out.printf("Unknown packet type given current context: %d\n", this.packet.get(0));
@@ -160,11 +162,13 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void sendActionPacket(int action, int playerNum) throws IOException {
+    public void sendActionPacket(int action, int playerNum) throws IOException, GeneralSecurityException {
         Factory factory = new Factory();
 
         this.packet = factory.makePlayerActionPacket(MainNet.roomID.get(), action, playerNum);
-
+        //encrypt action packet now
+        this.packet = ByteBuffer.wrap(MainNet.aead.encrypt(this.packet.array()));
+        //now send the action
         ByteBuffer ackBuf = ByteBuffer.allocate(1);
         Callable<Void> Callable = () -> {
             try {
@@ -175,24 +179,53 @@ public class PacketHandler implements Runnable {
             return null;
         };
         int retryNum = 0;
-        for (String server : ServerConfig.SERVER_NAMES) {
-            SocketAddress sa = new InetSocketAddress(server, 7086);
-            while (retryNum < 10) {
-                channel.send(packet, sa);
-                Future<Void> task = executorService.submit(Callable);
-
-                try {
-                    task.get(500, TimeUnit.MILLISECONDS);
-                } catch (TimeoutException | InterruptedException | ExecutionException e) {
-                    retryNum++;
-                    channel.close();
-                    channel = DatagramChannel.open().bind(null);
-                    continue;
-                }
+        //try it with mainnet sa first
+        channel.send(packet, MainNet.sa);
+        while(retryNum < 10) {
+            Future<Void> task = executorService.submit(Callable);
+            try {
+                task.get(500, TimeUnit.MILLISECONDS);
+                ackBuf.flip();
+                //if we get to this point then we get our ack back
                 if ((int) ackBuf.get(0) == -1) {
                     //Shouldn't get here so if you see this message there is a problem.
                     System.out.println("Action invalid");
                     return;
+                }
+                return;
+            } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                retryNum++;
+                channel.close();
+                channel = DatagramChannel.open().bind(null);
+                packet.rewind();
+                channel.send(packet, MainNet.sa);
+            }
+        }
+
+        retryNum = 0;
+        for (String server : ServerConfig.SERVER_NAMES) {
+            SocketAddress sa = new InetSocketAddress(server, 7086);
+            channel.send(packet, sa);
+            while (retryNum < 10) {
+                Future<Void> task = executorService.submit(Callable);
+                try {
+                    task.get(500, TimeUnit.MILLISECONDS);
+                    //make the new sa the one we just successfully got an ack from
+                    MainNet.sa = sa;
+                    ackBuf.flip();
+                    //if we get to this point then we get our ack back
+                    if ((int) ackBuf.get(0) == -1) {
+                        //Shouldn't get here so if you see this message there is a problem.
+                        System.out.println("Action invalid");
+                        return;
+                    }
+                    return;
+                } catch (TimeoutException | InterruptedException | ExecutionException e) {
+                    retryNum++;
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
+                    packet.rewind();
+                    channel.send(packet, MainNet.sa);
                 }
             }
         }

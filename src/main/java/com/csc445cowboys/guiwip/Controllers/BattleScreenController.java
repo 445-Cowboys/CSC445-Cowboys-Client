@@ -1,6 +1,7 @@
 package com.csc445cowboys.guiwip.Controllers;
 
 import com.csc445cowboys.guiwip.Main;
+import com.csc445cowboys.guiwip.Net.Character;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
 import com.csc445cowboys.guiwip.packets.GameStart;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -120,7 +122,7 @@ public class BattleScreenController {
                 serverPlayerNumber.set(temp);
                 if(temp == clientPlayerNumber.get()) isMyTurn = true;
                 String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
-                round_indicator.setText(String.valueOf(gs.getBlockNum()));
+                //round_indicator.setText(String.valueOf(gs.getBlockNum()));
                 curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
                 curr_server_name_label.setText(sa.toString());
                 appendToBattleWriter(s);
@@ -138,6 +140,8 @@ public class BattleScreenController {
      */
     public void onLeaveGameClick(ActionEvent actionEvent) throws IOException {
         new PacketHandler(MainNet.sa).sendCourtesyLeave();
+        //NOTE: This should probably be a system exit, they can always just start the game up again later if they wanna
+        //join again
         OpenMainMenuScreen(actionEvent);
     }
 
@@ -145,8 +149,8 @@ public class BattleScreenController {
      * Called when the player clicks the fire button, it will block the players
      * action if it is not their turn
      */
-    public void onFireClick(ActionEvent actionEvent) throws IOException {
-        if (clientPlayerNumber.get() == serverPlayerNumber.get()) {
+    public void onFireClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
+        if (isMyTurn) {
             new PacketHandler(MainNet.sa).sendActionPacket(1, clientPlayerNumber.get());
             isMyTurn = false;
         } else {
@@ -154,8 +158,8 @@ public class BattleScreenController {
         }
     }
 
-    public void onReloadClick(ActionEvent actionEvent) throws IOException {
-        if (clientPlayerNumber.get() == serverPlayerNumber.get()) {
+    public void onReloadClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
+        if (isMyTurn) {
             new PacketHandler(MainNet.sa).sendActionPacket(2, clientPlayerNumber.get());
             isMyTurn = false;
         }else {
@@ -173,6 +177,17 @@ public class BattleScreenController {
         clientPlayerNumber.set(number);
         if(clientPlayerNumber.get() == 0)
             isMyTurn = true;
+    }
+
+    public void setServerNameAndRoundLabel() {
+        curr_server_name_label.setText(MainNet.sa.toString().split("/")[0]);
+        curr_player_label.setText(Character.getPlayer(0).getName());
+        appendToBattleWriter("You are " + Character.getPlayer(clientPlayerNumber.get()).getName());
+    }
+
+    public void changeServerName() {
+        //will reset the server name to whatever sa is now for the MainNet
+        curr_server_name_label.setText(MainNet.sa.toString().split("/")[0]);
     }
 
     private void notTurn() {
