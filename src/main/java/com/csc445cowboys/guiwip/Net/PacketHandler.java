@@ -185,6 +185,7 @@ public class PacketHandler implements Runnable {
         };
         int retryNum = 0;
         //try it with mainnet sa first
+        packet.position(0);
         channel.send(packet, MainNet.sa);
         while(retryNum < 10) {
             Future<Void> task = executorService.submit(Callable);
@@ -210,6 +211,7 @@ public class PacketHandler implements Runnable {
         retryNum = 0;
         for (String server : ServerConfig.SERVER_NAMES) {
             SocketAddress sa = new InetSocketAddress(server, 7086);
+            packet.position(0);
             channel.send(packet, sa);
             while (retryNum < 10) {
                 Future<Void> task = executorService.submit(Callable);
@@ -253,6 +255,7 @@ public class PacketHandler implements Runnable {
         int retryNum = 0;
         //try it with mainnet sa first
         while (retryNum < 10) {
+            packet.position(0);
             channel.send(packet, MainNet.sa);
             Future<Void> task = executorService.submit(Callable);
 
@@ -281,6 +284,7 @@ public class PacketHandler implements Runnable {
         for (String server : ServerConfig.SERVER_NAMES) {
             SocketAddress sa = new InetSocketAddress(server, 7086);
             while (retryNum < 10) {
+                packet.position(0);
                 channel.send(packet, sa);
                 Future<Void> task = executorService.submit(Callable);
 

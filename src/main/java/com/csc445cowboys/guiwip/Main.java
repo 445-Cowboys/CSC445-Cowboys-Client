@@ -22,7 +22,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException, InterruptedException, GeneralSecurityException {
-                FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml")); // Load Main Menu FXML
+        FXMLLoader mainLdr = new FXMLLoader(getClass().getResource("main.fxml")); // Load Main Menu FXML
         Parent mainMenuPane = mainLdr.load();  // Load Main Menu Pane
         Scene mainMenuScene = new Scene(mainMenuPane);  // Create Main Menu Scene
 
