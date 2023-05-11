@@ -100,11 +100,9 @@ public class BattleScreenController {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
-                if(gs.getBossHealth() <= 0){
-                    Alerts.displayAlert("Winner", "Your Posse has beaten Doug Lea! Now you can graduate!", Alert.AlertType.ERROR);
-                    System.exit(0);
-                }
+                if(gs.getBlockNum() < roundNumber.get()) return;
+
+                roundNumber.set(gs.getBlockNum());
                 boss_curr_health_label.setText(Integer.toString(gs.getBossHealth()));
                 boss_curr_ammo_label.setText(Integer.toString(gs.getBossAmmo()));
                 // Player Stats
@@ -123,9 +121,16 @@ public class BattleScreenController {
                 if(temp == clientPlayerNumber.get()) isMyTurn = true;
                 String s = String.format("%d: %s", gs.getBlockNum(), gs.getActionMessage());
                 //round_indicator.setText(String.valueOf(gs.getBlockNum()));
-                curr_player_label.setText(Integer.toString(serverPlayerNumber.get()));
+                if(serverPlayerNumber.get() != 3)
+                    curr_player_label.setText(Character.getPlayer(serverPlayerNumber.get()).getName());
+                else
+                    curr_player_label.setText(boss_name_label.getText());
                 curr_server_name_label.setText(sa.toString());
                 appendToBattleWriter(s);
+//                //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
+//                if(gs.getBossHealth() <= 0){
+//
+//                }
             }
         });
         lock.unlock();
