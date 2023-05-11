@@ -127,10 +127,7 @@ public class Factory {
         buffer.flip();
         return buffer;
     }
-
-
-
-
+    
     public ByteBuffer makeGameStartPacket(int character, int bossNum, int gameRoom, byte[] symmetricKey) {
         ByteBuffer buffer = ByteBuffer.allocate(17 + symmetricKey.length);
 
