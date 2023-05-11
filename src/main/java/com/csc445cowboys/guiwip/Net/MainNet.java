@@ -1,8 +1,11 @@
 package com.csc445cowboys.guiwip.Net;
 
+import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.packets.GameRooms;
+import com.csc445cowboys.guiwip.packets.GameStart;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainNet implements Runnable {
     // Atomics
-    final static AtomicInteger MAX_RETRIES = new AtomicInteger(10);
+    final static AtomicInteger MAX_RETRIES = new AtomicInteger(3);
     static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
@@ -34,10 +37,10 @@ public class MainNet implements Runnable {
     static public byte[] SessionKey;
     static public AtomicInteger roomID = new AtomicInteger(-1);
     static public AtomicInteger programState = new AtomicInteger(0);
-    AtomicInteger timeout = new AtomicInteger(250);
+    AtomicInteger timeout = new AtomicInteger(500);
     AtomicInteger retries = new AtomicInteger(1);
     AtomicBoolean connected = new AtomicBoolean(false);
-    static AtomicInteger playerNumber = new AtomicInteger(-1);
+    public static AtomicInteger playerNumber = new AtomicInteger(-1);
     MainLobbyController mainLobbyController;
     BattleScreenController battleScreenController;
 
@@ -45,9 +48,8 @@ public class MainNet implements Runnable {
     // and sets the channel to non-blocking
     public MainNet(MainLobbyController mainLobbyController, BattleScreenController battleScreenController) throws IOException, GeneralSecurityException {
         receivedData = ByteBuffer.allocate(1024);
-        channel = DatagramChannel.open().bind(null);  // TOO Still need to ask Dom how he wants to handle client ports
+        channel = DatagramChannel.open().bind(null);
         channel.configureBlocking(true);
-        System.out.println("Client bound to port: " + channel.getLocalAddress());
         aead = new AEAD();
         this.mainLobbyController = mainLobbyController;
         this.battleScreenController = battleScreenController;
@@ -67,10 +69,9 @@ public class MainNet implements Runnable {
         buf.putInt(port);
         buf.flip();
         SocketAddress sa = new InetSocketAddress(server, PORT);
-        DatagramChannel awakeChannel = DatagramChannel.open().bind(null);
-        awakeChannel.send(buf, sa);
+        channel.send(buf, sa);
         System.out.println("Sent awake packet to server");
-        return awakeChannel;
+        return channel;
     }
 
     /**
@@ -128,7 +129,7 @@ public class MainNet implements Runnable {
 
     @Override
     public void run() {
-        for (; ;) {
+        for (;;) {
             // Will always fail on first attempt and attempt to round-robin find a server
             while (this.connected.get()) {
                 this.receivedData = ByteBuffer.allocate(1024);
@@ -136,7 +137,7 @@ public class MainNet implements Runnable {
                 this.timeout.set(1000 * 60);
                 try {
                     SocketAddress serverAdd = packetReceive();  // Attempt to receive a packet from the server, will time out after 60 seconds
-                    Thread thead = new Thread(new PacketHandler(serverAdd, this.receivedData, mainLobbyController));  // start a new thread to handle the packet
+                    Thread thead = new Thread(new PacketHandler(serverAdd, this.receivedData, mainLobbyController, battleScreenController));  // start a new thread to handle the packet
                     thead.start();
                 } catch (TimeoutException e) {  // If no packet is received, set connected to false and attempt to connect to a server,
                     // will fall to round robin search to try to connect to a server
@@ -146,8 +147,16 @@ public class MainNet implements Runnable {
                     e.printStackTrace();
                 }
             }
-            if (!roundRobinServerFind()) {
-                System.exit(-5);
+            try {
+                if (!roundRobinServerFind()) {
+                    Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION);
+                    Thread.sleep(5000);
+                    System.exit(0);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -168,17 +177,18 @@ public class MainNet implements Runnable {
      * --> If no servers are available, exit the program
      * ---> If GAME_ROOM Packet is received, break out of loop, set the server to connected, and update the game rooms
      * TODO Make it so that it tries each server before attempting a longer delay*/
-    public Boolean roundRobinServerFind() {
+    public Boolean roundRobinServerFind() throws IOException {
         // Server Round Robin to attempt to connect to a server
         // While retries less than max retries and not connected to a server
-        int init = 0;
         while ((retries.get() <= MAX_RETRIES.get())) {
-            for (int i = init; i < ServerConfig.SERVER_NAMES.length; i++) {
+            for (int i = 0; i < ServerConfig.SERVER_NAMES.length; i++) {
+                System.out.println(i);
                 try {
                     // Send awake packet to server
-                    DatagramChannel awakeChannel = sendAwake(ServerConfig.SERVER_NAMES[i], Integer.parseInt(channel.getLocalAddress().toString().split("]:")[1]));
+                    sendAwake(ServerConfig.SERVER_NAMES[i], Integer.parseInt(channel.getLocalAddress().toString().split("]:")[1]));
                     // Attempt to receive a packet from the server
-                    packetReceiveRoundRobin(awakeChannel);
+                    receivedData = ByteBuffer.allocate(1024);
+                    packetReceiveRoundRobin(channel);
                     // Break out of loop if server is awake upon receipt of @GameRooms packet
                     if (receivedData.get(0) == 5) {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
@@ -186,12 +196,14 @@ public class MainNet implements Runnable {
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
                         this.connected.set(true);
                         this.retries.set(1);
-                        this.timeout.set(250);
+                        this.timeout.set(500);
                         return true;
                     }
                     // If no packet is received or other failure occurs, increment retries and backoff time
                 } catch (ExecutionException | InterruptedException | TimeoutException | IOException |
                          UnresolvedAddressException e) {
+                    channel.close();
+                    channel = DatagramChannel.open().bind(null);
                     // Exponential backoff
                     mainLobbyController.appendToMainLobbyWriter("No response from server: " + ServerConfig.SERVER_NAMES[i] + ".\nRetrying in " + timeout.get() + "ms. Retry " + retries.get());
                 }
@@ -199,12 +211,16 @@ public class MainNet implements Runnable {
             // Current retry delay
             retries.getAndIncrement();
             timeout.getAndAdd(timeout.get());
-
         }
 
         // If no server is found, set connected to false and return false
-        System.out.println("No server found");
         return false;
+    }
+
+    public void setPlayerNumber(int num){
+        playerNumber.set(num);
+        //set it for the battle screen controller as well
+        battleScreenController.setClientPlayerNumber(num);
     }
 
 }

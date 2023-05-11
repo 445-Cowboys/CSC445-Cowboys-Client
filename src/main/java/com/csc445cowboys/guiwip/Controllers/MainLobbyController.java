@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Controllers;
 import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.Net.MainNet;
 import com.csc445cowboys.guiwip.Net.PacketHandler;
+import com.csc445cowboys.guiwip.Net.ServerConfig;
 import com.csc445cowboys.guiwip.packets.Factory;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameRoomsUpdate;
@@ -129,9 +130,15 @@ public class MainLobbyController {
      */
     public void OpenBattleScreen() {
         try {
-            Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            stage.setTitle("Battling: Game Room " + GameRoom.get());
-            stage.setScene(scene);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                    int gameRoom = GameRoom.get()+1;
+                    stage.setTitle("Battling: Game Room " + gameRoom);
+                    stage.setScene(scene);
+                }
+            });
         } catch (Exception e) {
             System.out.println("Error opening battle screen");
         }
@@ -219,7 +226,7 @@ public class MainLobbyController {
     public void exitGameButton(ActionEvent actionEvent) throws IOException {
         System.out.println("Exit Game Button Pressed: Exiting Game...");
         DatagramChannel channel = DatagramChannel.open().bind(null);
-        InetSocketAddress serverAddress = new InetSocketAddress("localhost", 7086);
+        InetSocketAddress serverAddress = new InetSocketAddress(ServerConfig.SERVER_NAMES[0], 7086);
         channel.send(new Factory().makeCourtesyLeave(Integer.parseInt(MainNet.channel.getLocalAddress().toString().split("]:")[1])), serverAddress);
         System.exit(0);
     }
