@@ -145,7 +145,7 @@ public class MainLobbyController {
     }
 
     public void gameFullAlert() {
-        Alerts.displayAlert("Game is full", "The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION);
+        Alerts.displayAlert("Game is full", "The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION, false);
     }
 
     public static String serverStatusFromN(int n) {
@@ -240,6 +240,6 @@ public class MainLobbyController {
     }
 
     public void waitingForGame() {
-        Alerts.displayAlert("Waiting for Game", "Waiting for game to start...", Alert.AlertType.INFORMATION);
+        Alerts.displayAlert("Waiting for Game", "Waiting for game to start...", Alert.AlertType.INFORMATION, false);
     }
 }

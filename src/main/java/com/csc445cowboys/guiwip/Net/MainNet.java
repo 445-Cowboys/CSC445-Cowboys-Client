@@ -149,7 +149,7 @@ public class MainNet implements Runnable {
             }
             try {
                 if (!roundRobinServerFind()) {
-                    Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION);
+                    Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION, false);
                     Thread.sleep(5000);
                     System.exit(0);
                 }

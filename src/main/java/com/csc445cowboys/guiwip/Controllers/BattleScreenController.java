@@ -200,6 +200,6 @@ public class BattleScreenController {
 
     private void notTurn() {
         // Disable all buttons
-        Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR);
+        Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR, false);
     }
 }
