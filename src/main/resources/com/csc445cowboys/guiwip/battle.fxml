@@ -53,11 +53,10 @@
          <Label id="char-label" fx:id="boss_name_label" prefHeight="0.0" prefWidth="518.0" text="Doug Lea" />
          <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
          <Pane>
-            <ImageView fx:id="boss_picture" fitHeight="230.0" fitWidth="328.0" layoutX="25.0" pickOnBounds="true" preserveRatio="true">
-               <Image url="@img/boss_anthill.jpeg" />
+            <ImageView fx:id="boss_picture" fitHeight="275.0" fitWidth="307.0" layoutX="90.0" pickOnBounds="true" preserveRatio="true">
+               <Image url="@img/douglea_yeehaww.png" />
             </ImageView>
          </Pane>
-         <Separator id="horz-line" prefWidth="200.0" style="-fx-background-color: #000000;" />
          <GridPane id="char-data-table">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -65,7 +64,6 @@
                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>

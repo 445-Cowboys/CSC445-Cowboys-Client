@@ -146,6 +146,7 @@ public class MainLobbyController {
 
     public void gameFullAlert() {
         Alerts.displayAlert("Game is full", "The game you are trying to join is full. Please try again later.", Alert.AlertType.INFORMATION, false);
+
     }
 
     public static String serverStatusFromN(int n) {

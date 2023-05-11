@@ -108,6 +108,17 @@ public class BattleScreenController {
             }
             System.exit(0);
         }
+
+         if(gs.getPlayerHealth(0) <= 0 && gs.getPlayerHealth(1) <= 0 && gs.getPlayerHealth(2) <= 0) {
+             Alerts.displayAlert("Loser", "Your Posse has been defeated by Doug Lea! You must repeat the semester!", Alert.AlertType.ERROR, true);
+             // Sleep
+             try {
+                 Thread.sleep(5000);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+             System.exit(0);
+         }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -208,6 +219,7 @@ public class BattleScreenController {
 
     private void notTurn() {
         // Disable all buttons
-        Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR, false);
+        Alerts.displayAlert("Not Your Turn", "It is not your turn yet.", Alert.AlertType.ERROR,false);
+
     }
 }
