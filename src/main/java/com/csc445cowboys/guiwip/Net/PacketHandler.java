@@ -26,7 +26,7 @@ public class PacketHandler implements Runnable {
 
     public PacketHandler(SocketAddress sa, ByteBuffer packet, MainLobbyController mlc, BattleScreenController bsc) throws IOException {
         try {
-            this.packet = packet;  // May not need to actually flip?  TODO Look into this during testing
+            this.packet = packet;
             this.sa = sa;
             channel = DatagramChannel.open().bind(null);
             this.mlc = mlc;
@@ -67,9 +67,6 @@ public class PacketHandler implements Runnable {
         } catch (GeneralSecurityException | IOException e) {
             System.out.println("Failed to handle packet");
             System.out.println("code has "+(int) this.packet.get(0));
-//            if(MainNet.programState.get() == 2 | MainNet.programState.get() == 1){
-//                MainNet.voidGameSession();
-//            }
         }
     }
 
@@ -125,14 +122,17 @@ public class PacketHandler implements Runnable {
             case 6 -> {  // ; GAME ROOMS PACKET received from server
                 EnterRoomAck enterRoomAck = new EnterRoomAck(this.packet);
                 if (enterRoomAck.getResult()) {
+                    mlc.appendToMainLobbyWriter("Entered room: " + MainNet.roomID.get() + "\n");
                     System.out.printf("Entered room: %d\n", MainNet.roomID.get());
                 }else{
+                    mlc.appendToMainLobbyWriter("Failed to enter room: " + MainNet.roomID.get() + "\n");
                     MainNet.voidGameSession();
                     System.out.printf("Failed to enter room: %d\n", MainNet.roomID.get());
                 }
             }
             case 4 -> {  // GAME START PACKET received from server
                 //send an ack back letting the server know we got it
+                mlc.appendToMainLobbyWriter("Game starting...\n");
                 ByteBuffer ackBuf = ByteBuffer.allocate(1);
                 ackBuf.put((byte) 0x04);
                 ackBuf.flip();
@@ -154,7 +154,6 @@ public class PacketHandler implements Runnable {
     public void InGameContext() throws GeneralSecurityException, IOException {
         // Decrypt packet
         this.packet = ByteBuffer.wrap(MainNet.aead.decrypt(Arrays.copyOfRange(packet.array(), 0, packet.limit())));
-        // TODO May need to flip after encryption/decryption?? (we will not since ByteBuffer.wrap will reset our counter :))
         // GAME STATE PACKET
         ByteBuffer ackBuf = ByteBuffer.allocate(1);
         if (this.packet.get(0) == 9) {
