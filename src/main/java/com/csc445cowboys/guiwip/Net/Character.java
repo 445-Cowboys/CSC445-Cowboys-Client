@@ -48,7 +48,7 @@ public enum Character {
             "is eaten by an anteater"),
 
     DEMON_FEET("Demon Feet",
-            10, 10, 10, 6,
+            10, 10, 100, 6,
             "shoots %p with his demon gun",
             "gains %d defense from his cursed feet",
             "reloads his demon gun",
