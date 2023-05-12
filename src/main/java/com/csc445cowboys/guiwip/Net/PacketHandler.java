@@ -1,8 +1,10 @@
 package com.csc445cowboys.guiwip.Net;
+import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
 import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.packets.*;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,7 +21,7 @@ public class PacketHandler implements Runnable {
     ByteBuffer packet;
     DatagramChannel channel;
     SocketAddress sa;
-    public BattleScreenController bsc;
+    public static BattleScreenController bsc;
     public MainLobbyController mlc;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -167,7 +169,7 @@ public class PacketHandler implements Runnable {
         }
     }
 
-    public void sendActionPacket(int action, int playerNum) throws IOException, GeneralSecurityException {
+    public void sendActionPacket(int action, int playerNum) throws IOException, GeneralSecurityException, InterruptedException {
         Factory factory = new Factory();
 
         this.packet = factory.makePlayerActionPacket(MainNet.roomID.get(), action, playerNum);
@@ -218,8 +220,8 @@ public class PacketHandler implements Runnable {
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                     //make the new sa the one we just successfully got an ack from
-                    MainNet.sa = sa;
-                    MainNet.curServer = server;
+                    MainNet.sa = new InetSocketAddress(server, 7086);
+                    bsc.changeServerName(server);
                     //set the bsc server name to tne new server we prioirtize
                     ackBuf.flip();
                     //if we get to this point then we get our ack back
@@ -239,6 +241,9 @@ public class PacketHandler implements Runnable {
                 }
             }
         }
+        Alerts.displayAlert("Servers down", "All servers are currently down. Please try connecting later.", Alert.AlertType.INFORMATION,false);
+        Thread.sleep(5000);
+        System.exit(0);
     }
 
     public void sendGameRequestPacket(int room) throws IOException {
@@ -292,7 +297,7 @@ public class PacketHandler implements Runnable {
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                     ackBuf.flip();
-                    MainNet.sa = sa;
+                    MainNet.sa = new InetSocketAddress(server, 7086);
                     MainNet.curServer = server;
                     //if we get to this point then we get our ack back
                     EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);

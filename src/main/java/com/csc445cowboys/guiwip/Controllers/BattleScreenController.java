@@ -147,7 +147,6 @@ public class BattleScreenController {
                     curr_player_label.setText(Character.getPlayer(serverPlayerNumber.get()).getName());
                 else
                     curr_player_label.setText(boss_name_label.getText());
-                curr_server_name_label.setText(MainNet.curServer);
                 appendToBattleWriter(s);
 //                //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
 //                if(gs.getBossHealth() <= 0){
@@ -169,14 +168,15 @@ public class BattleScreenController {
         new PacketHandler(MainNet.sa).sendCourtesyLeave();
         //NOTE: This should probably be a system exit, they can always just start the game up again later if they wanna
         //join again
-        OpenMainMenuScreen(actionEvent);
+//        OpenMainMenuScreen(actionEvent);
+        System.exit(0);
     }
 
     /*
      * Called when the player clicks the fire button, it will block the players
      * action if it is not their turn
      */
-    public void onFireClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
+    public void onFireClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException, InterruptedException {
         if (isMyTurn) {
             new PacketHandler(MainNet.sa).sendActionPacket(1, clientPlayerNumber.get());
             isMyTurn = false;
@@ -185,7 +185,7 @@ public class BattleScreenController {
         }
     }
 
-    public void onReloadClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException {
+    public void onReloadClick(ActionEvent actionEvent) throws IOException, GeneralSecurityException, InterruptedException {
         if (isMyTurn) {
             new PacketHandler(MainNet.sa).sendActionPacket(2, clientPlayerNumber.get());
             isMyTurn = false;
@@ -212,9 +212,9 @@ public class BattleScreenController {
         appendToBattleWriter("You are " + Character.getPlayer(clientPlayerNumber.get()).getName());
     }
 
-    public void changeServerName() {
+    public void changeServerName(String server) {
         //will reset the server name to whatever sa is now for the MainNet
-        curr_server_name_label.setText(MainNet.sa.toString().split("/")[0]);
+        curr_server_name_label.setText(server);
     }
 
     private void notTurn() {
