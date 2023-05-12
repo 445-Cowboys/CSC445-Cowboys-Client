@@ -219,6 +219,7 @@ public class PacketHandler implements Runnable {
                     task.get(500, TimeUnit.MILLISECONDS);
                     //make the new sa the one we just successfully got an ack from
                     MainNet.sa = sa;
+                    MainNet.curServer = server;
                     //set the bsc server name to tne new server we prioirtize
                     ackBuf.flip();
                     //if we get to this point then we get our ack back
@@ -291,6 +292,8 @@ public class PacketHandler implements Runnable {
                 try {
                     task.get(500, TimeUnit.MILLISECONDS);
                     ackBuf.flip();
+                    MainNet.sa = sa;
+                    MainNet.curServer = server;
                     //if we get to this point then we get our ack back
                     EnterRoomAck enterRoomAck = new EnterRoomAck(ackBuf);
                     if (enterRoomAck.getResult()) {

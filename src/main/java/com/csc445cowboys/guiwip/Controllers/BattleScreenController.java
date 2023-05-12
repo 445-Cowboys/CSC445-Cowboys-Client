@@ -147,7 +147,7 @@ public class BattleScreenController {
                     curr_player_label.setText(Character.getPlayer(serverPlayerNumber.get()).getName());
                 else
                     curr_player_label.setText(boss_name_label.getText());
-                curr_server_name_label.setText(sa.toString());
+                curr_server_name_label.setText(MainNet.curServer);
                 appendToBattleWriter(s);
 //                //if boss health is 0, send a splash screen saying that the group has won. Exit out after that
 //                if(gs.getBossHealth() <= 0){
@@ -207,7 +207,7 @@ public class BattleScreenController {
     }
 
     public void setServerNameAndRoundLabel() {
-        curr_server_name_label.setText(MainNet.sa.toString().split("/")[0]);
+        curr_server_name_label.setText(MainNet.curServer);
         curr_player_label.setText(Character.getPlayer(0).getName());
         appendToBattleWriter("You are " + Character.getPlayer(clientPlayerNumber.get()).getName());
     }

@@ -58,7 +58,7 @@ public class MainLobbyController {
 
     public void onLobby1EnterGame(ActionEvent actionEvent) throws IOException {
         appendToMainLobbyWriter("Attempting to Enter Lobby 1...");
-        if (checkFull(lobby1_curr_players)) {
+        if (checkFull(lobby1_curr_players) || lobby1_game_status_label.toString().contains("Game in progress")) {
             appendToMainLobbyWriter("Lobby 1 is full, cannot join...");
             gameFullAlert();
         } else if (MainNet.programState.get() == 1){
@@ -73,7 +73,7 @@ public class MainLobbyController {
     }
     public void onLobby2EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToMainLobbyWriter("Attempting to Enter Lobby 2...");
-        if (checkFull(lobby2_curr_players)) {
+        if (checkFull(lobby2_curr_players) || lobby2_game_status_label.toString().contains("Game in progress")) {
             appendToMainLobbyWriter("Lobby 2 is full,cannot join...");
             gameFullAlert();
         } else if(MainNet.programState.get() == 1){
@@ -85,7 +85,7 @@ public class MainLobbyController {
 
     public void onLobby3EnterGame(ActionEvent actionEvent) throws IOException, GeneralSecurityException, TimeoutException {
         appendToMainLobbyWriter("Attempting to Enter Lobby 3...");
-        if (checkFull(lobby3_curr_players)) {
+        if (checkFull(lobby3_curr_players)|| lobby1_game_status_label.toString().contains("Game in progress")) {
             gameFullAlert();
             appendToMainLobbyWriter("Lobby 3 is full, cannot join.");
         } else if (MainNet.programState.get() == 1){

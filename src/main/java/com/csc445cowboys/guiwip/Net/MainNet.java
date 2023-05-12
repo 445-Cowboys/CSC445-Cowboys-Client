@@ -3,6 +3,7 @@ package com.csc445cowboys.guiwip.Net;
 import com.csc445cowboys.guiwip.Controllers.Alerts;
 import com.csc445cowboys.guiwip.Controllers.BattleScreenController;
 import com.csc445cowboys.guiwip.Controllers.MainLobbyController;
+import com.csc445cowboys.guiwip.Main;
 import com.csc445cowboys.guiwip.packets.GameRooms;
 import com.csc445cowboys.guiwip.packets.GameStart;
 import javafx.scene.control.Alert;
@@ -25,6 +26,7 @@ public class MainNet implements Runnable {
     static public DatagramChannel channel;
     static public SocketAddress sa;
     static public AEAD aead;
+    static public String curServer;
     final static int PORT = 7086;
     ByteBuffer receivedData;
 
@@ -194,6 +196,7 @@ public class MainNet implements Runnable {
                         mainLobbyController.appendToMainLobbyWriter("Connected to Server: " + ServerConfig.SERVER_NAMES[i] + "\n");
                         mainLobbyController.setGameRooms(new GameRooms(receivedData));
                         sa = new InetSocketAddress(ServerConfig.SERVER_NAMES[i], MainNet.PORT);
+                        MainNet.curServer = ServerConfig.SERVER_NAMES[i];
                         this.connected.set(true);
                         this.retries.set(1);
                         this.timeout.set(500);
